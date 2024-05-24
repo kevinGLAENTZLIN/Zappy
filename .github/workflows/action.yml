@@ -34,9 +34,10 @@ jobs:
               run: make clean
             - name: Check Binary
               run: |
-                  IFS=$','
-                  for new_file in $EXECUTABLES; do
-                    if [ ! -x $new_file ]; then
+                  IFS=',' read -r -a executables <<< "$EXECUTABLES"
+                  for new_file in "${executables[@]}"; do
+                    if [ ! -x "$new_file" ]; then
+                      echo "Error: $new_file is not executable"
                       exit 1
                     fi
                   done
