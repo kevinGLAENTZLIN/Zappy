@@ -24,9 +24,9 @@ jobs:
                   fetch-depth: 0
             - name: Install Dependencies
               run: |
-                  sudo apt-get update
-                  sudo apt-get install -y build-essential
-                  sudo apt-get install -y raylib libraylib-dev
+                  sudo dnf update -y
+                  sudo dnf install -y make gcc
+                  sudo dnf install -y raylib raylib-devel
             - name: Make
               run: make
               timeout-minutes: 2
