@@ -2,7 +2,7 @@ name: Zappy
 run-name: Zappy
 env:
     MIRROR_URL: "git@github.com:EpitechPromo2027/B-YEP-400-MLH-4-1-zappy-kevin1.glaentzlin.git"
-    EXECUTABLES: "zappy_ai, zappy_gui, zappy_server"
+    EXECUTABLES: "zappy_ai, zappy_server"
 
 on:
     push:
@@ -24,7 +24,6 @@ jobs:
                   fetch-depth: 0
             - name: Install Dependencies
               run: |
-                  sudo dnf update -y
                   sudo dnf install -y make gcc
                   sudo dnf install -y raylib raylib-devel
             - name: Make

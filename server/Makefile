@@ -5,7 +5,7 @@
 ## do something apparently
 ##
 
-SRC			=	$(shell find -name "*.c" -type f)
+SRC			=	$(shell find . -name "*.c" -type f)
 
 OBJ			=	$(SRC:.c=.o)
 

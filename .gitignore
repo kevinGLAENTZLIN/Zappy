@@ -1,0 +1,4 @@
+zappy_ai
+zappy_gui
+*.o
+zappy_server
