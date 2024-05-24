@@ -2,7 +2,7 @@ name: Zappy
 run-name: Zappy
 env:
     MIRROR_URL: "git@github.com:EpitechPromo2027/B-YEP-400-MLH-4-1-zappy-kevin1.glaentzlin.git"
-    EXECUTABLES: "zappy_ai, zappy_server"
+    EXECUTABLES: "zappy_ai,zappy_server"
 
 on:
     push:
@@ -29,12 +29,18 @@ jobs:
             - name: Make
               run: make
               timeout-minutes: 2
+            - name: List Files After Make
+              run: ls -l
             - name: Make Clean
               run: make clean
             - name: Check Binary
               run: |
                   IFS=',' read -r -a executables <<< "$EXECUTABLES"
                   for new_file in "${executables[@]}"; do
+                    if [ ! -f "$new_file" ]; then
+                      echo "Error: $new_file does not exist"
+                      exit 1
+                    fi
                     if [ ! -x "$new_file" ]; then
                       echo "Error: $new_file is not executable"
                       exit 1
