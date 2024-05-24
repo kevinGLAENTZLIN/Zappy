@@ -18,10 +18,15 @@ jobs:
         container:
             image: epitechcontent/epitest-docker:latest
         steps:
-            - name: check_compilation
+            - name: Checkout Code
               uses: actions/checkout@v3
               with:
                   fetch-depth: 0
+            - name: Install Dependencies
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y build-essential
+                  sudo apt-get install -y raylib libraylib-dev
             - name: Make
               run: make
               timeout-minutes: 2
@@ -31,7 +36,7 @@ jobs:
               run: |
                   IFS=$','
                   for new_file in $EXECUTABLES; do
-                    if [ ! -x $new_file]; then
+                    if [ ! -x $new_file ]; then
                       exit 1
                     fi
                   done
@@ -41,11 +46,11 @@ jobs:
         runs-on: ubuntu-latest
         if: ${{ github.event_name == 'push' }}
         steps:
-            - name: checker
+            - name: Checkout Code
               uses: actions/checkout@v3
               with:
                   fetch-depth: 0
-            - name: push_to_mirror
+            - name: Push to Mirror
               uses: pixta-dev/repository-mirroring-action@v1.1.1
               with:
                   target_repo_url: ${{env.MIRROR_URL}}
