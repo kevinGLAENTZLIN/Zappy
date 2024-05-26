@@ -9,5 +9,5 @@
 
 int main(void)
 {
-    printf("jaj\n");
+    printf("jaj test\n");
 }
