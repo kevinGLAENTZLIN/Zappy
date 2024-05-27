@@ -5,19 +5,24 @@
 ** main
 */
 
-#include <raylib.h>
+extern "C" {
+    #include <raylib.h>
+}
+#include "./Raylib/Window.hh"
+
 
 int main(void)
 {
-    InitWindow(800, 450, "raylib [core] example - basic window");
+    Raylib::Window window(800, 450, "Zappy");
+    window.LoadWindow(60, KEY_DELETE);
 
-    while (!WindowShouldClose())
+    while (!window.MyWindowShouldClose())
     {
-        BeginDrawing();
-            ClearBackground(RAYWHITE);
+        window.MyBeginDrawing();
+            window.MyClearBackground(RAYWHITE);
             DrawText("Hello World", 190, 200, 20, LIGHTGRAY);
-        EndDrawing();
+        window.MyEndDrawing();
     }
-    CloseWindow();
+    window.MyCloseWindow();
     return 0;
 }
