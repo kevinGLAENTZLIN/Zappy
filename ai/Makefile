@@ -5,18 +5,18 @@
 ## do something apparently
 ##
 
-SRC			=	$(shell find . -name "*.c" -type f)
+SRC			=	$(shell find . -name "*.cpp" -type f)
 
-OBJ			=	$(SRC:.c=.o)
+OBJ			=	$(SRC:.cpp=.o)
 
 NAME		=	zappy_ai
 
-FLAG		=	-W -Wall -Wextra -g
+FLAGS		=	-std=c++20 -W -Wall -Wextra -g
 
-CFLAGS	+=	$(FLAG)
+CXXFLAGS	+=	$(FLAGS)
 
 $(NAME):	$(OBJ)
-	gcc -o $(NAME) $(OBJ) $(FLAG)
+	g++ -o $(NAME) $(OBJ) $(FLAGS)
 
 all:		$(NAME)
 	cp $(NAME) ../
