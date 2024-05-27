@@ -11,8 +11,8 @@
 namespace Raylib {
     class Screen {
         public:
-            static int MyGetScreenWidth();
-            static int MyGetScreenHeight();
+            static int myGetScreenWidth();
+            static int myGetScreenHeight();
 
         protected:
         private:

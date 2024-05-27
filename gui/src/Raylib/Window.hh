@@ -12,23 +12,21 @@
 namespace Raylib {
     class Window {
         public:
-            Window(int width, int height, std::string title);
+            Window(int fps, int exitKey, std::string title);
             ~Window();
             void LoadWindow(int fps, int exitKey);
-            void MyBeginDrawing() const;
-            void MyEndDrawing() const;
-            void MyCloseWindow() const;
-            bool MyWindowShouldClose() const;
-            void MyClearBackground(Color color) const;
+            void myBeginDrawing() const;
+            void myEndDrawing() const;
+            void myCloseWindow() const;
+            bool myWindowShouldClose() const;
+            void myClearBackground() const;
 
         protected:
         private:
-            void MyInitWindow(int width, int height, std::string title) const;
-            void MySetTargetFPS(int fps) const;
-            void MySetExitKey(int key) const;
-            void MyInitAudioDevice() const;
-            int _width;
-            int _height;
-            std::string _title;
+            void myInitWindow(int width, int height, std::string title) const;
+            void mySetTargetFPS(int fps) const;
+            void mySetExitKey(int key) const;
+            void myInitAudioDevice() const;
+            void setFullScreen() const;
     };
 }

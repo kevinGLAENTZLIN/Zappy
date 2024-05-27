@@ -7,10 +7,10 @@
 
 #include "Window.hh"
 
-Raylib::Window::Window(int width, int height, std::string title):
-    _width(width), _height(height), _title(title)
+Raylib::Window::Window(int fps, int exitKey, std::string title)
 {
-    MyInitWindow(width, height, title);
+    myInitWindow(800, 450, title);
+    LoadWindow(fps, exitKey);
 }
 
 Raylib::Window::~Window()
@@ -19,56 +19,63 @@ Raylib::Window::~Window()
 
 void Raylib::Window::LoadWindow(int fps, int key)
 {
-    MySetTargetFPS(fps);
-    MySetExitKey(key);
-    MyInitAudioDevice();
+    mySetTargetFPS(fps);
+    mySetExitKey(key);
+    setFullScreen();
+    myInitAudioDevice();
 }
 
 extern "C" {
 
-    void Raylib::Window::MyInitWindow(int width, int height, std::string title) const
+    void Raylib::Window::myInitWindow(int width, int height, std::string title) const
     {
         InitWindow(width, height, title.c_str());
     }
 
-    bool Raylib::Window::MyWindowShouldClose() const
+    bool Raylib::Window::myWindowShouldClose() const
     {
         return WindowShouldClose();
     }
 
-    void Raylib::Window::MySetTargetFPS(int fps) const
+    void Raylib::Window::mySetTargetFPS(int fps) const
     {
         SetTargetFPS(fps);
     }
 
-    void Raylib::Window::MySetExitKey(int key) const
+    void Raylib::Window::mySetExitKey(int key) const
     {
         SetExitKey(key);
     }
 
-    void Raylib::Window::MyBeginDrawing() const
+    void Raylib::Window::myBeginDrawing() const
     {
         BeginDrawing();
     }
 
-    void Raylib::Window::MyClearBackground(Color color) const
+    void Raylib::Window::myClearBackground() const
     {
-        ClearBackground(color);
+        ClearBackground(RAYWHITE);
     }
 
-    void Raylib::Window::MyEndDrawing() const
+    void Raylib::Window::myEndDrawing() const
     {
         EndDrawing();
     }
 
-    void Raylib::Window::MyCloseWindow() const
+    void Raylib::Window::myCloseWindow() const
     {
         CloseWindow();
     }
 
-    void Raylib::Window::MyInitAudioDevice() const
+    void Raylib::Window::myInitAudioDevice() const
     {
         InitAudioDevice();
+    }
+
+    void Raylib::Window::setFullScreen() const
+    {
+        if (IsWindowFullscreen() == false)
+            ToggleFullscreen();
     }
 
 }

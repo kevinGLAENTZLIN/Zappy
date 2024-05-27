@@ -9,12 +9,12 @@
 
 extern "C" {
 
-    int Raylib::Screen::MyGetScreenWidth()
+    int Raylib::Screen::myGetScreenWidth()
     {
         return GetScreenWidth();
     }
 
-    int Raylib::Screen::MyGetScreenHeight()
+    int Raylib::Screen::myGetScreenHeight()
     {
         return GetScreenHeight();
     }
