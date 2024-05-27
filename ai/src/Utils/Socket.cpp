@@ -62,6 +62,9 @@ extern "C" {
     {
         struct sockaddr_in sock_serv;
 
+        std::cout << port << std::endl;
+        std::cout << serverAdress << std::endl;
+
         sock_serv.sin_family = AF_INET;
         sock_serv.sin_port = htons(atoi(port.c_str()));
         sock_serv.sin_addr.s_addr = inet_addr(serverAdress.c_str());

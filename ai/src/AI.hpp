@@ -13,7 +13,7 @@ namespace Zappy {
     class AI {
 
         public:
-            AI(const std::string port, const std::string ip, const std::string teamName);
+            AI(const std::string port, const std::string teamName, const std::string ip);
             ~AI() = default;
             void run();
 
