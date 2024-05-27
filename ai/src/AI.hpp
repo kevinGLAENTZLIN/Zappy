@@ -20,6 +20,7 @@ namespace Zappy {
             void checkArg(int argc, char **argv);
             void initAI(const std::string port, const std::string teamName, const std::string ip);
             void run();
+            void handleResponse(int fd);
 
         private:
             std::string _ip;

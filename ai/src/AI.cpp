@@ -51,15 +51,25 @@ void Zappy::AI::initAI(const std::string port, const std::string teamName, const
 void Zappy::AI::run(void)
 {
     _clientSocket->connectSocket(_port, _ip);
-    std::string response;
     int fd = 0;
 
     while (_isAlive) {
         _clientSocket->selectSocket();
         fd = _clientSocket->getSocket();
-        fd >> response;
-        if (response == "WELCOME\n")
-            fd << _teamName;
-        std::cout << "response -> " << response << std::endl;
+        handleResponse(fd);
     }
+}
+
+void Zappy::AI::handleResponse(int fd)
+{
+    std::string response = "";
+
+    fd >> response;
+    if (response == "WELCOME\n")
+        fd << (_teamName + "\n");
+    if (response == "dead\n10\n") {
+        _isAlive = false;
+        _clientSocket->~Socket();
+    }
+    std::cout << "response -> " << response;
 }
