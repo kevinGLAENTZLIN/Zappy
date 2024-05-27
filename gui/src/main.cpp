@@ -5,21 +5,24 @@
 ** main
 */
 
-extern "C" {
-    #include <raylib.h>
-}
-#include "./Raylib/Window.hh"
+#include <raylib.h>
 
+#include "./Raylib/Window.hh"
+#include "./Raylib/Text/Text.hh"
+#include "./Raylib/Texture/Texture.hh"
 
 int main(void)
 {
-    Raylib::Window window(60, KEY_DELETE, "Zappy");
+    Raylib::Window window(KEY_DELETE, "Zappy", 60);
+    // Raylib::Text jaj("jaj", 20, "default.ttf", 50, 75, 3, BLACK, Raylib::CENTER);
+    // Raylib::Texture toothless("toothless-dancing.gif", 50, 50, 0, 1);
 
     while (!window.myWindowShouldClose())
     {
         window.myBeginDrawing();
+            // toothless.DrawTexture();
             window.myClearBackground();
-            DrawText("Hello World", 190, 200, 20, LIGHTGRAY);
+            // jaj.TextDraw();
         window.myEndDrawing();
     }
     window.myCloseWindow();
