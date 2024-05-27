@@ -8,13 +8,8 @@
 #include "AI.hpp"
 #include "Utils/Socket.hpp"
 
-Zappy::AI::AI(const std::string port, const std::string teamName, const std::string ip)
+Zappy::AI::AI()
 {
-    _port = port;
-    _ip = ip;
-    _teamName = teamName;
-    _clientSocket = std::make_unique<Zappy::Socket>();
-    _isAlive = true;
     _commands.push_back("Forward\n");
     _commands.push_back("Right\n");
     _commands.push_back("Left\n");
@@ -31,7 +26,26 @@ Zappy::AI::AI(const std::string port, const std::string teamName, const std::str
 
 Zappy::AI::~AI()
 {
-    _clientSocket->~Socket();
+}
+
+void Zappy::AI::checkArg(int argc, char **argv)
+{
+    if (argc != 7) {
+        throw Zappy::ErrorAI(ArgError, "invalid number of argument");
+    }
+    if (std::string(argv[1]) != "-p" || std::string(argv[3]) != "-n" ||
+        std::string(argv[5]) != "-h") {
+        throw Zappy::ErrorAI(ArgError, "-p or -n or -h missing check -h");
+    }
+}
+
+void Zappy::AI::initAI(const std::string port, const std::string teamName, const std::string ip)
+{
+    _port = port;
+    _ip = ip;
+    _teamName = teamName;
+    _clientSocket = std::make_unique<Zappy::Socket>();
+    _isAlive = true;
 }
 
 void Zappy::AI::run(void)
@@ -43,8 +57,9 @@ void Zappy::AI::run(void)
     while (_isAlive) {
         _clientSocket->selectSocket();
         fd = _clientSocket->getSocket();
-        fd << _commands[3];
         fd >> response;
-        std::cout << response << std::endl;
+        if (response == "WELCOME\n")
+            fd << _teamName;
+        std::cout << "response -> " << response << std::endl;
     }
 }

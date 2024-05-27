@@ -23,6 +23,9 @@ Zappy::ErrorAI::ErrorAI(ErrorType error)
         case SocketError:
             _msg = "Socket error";
             break;
+        case ArgError:
+            _msg = "Argument error";
+            break;
         default:
             _msg = "Unknown error";
             break;
@@ -35,6 +38,9 @@ Zappy::ErrorAI::ErrorAI(ErrorType error, const std::string &msg)
         case SocketError:
             _msg = "Socket error: " + msg;
             break;
+        case ArgError:
+            _msg = "Argument error: " + msg;
+            break;    
         default:
             _msg = "Unknown error";
             break;
