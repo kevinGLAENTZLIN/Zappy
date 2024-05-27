@@ -20,6 +20,8 @@ namespace Raylib {
         ~Texture();
         void DrawTexture();
     private:
+        void createTexture(const std::string &path);
+        void destroyTexture();
         Texture2D _texture;
         Vector2 _position;
         double _rotation;
