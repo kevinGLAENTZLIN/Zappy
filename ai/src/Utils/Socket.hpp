@@ -30,10 +30,8 @@ namespace Zappy {
             ~Socket();
             int getSocket() const;
             int &getSocket();
-            void bindSocket(void);
-            int acceptConnection(void);
             int selectSocket(void);
-            void connectSocket(std::string socketName);
+            void connectSocket(const std::string port, const std::string serverAdress);
 
         private:
             void createSocket(void);
