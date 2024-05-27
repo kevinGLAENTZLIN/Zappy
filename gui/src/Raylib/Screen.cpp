@@ -19,4 +19,14 @@ extern "C" {
         return GetScreenHeight();
     }
 
+    int Raylib::Screen::myGetMonitorWidth()
+    {
+        return GetMonitorWidth(0);
+    }
+
+    int Raylib::Screen::myGetMonitorHeight()
+    {
+        return GetMonitorHeight(0);
+    }
+
 }

@@ -13,6 +13,8 @@ namespace Raylib {
         public:
             static int myGetScreenWidth();
             static int myGetScreenHeight();
+            static int myGetMonitorWidth();
+            static int myGetMonitorHeight();
 
         protected:
         private:

@@ -6,10 +6,11 @@
 */
 
 #include "Window.hh"
+#include "Screen.hh"
 
 Raylib::Window::Window(const int &exitKey, const std::string &title, const int &fps)
 {
-    myInitWindow(800, 450, title);
+    myInitWindow(Raylib::Screen::myGetMonitorWidth(), Raylib::Screen::myGetMonitorHeight(), title);
     LoadWindow(fps, exitKey);
 }
 
