@@ -14,14 +14,14 @@ Raylib::Text::Text(const std::string &text, const std::size_t &textSize,
                    const std::size_t &textAlignment):
     _text(text), _textSize(textSize), _font(font), _spacing(spacing), _textColor(color)
 {
-    float posPixelX = Screen::myGetScreenWidth() * (posX / 100);
-    float posPixelY = Screen::myGetScreenHeight() * (posY / 100) - getTextHeight() / 2;
+    double posPixelX = Screen::myGetScreenWidth() * (posX / 100);
+    double posPixelY = Screen::myGetScreenHeight() * (posY / 100) - getTextHeight() / 2;
 
     if (textAlignment == RIGHT)
         posPixelX -= getTextWidth();
     if (textAlignment == CENTER)
         posPixelX -= getTextWidth() / 2;
-    _position = (Vector2){posPixelX, posPixelY};
+    _position = {static_cast<float>(posPixelX), static_cast<float>(posPixelY)};
 }
 
 Raylib::Text::Text(const std::string &text, const std::size_t &textSize,
