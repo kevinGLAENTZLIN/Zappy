@@ -7,7 +7,7 @@
 
 #include "Window.hh"
 
-Raylib::Window::Window(int fps, int exitKey, std::string title)
+Raylib::Window::Window(const int &exitKey, const std::string &title, const int &fps)
 {
     myInitWindow(800, 450, title);
     LoadWindow(fps, exitKey);
@@ -17,7 +17,7 @@ Raylib::Window::~Window()
 {
 }
 
-void Raylib::Window::LoadWindow(int fps, int key)
+void Raylib::Window::LoadWindow(const int &fps, const int &key)
 {
     mySetTargetFPS(fps);
     mySetExitKey(key);
@@ -27,7 +27,7 @@ void Raylib::Window::LoadWindow(int fps, int key)
 
 extern "C" {
 
-    void Raylib::Window::myInitWindow(int width, int height, std::string title) const
+    void Raylib::Window::myInitWindow(const int &width, const int &height, const std::string &title) const
     {
         InitWindow(width, height, title.c_str());
     }
@@ -37,12 +37,12 @@ extern "C" {
         return WindowShouldClose();
     }
 
-    void Raylib::Window::mySetTargetFPS(int fps) const
+    void Raylib::Window::mySetTargetFPS(const int &fps) const
     {
         SetTargetFPS(fps);
     }
 
-    void Raylib::Window::mySetExitKey(int key) const
+    void Raylib::Window::mySetExitKey(const int &key) const
     {
         SetExitKey(key);
     }
