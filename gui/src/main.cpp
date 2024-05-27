@@ -13,16 +13,15 @@ extern "C" {
 
 int main(void)
 {
-    Raylib::Window window(800, 450, "Zappy");
-    window.LoadWindow(60, KEY_DELETE);
+    Raylib::Window window(60, KEY_DELETE, "Zappy");
 
-    while (!window.MyWindowShouldClose())
+    while (!window.myWindowShouldClose())
     {
-        window.MyBeginDrawing();
-            window.MyClearBackground(RAYWHITE);
+        window.myBeginDrawing();
+            window.myClearBackground();
             DrawText("Hello World", 190, 200, 20, LIGHTGRAY);
-        window.MyEndDrawing();
+        window.myEndDrawing();
     }
-    window.MyCloseWindow();
+    window.myCloseWindow();
     return 0;
 }
