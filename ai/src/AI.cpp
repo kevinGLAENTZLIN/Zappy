@@ -13,28 +13,16 @@
 
 Zappy::AI::AI()
 {
-    _commands.push_back("Forward\n");
-    _commands.push_back("Right\n");
-    _commands.push_back("Left\n");
-    _commands.push_back("Look\n");
-    _commands.push_back("Inventory\n");
-    _commands.push_back("Broadcast text\n");
-    _commands.push_back("Connect_nbr\n");
-    _commands.push_back("Fork\n");
-    _commands.push_back("Eject\n");
-    _commands.push_back("Take object\n");
-    _commands.push_back("Set object\n");
-    _commands.push_back("Incantation\n");
 }
 
 void Zappy::AI::checkArg(int argc, char **argv)
 {
     if (argc != 7) {
-        throw Zappy::ErrorAI(ArgError, "invalid number of argument");
+        throw Zappy::ErrorAI(ArgError, "invalid number of arguments");
     }
     if (std::string(argv[1]) != "-p" || std::string(argv[3]) != "-n" ||
         std::string(argv[5]) != "-h") {
-        throw Zappy::ErrorAI(ArgError, "-p or -n or -h missing check -h");
+        throw Zappy::ErrorAI(ArgError, "-p or -n or -h missing, check -h");
     }
 }
 
@@ -46,7 +34,10 @@ void Zappy::AI::initAI(const std::string port, const std::string teamName, const
     _clientSocket = std::make_unique<Zappy::Socket>();
     _isAlive = true;
     _currentLevel = 1;
+    _numberCmdInQueue = 1;
     _food = 9;
+    _numberCmdInQueue = 0;
+    _commandQueue.push("Inventory\n");
 }
 
 void Zappy::AI::run(void)
@@ -58,11 +49,10 @@ void Zappy::AI::run(void)
     while (_isAlive) {
         if (_clientSocket->selectSocket() == -1) {
             handleResponse(fd);
-        } else {
+        } else if (_numberCmdInQueue < 10) {
             handleDefaultAction(fd);
         }
     }
-    std::exit(0);
 }
 
 void Zappy::AI::handleResponse(int fd)
@@ -84,56 +74,66 @@ void Zappy::AI::handleResponse(int fd)
 
 void Zappy::AI::handleCommand(std::string response, int fd)
 {
-    if (response == "WELCOME")
+    _numberCmdInQueue--;
+    if (response == "WELCOME") {
         fd << (_teamName + "\n");
-    if (response == "dead") {
+    } else if (response == "dead") {
         _isAlive = false;
         _clientSocket->~Socket();
-        return;
+    } else {
+        handlePriority(response, fd);
     }
-    handlePriority(response, fd);
 }
 
 void Zappy::AI::handlePriority(std::string response, int fd)
 {
-    //TODO voir le hnadle priority pr regler les boucles inf de inventory
-    fd << _commands[4];
-    parseInventory(response);
-
-    if (_food < 2) {
-        std::cout << "Low food, forking..." << std::endl;
-    } else {
-        std::cout << "Food level is sufficient." << std::endl;
+    if (_lastCommand != "Look\n" && response.find("[") != std::string::npos)
+        parseInventory(response);
+    if (_food <= 2) {
+        std::string fork = "Fork\n";
+        fd << fork;
+        _numberCmdInQueue++;
+    }
+    if (_food > 2) {
+        std::cout << "Food > 2" << std::endl;
+        _commandQueue.push("Forward\n");
+        _commandQueue.push("Right\n");
+        _commandQueue.push("Look\n");
+        _commandQueue.push("Inventory\n");
     }
 }
 
-
 void Zappy::AI::handleDefaultAction(int fd)
 {
-    std::cout << "handle default action" << std::endl;
-    fd << _commands[0];
-    fd << _commands[1];
-    fd << _commands[3];
+    if (!_commandQueue.empty() && _food > 2) {
+        std::string command = _commandQueue.front();
+        std::cout << "commande faite -> " << command;
+        _commandQueue.pop();
+        _lastCommand = command;
+        fd << command;
+        _numberCmdInQueue++;
+    }
 }
 
-void Zappy::AI::parseInventory(const std::string &response) {
+void Zappy::AI::parseInventory(const std::string &response)
+{
     std::istringstream stream(response);
-    std::string token;
-    
-    while (stream >> token) {
-        if (token == "food") {
+    std::string stringFind;
+
+    while (stream >> stringFind) {
+        if (stringFind == "food") {
             stream >> _food;
-        } else if (token == "linemate") {
+        } else if (stringFind == "linemate") {
             stream >> _linemate;
-        } else if (token == "deraumere") {
+        } else if (stringFind == "deraumere") {
             stream >> _deraumere;
-        } else if (token == "sibur") {
+        } else if (stringFind == "sibur") {
             stream >> _sibur;
-        } else if (token == "mendiane") {
+        } else if (stringFind == "mendiane") {
             stream >> _mendiane;
-        } else if (token == "phiras") {
+        } else if (stringFind == "phiras") {
             stream >> _phiras;
-        } else if (token == "thystame") {
+        } else if (stringFind == "thystame") {
             stream >> _thystame;
         }
     }
