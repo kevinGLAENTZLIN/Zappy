@@ -7,24 +7,22 @@
 
 #include <raylib.h>
 
-#include "./Raylib/Window.hh"
+#include "./Raylib/Window/Window.hh"
 #include "./Raylib/Text/Text.hh"
 #include "./Raylib/Texture/Texture.hh"
+#include "./Raylib/Shapes/Rectangle.hh"
+#include "./Utils/GuiSocket.hh"
+#include "./ErrorGUI.hh"
+#include <memory>
 
-int main(void)
+int main()
 {
-    Raylib::Window window(KEY_DELETE, "Zappy", 60);
-    // Raylib::Text jaj("jaj", 20, "default.ttf", 50, 75, 3, BLACK, Raylib::CENTER);
-    // Raylib::Texture toothless("toothless-dancing.gif", 50, 50, 0, 1);
-
-    while (!window.myWindowShouldClose())
-    {
-        window.myBeginDrawing();
-            // toothless.DrawTexture();
-            window.myClearBackground();
-            // jaj.TextDraw();
-        window.myEndDrawing();
+    try {
+        Zappy::GuiSocket sock;
+        sock.run();
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        return 84;
     }
-    window.myCloseWindow();
     return 0;
 }
