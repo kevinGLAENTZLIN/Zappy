@@ -22,6 +22,18 @@ static bool command_loop_handling(char **list_cmd, void (**list_func)(),
     return false;
 }
 
+static void set_client_ia_mode(server_t *server, int i)
+{
+    team_t *team = get_team_by_name(server, BUFF_CLIENT);
+    player_t *player = init_player(0, 0);
+
+    CLIENT_TYPE = strdup(IA);
+    CLIENT->player_id = team->nb_player;
+    CLIENT->team_name = strdup(team->team_name);
+    PLAYER = player;
+    push_back_player(team, player);
+}
+
 static bool check_connexion_command(server_t *server, int i)
 {
     if (CLIENT_TYPE != NULL)
@@ -31,7 +43,7 @@ static bool check_connexion_command(server_t *server, int i)
         return true;
     }
     if (is_team_name(server, BUFF_CLIENT)) {
-        CLIENT_TYPE = strdup(TEAM);
+        set_client_ia_mode(server, i);
         return true;
     }
     return false;
@@ -49,11 +61,13 @@ void command_handling(server_t *server, int i)
     void (*ia_func[])() = {&forward, &right, &left, &look, &inventory,
         &broadcast, &my_connect, &my_fork, &eject, &take, &set, &incantation};
 
-    if (command_loop_handling(list_gui_cmd, gui_func, server, i))
+    if (check_connexion_command(server, i) || CLIENT_TYPE == NULL)
         return;
-    if (command_loop_handling(list_ia_cmd, ia_func, server, i))
+    if (strcmp(CLIENT_TYPE, GUI) == 0 &&
+    command_loop_handling(list_gui_cmd, gui_func, server, i))
         return;
-    if (check_connexion_command(server, i))
+    if (strcmp(CLIENT_TYPE, GUI) != 0 &&
+    command_loop_handling(list_ia_cmd, ia_func, server, i))
         return;
     dprintf(FD_CLIENT, "ko\n");
 }

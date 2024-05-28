@@ -19,14 +19,14 @@ static void load_player_inventory(player_t *player)
     player->thystame = 0;
 }
 
-player_t *init_player(char *team_name, int id, int x, int y)
+player_t *init_player(int x, int y)
 {
     player_t *player = malloc(sizeof(player_t));
 
-    player->id = id;
+    player->id = -1;
     player->x = x;
     player->y = y;
-    player->team_name = strdup(team_name);
+    player->team_name = NULL;
     player->next = NULL;
     load_player_inventory(player);
     return player;
@@ -36,7 +36,8 @@ void free_player(player_t *player)
 {
     if (player == NULL)
         return;
-    free(player->team_name);
+    if (player->team_name != NULL)
+        free(player->team_name);
     free(player);
 }
 

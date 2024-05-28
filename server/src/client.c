@@ -16,6 +16,8 @@ static client_t *init_client(int fd)
     client->buffer[0] = 0;
     client->client_type = NULL;
     client->next = NULL;
+    client->player = NULL;
+    client->player_id = -1;
     return client;
 }
 
@@ -26,6 +28,8 @@ void free_client(client_t *client)
     free(client->buffer);
     if (client->client_type != NULL)
         free(client->client_type);
+    if (client->player != NULL)
+        free(client->player);
     if (client->fd != 0)
         close(client->fd);
     free(client);
