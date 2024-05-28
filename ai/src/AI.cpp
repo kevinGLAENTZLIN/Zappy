@@ -92,6 +92,7 @@ void Zappy::AI::handlePriority(std::string response, int fd)
     parseInventory(response);
     std::cout << "Inventory updated: " << "food =" << _food << ", " << "linemate =" << _linemate << ", " << "deraumere =" << _deraumere << ", "
     << "sibur =" << _sibur << ", " << "mendiane =" << _mendiane << ", " << "phiras =" << _phiras << ", " << "thystame =" << _thystame << std::endl;
+    fd << _commands[3];
 }
 
 
