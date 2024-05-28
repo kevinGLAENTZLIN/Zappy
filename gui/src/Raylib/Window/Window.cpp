@@ -6,7 +6,7 @@
 */
 
 #include "Window.hh"
-#include "Screen.hh"
+#include "../Screen/Screen.hh"
 
 Raylib::Window::Window(const int &exitKey, const std::string &title, const int &fps)
 {

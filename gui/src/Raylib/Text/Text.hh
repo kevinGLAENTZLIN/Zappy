@@ -11,7 +11,7 @@
 #include <iostream>
 #include <raylib.h>
 
-#include "../Screen.hh"
+#include "../Screen/Screen.hh"
 #include "FontEnc.hh"
 
 namespace Raylib {

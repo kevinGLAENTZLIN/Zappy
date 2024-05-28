@@ -6,7 +6,7 @@
 */
 
 #include "Rectangle.hh"
-#include "Screen.hh"
+#include "../Screen/Screen.hh"
 
 Raylib::Rectangle::Rectangle(double x, double y, double width, double height, Color color = WHITE):
     _x(Screen::myGetScreenWidth() * (x / 100) - width / 2),
