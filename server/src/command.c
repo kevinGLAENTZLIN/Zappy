@@ -58,7 +58,7 @@ void command_handling(server_t *server, int i)
     NULL};
     void (*gui_func[])() = {&msz, &bct, &mct, &tna, &ppo, &plv, &pin,
         &sgt, &sst};
-    void (*ia_func[])() = {&forward, &right, &left, &look, &inventory,
+    void (*ia_func[])() = {&forward, &my_right, &my_left, &look, &inventory,
         &broadcast, &my_connect, &my_fork, &eject, &take, &set, &incantation};
 
     if (check_connexion_command(server, i) || CLIENT_TYPE == NULL)

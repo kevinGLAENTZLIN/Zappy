@@ -9,9 +9,15 @@
 
 void forward(server_t *server, int i, char *input)
 {
-    char **tab = get_parameters(input);
-
-    (void) server;
-    (void) i;
-    free_tab(tab);
+    (void) input;
+    if (PLAYER != NULL) {
+        if (PLAYER->direction == up)
+            PLAYER->y = ((PLAYER->y - 1) + ZAPPY->y) % ZAPPY->y;
+        if (PLAYER->direction == right)
+            PLAYER->x = ((PLAYER->x + 1) + ZAPPY->x) % ZAPPY->x;
+        if (PLAYER->direction == down)
+            PLAYER->y = ((PLAYER->y + 1) + ZAPPY->y) % ZAPPY->y;
+        if (PLAYER->direction == left)
+            PLAYER->x = ((PLAYER->x - 1) + ZAPPY->x) % ZAPPY->x;
+    }
 }

@@ -23,11 +23,13 @@ player_t *init_player(int x, int y)
 {
     player_t *player = malloc(sizeof(player_t));
 
+    srand(time(NULL));
     player->id = -1;
     player->x = x;
     player->y = y;
     player->team_name = NULL;
     player->next = NULL;
+    player->direction = rand() % 4;
     load_player_inventory(player);
     return player;
 }

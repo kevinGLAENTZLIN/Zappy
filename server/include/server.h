@@ -52,6 +52,13 @@
 
 #define SO_REUSEPORT    15
 
+typedef enum direction_e {
+    up = 0,
+    right,
+    down,
+    left
+} direction_t;
+
 typedef struct player_s {
     char *team_name;
     int id;
@@ -65,6 +72,7 @@ typedef struct player_s {
     int mendiane;
     int phiras;
     int thystame;
+    direction_t direction;
     struct player_s *next;
 } player_t;
 
@@ -163,8 +171,8 @@ void my_fork(server_t *server, int i, char *input);
 void forward(server_t *server, int i, char *input);
 void incantation(server_t *server, int i, char *input);
 void inventory(server_t *server, int i, char *input);
-void left(server_t *server, int i, char *input);
+void my_left(server_t *server, int i, char *input);
 void look(server_t *server, int i, char *input);
-void right(server_t *server, int i, char *input);
+void my_right(server_t *server, int i, char *input);
 void set(server_t *server, int i, char *input);
 void take(server_t *server, int i, char *input);

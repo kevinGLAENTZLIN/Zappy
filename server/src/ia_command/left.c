@@ -7,11 +7,9 @@
 
 #include "../../include/server.h"
 
-void left(server_t *server, int i, char *input)
+void my_left(server_t *server, int i, char *input)
 {
-    char **tab = get_parameters(input);
-
-    (void) server;
-    (void) i;
-    free_tab(tab);
+    (void) input;
+    if (PLAYER != NULL)
+        PLAYER->direction = ((PLAYER->direction - 1) + 4) % 4;
 }
