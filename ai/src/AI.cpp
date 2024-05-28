@@ -42,13 +42,14 @@ void Zappy::AI::initAI(const std::string port, const std::string teamName, const
     _teamName = teamName;
     _clientSocket = std::make_unique<Zappy::Socket>();
     _isAlive = true;
+    _currentLevel = 1;
 }
 
 void Zappy::AI::run(void)
 {
-    _clientSocket->connectSocket(_port, _ip);
     int fd = 0;
 
+    _clientSocket->connectSocket(_port, _ip);
     while (_isAlive) {
         _clientSocket->selectSocket();
         fd = _clientSocket->getSocket();
@@ -58,7 +59,7 @@ void Zappy::AI::run(void)
 
 void Zappy::AI::handleResponse(int fd)
 {
-    static std::string buffer;
+    std::string buffer;
     std::string delimiter = "\n";
     std::string serverResponse;
     size_t pos = 0;
@@ -68,7 +69,6 @@ void Zappy::AI::handleResponse(int fd)
     while ((pos = buffer.find(delimiter)) != std::string::npos) {
         std::string response = buffer.substr(0, pos);
         buffer.erase(0, pos + delimiter.length());
-        std::cout << "response -> " << response << std::endl;
         handleCommand(response, fd);
     }
 }
@@ -81,5 +81,37 @@ void Zappy::AI::handleCommand(std::string response, int fd)
         _isAlive = false;
         _clientSocket->~Socket();
     }
-    //TODO faire l'algo ici
+    handlePriority(response, fd);
+}
+
+void Zappy::AI::handlePriority(std::string response, int fd)
+{
+    fd << _commands[4];
+    parseInventory(response);
+    std::cout << "Inventory updated: " << "food =" << _food << ", " << "linemate =" << _linemate << ", " << "deraumere =" << _deraumere << ", "
+    << "sibur =" << _sibur << ", " << "mendiane =" << _mendiane << ", " << "phiras =" << _phiras << ", " << "thystame =" << _thystame << std::endl;
+}
+
+
+void Zappy::AI::parseInventory(const std::string &response) {
+    std::istringstream stream(response);
+    std::string token;
+    
+    while (stream >> token) {
+        if (token == "food") {
+            stream >> _food;
+        } else if (token == "linemate") {
+            stream >> _linemate;
+        } else if (token == "deraumere") {
+            stream >> _deraumere;
+        } else if (token == "sibur") {
+            stream >> _sibur;
+        } else if (token == "mendiane") {
+            stream >> _mendiane;
+        } else if (token == "phiras") {
+            stream >> _phiras;
+        } else if (token == "thystame") {
+            stream >> _thystame;
+        }
+    }
 }

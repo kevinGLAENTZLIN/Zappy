@@ -8,6 +8,8 @@
 #include "Utils/Socket.hpp"
 #include <map>
 #include <memory>
+#include <sstream>
+#include <regex>
 #include <utility>
 
 namespace Zappy {
@@ -22,6 +24,8 @@ namespace Zappy {
             void run();
             void handleResponse(int fd);
             void handleCommand(std::string response, int fd);
+            void handlePriority(std::string response, int fd);
+            void parseInventory(const std::string &response);
 
         private:
             std::string _ip;
@@ -30,6 +34,14 @@ namespace Zappy {
             std::unique_ptr<Zappy::Socket> _clientSocket;
             std::vector<std::string> _commands;
             bool _isAlive;
+            int _food;
+            int _linemate;
+            int _deraumere;
+            int _sibur;
+            int _mendiane;
+            int _phiras;
+            int _thystame;
+            int _currentLevel;
 
     };
 }
