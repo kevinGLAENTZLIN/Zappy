@@ -7,7 +7,7 @@
 
 #include "../include/server.h"
 
-server_t *server_server;
+server_t *server;
 
 struct sockaddr_in set_address(int port)
 {
@@ -105,19 +105,20 @@ void read_client_loop(server_t *server)
 
 int my_server(zappy_t *zappy)
 {
-    server_server = init_server();
-    if (server_server->control_fd == -1) {
+    server = init_server();
+    if (server->control_fd == -1) {
         RAISE("No socket available\n");
-        free_myteams(server_server);
+        free_myteams(server);
         return 84;
     }
+    server->zappy = zappy;
     signal(SIGINT, teams_sigint);
-    config_control(server_server, zappy->port);
-    listen(server_server->control_fd, NB_MAX_CLIENT);
-    while (server_server != NULL) {
-        add_client_loop(server_server);
-        if (server_server != NULL)
-            read_client_loop(server_server);
+    config_control(server, zappy->port);
+    listen(server->control_fd, NB_MAX_CLIENT);
+    while (server != NULL) {
+        add_client_loop(server);
+        if (server != NULL)
+            read_client_loop(server);
     }
     return 0;
 }

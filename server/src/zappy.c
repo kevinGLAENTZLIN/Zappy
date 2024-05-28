@@ -54,14 +54,10 @@ zappy_t *init_zappy(int argc, char **argv)
 
 void free_zappy(zappy_t *zappy)
 {
-    int len = 0;
-
     if (zappy == NULL)
         return;
-    len = my_len(NULL, (void **)zappy->teams_name);
     free_teams(zappy);
     free_tab(zappy->map);
-    for (int i = 0; i < len; i++)
-        free(zappy->teams_name);
-    free(zappy->teams_name);
+    free_tab(zappy->teams_name);
+    free(zappy);
 }
