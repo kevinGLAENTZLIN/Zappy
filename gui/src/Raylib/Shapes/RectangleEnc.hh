@@ -1,25 +1,32 @@
 /*
 ** EPITECH PROJECT, 2024
-** Rectangle.hh
+** RectangleEnc.hh
 ** File description:
-** Rectangle
+** RectangleEnc
 */
 
 #pragma once
+#include <optional>
 #include <raylib.h>
 #include <utility>
 
 namespace Raylib {
-    class Rectangle {
+    class RectangleEnc {
         public:
-            Rectangle(double x, double y, double width, double height, Color color);
-            ~Rectangle();
+            RectangleEnc();
+            RectangleEnc(double x, double y, double width, double height, Color color);
+            ~RectangleEnc();
+
             std::pair<double, double> getPosition() const;
             std::pair<double, double> getSize() const;
             Color getColor() const;
+            Rectangle getRectangle() const;
+
+            void setPosition(double x, double y);
+            void setSize(double width, double height);
+
             void myDrawRectangle() const;
 
-        protected:
         private:
             double _x;
             double _y;
