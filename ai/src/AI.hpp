@@ -38,6 +38,8 @@ namespace Zappy {
             int _linemate;
             int _deraumere;
             int _sibur;
+            int _worldX;
+            int _worldY;
             int _mendiane;
             int _phiras;
             int _thystame;

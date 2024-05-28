@@ -69,6 +69,7 @@ void Zappy::AI::handleResponse(int fd)
     while ((pos = buffer.find(delimiter)) != std::string::npos) {
         std::string response = buffer.substr(0, pos);
         buffer.erase(0, pos + delimiter.length());
+        std::cout << "res -> " << response << std::endl;
         handleCommand(response, fd);
     }
 }
@@ -80,6 +81,7 @@ void Zappy::AI::handleCommand(std::string response, int fd)
     if (response == "dead") {
         _isAlive = false;
         _clientSocket->~Socket();
+        return;
     }
     handlePriority(response, fd);
 }
