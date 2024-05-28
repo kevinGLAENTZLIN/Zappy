@@ -6,6 +6,7 @@
 */
 
 #include "Utils/Socket.hpp"
+#include "Utils/Utils.hh"
 #include <map>
 #include <memory>
 #include <sstream>
@@ -26,6 +27,7 @@ namespace Zappy {
             void handleCommand(std::string response, int fd);
             void handlePriority(std::string response, int fd);
             void parseInventory(const std::string &response);
+            void handleDefaultAction(int fd);
 
         private:
             std::string _ip;
@@ -33,6 +35,7 @@ namespace Zappy {
             std::string _teamName;
             std::unique_ptr<Zappy::Socket> _clientSocket;
             std::vector<std::string> _commands;
+            std::map<std::string, int> _commandPriority;
             bool _isAlive;
             int _food;
             int _linemate;
@@ -42,8 +45,9 @@ namespace Zappy {
             int _worldY;
             int _mendiane;
             int _phiras;
+            bool _isImportant;
             int _thystame;
             int _currentLevel;
-
     };
 }
+

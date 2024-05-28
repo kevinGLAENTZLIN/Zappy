@@ -43,13 +43,18 @@ extern "C" {
     int Zappy::Socket::selectSocket(void)
     {
         int ret = 0;
+        struct timeval timeoutStruct;
 
         FD_ZERO(&_rfds);
-        FD_ZERO(&_wfds);
+       // FD_ZERO(&_wfds);
         FD_SET(_socket, &_rfds);
-        ret = select(_socket + 1, &_rfds, &_wfds, NULL, NULL);
+        timeoutStruct.tv_sec = 1;
+        timeoutStruct.tv_usec = 0;
+        ret = select(_socket + 1, &_rfds, NULL, NULL, &timeoutStruct);
         if (ret == -1)
             throw Zappy::ErrorAI(SocketError, "select: " + std::string(strerror(errno)));
+        if (FD_ISSET(_socket, &_rfds))
+            return -1;
         return ret;
     }
 
@@ -82,12 +87,15 @@ int &Zappy::operator<<(int &sock, const std::string &val)
 
 int &Zappy::operator>>(int &sock, std::string &val)
 {
-    char buffer[40000];
-    ssize_t byte = read(sock, buffer, sizeof(buffer) - 1);
+    char buffer[1];
+    std::string newBuff;
 
-    if (byte == -1)
-        throw Zappy::ErrorAI(SocketError, "read: " + std::string(strerror(errno)));
-    buffer[byte] = '\0';
-    val = std::string(buffer);
+    while (read(sock, buffer, sizeof(buffer))) {
+        if (buffer[0] == '\n')
+            break;
+        newBuff += buffer[0];
+    }
+    newBuff += '\n';
+    val = newBuff;
     return sock;
 }

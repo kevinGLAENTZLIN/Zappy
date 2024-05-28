@@ -7,6 +7,9 @@
 
 #include "AI.hpp"
 #include "Utils/Socket.hpp"
+#include <queue>
+#include <sstream>
+#include <thread>
 
 Zappy::AI::AI()
 {
@@ -43,18 +46,23 @@ void Zappy::AI::initAI(const std::string port, const std::string teamName, const
     _clientSocket = std::make_unique<Zappy::Socket>();
     _isAlive = true;
     _currentLevel = 1;
+    _food = 9;
 }
 
 void Zappy::AI::run(void)
 {
     int fd = 0;
-
     _clientSocket->connectSocket(_port, _ip);
+    fd = _clientSocket->getSocket();
+
     while (_isAlive) {
-        _clientSocket->selectSocket();
-        fd = _clientSocket->getSocket();
-        handleResponse(fd);
+        if (_clientSocket->selectSocket() == -1) {
+            handleResponse(fd);
+        } else {
+            handleDefaultAction(fd);
+        }
     }
+    std::exit(0);
 }
 
 void Zappy::AI::handleResponse(int fd)
@@ -65,11 +73,11 @@ void Zappy::AI::handleResponse(int fd)
     size_t pos = 0;
 
     fd >> serverResponse;
+    std::cout << "server response -> " << serverResponse << std::endl;
     buffer.append(serverResponse);
     while ((pos = buffer.find(delimiter)) != std::string::npos) {
         std::string response = buffer.substr(0, pos);
         buffer.erase(0, pos + delimiter.length());
-        std::cout << "res -> " << response << std::endl;
         handleCommand(response, fd);
     }
 }
@@ -88,13 +96,25 @@ void Zappy::AI::handleCommand(std::string response, int fd)
 
 void Zappy::AI::handlePriority(std::string response, int fd)
 {
+    //TODO voir le hnadle priority pr regler les boucles inf de inventory
     fd << _commands[4];
     parseInventory(response);
-    std::cout << "Inventory updated: " << "food =" << _food << ", " << "linemate =" << _linemate << ", " << "deraumere =" << _deraumere << ", "
-    << "sibur =" << _sibur << ", " << "mendiane =" << _mendiane << ", " << "phiras =" << _phiras << ", " << "thystame =" << _thystame << std::endl;
-    fd << _commands[3];
+
+    if (_food < 2) {
+        std::cout << "Low food, forking..." << std::endl;
+    } else {
+        std::cout << "Food level is sufficient." << std::endl;
+    }
 }
 
+
+void Zappy::AI::handleDefaultAction(int fd)
+{
+    std::cout << "handle default action" << std::endl;
+    fd << _commands[0];
+    fd << _commands[1];
+    fd << _commands[3];
+}
 
 void Zappy::AI::parseInventory(const std::string &response) {
     std::istringstream stream(response);
