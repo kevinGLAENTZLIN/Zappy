@@ -28,11 +28,15 @@
 
 #define FD_CTRL         server->control_fd
 #define ADDR_CTRL       server->ctrl_addr
+#define ZAPPY           server->zappy
 #define CLIENT          get_client_by_index(server, i)
 
+#define CLIENT_TYPE     CLIENT->client_type
 #define BUFF_CLIENT     CLIENT->buffer
 #define FD_CLIENT       CLIENT->fd
 
+#define GUI             "GRAPHIC"
+#define TEAM            "TEAM"
 
 #define MAX_NAME_LENGTH 32
 #define BUFFER_SIZE     1024
@@ -73,7 +77,7 @@ typedef struct client_s {
     struct client_s *next;
     char *team_name;
     int team_id;
-    // ? Type de Client : GUI/IA
+    char *client_type;
 } client_t;
 
 typedef struct zappy_s {
@@ -115,10 +119,12 @@ client_t *get_client_by_index(server_t *server, int i);
 player_t *init_player(char *team_name, int id, int x, int y);
 void free_player(player_t *player);
 void free_players(team_t *team);
+void push_back_player(team_t *team, player_t *player);
 
 // * team functions :
 void load_zappy_teams(zappy_t *zappy);
 void free_teams(zappy_t *zappy);
+bool is_team_name(server_t *server, const char *name);
 
 // * Zappy functions :
 zappy_t *init_zappy(int argc, char **argv);
@@ -126,6 +132,8 @@ void free_zappy(zappy_t *zappy);
 
 // * command.c functions :
 void command_handling(server_t *server, int i);
+
+// * command_util.c functions :
 char **get_parameters(char *input);
 void free_tab(char **tab);
 int my_len(void *delimiter, void **elts);

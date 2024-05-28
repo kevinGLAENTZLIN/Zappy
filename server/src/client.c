@@ -14,6 +14,7 @@ static client_t *init_client(int fd)
     client->fd = fd;
     client->buffer = malloc(sizeof(char) * BUFFER_SIZE);
     client->buffer[0] = 0;
+    client->client_type = NULL;
     client->next = NULL;
     return client;
 }
@@ -23,6 +24,8 @@ void free_client(client_t *client)
     if (client == NULL)
         return;
     free(client->buffer);
+    if (client->client_type != NULL)
+        free(client->client_type);
     if (client->fd != 0)
         close(client->fd);
     free(client);
@@ -46,10 +49,12 @@ void add_client(server_t *server, int fd)
 
     if (tmp == NULL) {
         server->clients = init_client(fd);
+        dprintf(server->clients->fd, "WELCOME\n");
     } else {
         while (tmp->next != NULL)
             tmp = tmp->next;
         tmp->next = init_client(fd);
+        dprintf(tmp->next->fd, "WELCOME\n");
     }
     server->nb_client += 1;
 }
