@@ -28,8 +28,6 @@ void free_client(client_t *client)
     free(client->buffer);
     if (client->client_type != NULL)
         free(client->client_type);
-    if (client->player != NULL)
-        free(client->player);
     if (client->fd != 0)
         close(client->fd);
     free(client);
