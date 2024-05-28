@@ -16,11 +16,12 @@ namespace Zappy {
 
         public:
             AI(void);
-            ~AI();
+            ~AI() = default;
             void checkArg(int argc, char **argv);
             void initAI(const std::string port, const std::string teamName, const std::string ip);
             void run();
             void handleResponse(int fd);
+            void handleCommand(std::string response, int fd);
 
         private:
             std::string _ip;

@@ -75,7 +75,7 @@ extern "C" {
 
 int &Zappy::operator<<(int &sock, const std::string &val)
 {
-    if (write(sock, val.c_str(), sizeof(char) * (val.length() + 1)) == -1)
+    if (write(sock, val.c_str(), val.length()) == -1)
         throw Zappy::ErrorAI(SocketError, "write: " + std::string(strerror(errno)));
     return sock;
 }
@@ -83,9 +83,11 @@ int &Zappy::operator<<(int &sock, const std::string &val)
 int &Zappy::operator>>(int &sock, std::string &val)
 {
     char buffer[40000];
+    ssize_t byte = read(sock, buffer, sizeof(buffer) - 1);
 
-    if (read(sock, buffer, sizeof(char) * 40000) == -1)
+    if (byte == -1)
         throw Zappy::ErrorAI(SocketError, "read: " + std::string(strerror(errno)));
+    buffer[byte] = '\0';
     val = std::string(buffer);
     return sock;
 }

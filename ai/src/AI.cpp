@@ -24,10 +24,6 @@ Zappy::AI::AI()
     _commands.push_back("Incantation\n");
 }
 
-Zappy::AI::~AI()
-{
-}
-
 void Zappy::AI::checkArg(int argc, char **argv)
 {
     if (argc != 7) {
@@ -62,14 +58,28 @@ void Zappy::AI::run(void)
 
 void Zappy::AI::handleResponse(int fd)
 {
-    std::string response = "";
+    static std::string buffer;
+    std::string delimiter = "\n";
+    std::string serverResponse;
+    size_t pos = 0;
 
-    fd >> response;
-    if (response == "WELCOME\n")
+    fd >> serverResponse;
+    buffer.append(serverResponse);
+    while ((pos = buffer.find(delimiter)) != std::string::npos) {
+        std::string response = buffer.substr(0, pos);
+        buffer.erase(0, pos + delimiter.length());
+        std::cout << "response -> " << response << std::endl;
+        handleCommand(response, fd);
+    }
+}
+
+void Zappy::AI::handleCommand(std::string response, int fd)
+{
+    if (response == "WELCOME")
         fd << (_teamName + "\n");
-    if (response == "dead\n10\n") {
+    if (response == "dead") {
         _isAlive = false;
         _clientSocket->~Socket();
     }
-    std::cout << "response -> " << response;
+    //TODO faire l'algo ici
 }
