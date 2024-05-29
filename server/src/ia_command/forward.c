@@ -19,5 +19,6 @@ void forward(server_t *server, int i, char *input)
             PLAYER->y = ((PLAYER->y + 1) + ZAPPY->y) % ZAPPY->y;
         if (PLAYER->direction == left)
             PLAYER->x = ((PLAYER->x - 1) + ZAPPY->x) % ZAPPY->x;
+        dprintf(FD_CLIENT, "ok\n");
     }
 }
