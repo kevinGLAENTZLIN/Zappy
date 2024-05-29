@@ -7,17 +7,36 @@
 
 #include <raylib.h>
 
+#include "./Raylib/Window/Window.hh"
+#include "./Raylib/Text/Text.hh"
+#include "./Raylib/Texture/Texture.hh"
+#include "./Raylib/3DEnvironment/Model3D.hh"
+#include "./Raylib/3DEnvironment/Camera.hh"
+#include "Raylib/Texture/SpriteSheet.hh"
+#include "Raylib/Texture/AnimatedSpriteSheet.hh"
+
 int main(void)
 {
-    InitWindow(800, 450, "raylib [core] example - basic window");
+    Raylib::Window window(KEY_DELETE, "Zappy", 60);
+    Raylib::Camera camera;
+    // Raylib::Model3D model("ArcTriomphe.obj", "textures.png", 0, 0, 0, 0, 0, 0, 0.1);
+    // Raylib::AnimatedSpriteSheet crocmouQuiDance("spriteSheetDuDemon.png", 270, 60, 15, 18, 50, 50);
+    // Raylib::Text jaj("jaj", 20, "default.ttf", 50, 75, 3, BLACK, Raylib::CENTER);
+    // Raylib::Texture toothless("toothless-dancing.gif", 50, 50, 0, 1);
 
-    while (!WindowShouldClose())
+    while (!window.myWindowShouldClose())
     {
-        BeginDrawing();
-            ClearBackground(RAYWHITE);
-            DrawText("Hello World", 190, 200, 20, LIGHTGRAY);
-        EndDrawing();
+        window.myBeginDrawing();
+            window.myClearBackground();
+            camera.begin3DMode();
+                // model.ModelDraw();
+            // toothless.DrawTexture();
+            // jaj.TextDraw();
+            camera.end3DMode();
+            // crocmouQuiDance.DrawSpriteSheet();
+            DrawFPS(10, 10);
+        window.myEndDrawing();
     }
-    CloseWindow();
+    window.myCloseWindow();
     return 0;
 }
