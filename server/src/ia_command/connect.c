@@ -9,9 +9,12 @@
 
 void my_connect(server_t *server, int i, char *input)
 {
-    char **tab = get_parameters(input);
+    team_t *tmp = NULL;
 
-    (void) server;
-    (void) i;
-    free_tab(tab);
+    (void) input;
+    if (PLAYER != NULL) {
+        tmp = get_team_by_name(server, PLAYER->team_name);
+        if (tmp != NULL)
+            dprintf(FD_CLIENT, "%d\n", tmp->nb_max_player - tmp->nb_player);
+    }
 }

@@ -18,6 +18,7 @@ void push_back_player(team_t *team, player_t *player)
             tmp = tmp->next;
         tmp->next = player;
     }
+    player->team_name = strdup(team->team_name);
     player->id = team->nb_player;
     team->nb_player += 1;
 }
