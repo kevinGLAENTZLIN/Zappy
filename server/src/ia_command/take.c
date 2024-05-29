@@ -60,7 +60,7 @@ void take(server_t *server, int i, char *input)
     char **tab = get_parameters(input);
 
     if (tab == NULL || tab[0] == NULL || tab[1] == NULL)
-        return (void)dprintf(FD_CLIENT, "hej\n");
+        return (void)dprintf(FD_CLIENT, "ko\n");
     take_object(server, i, tab[1]);
     free_tab(tab);
 }
