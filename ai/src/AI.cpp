@@ -7,12 +7,18 @@
 
 #include "AI.hpp"
 #include "Utils/Socket.hpp"
-#include <queue>
-#include <sstream>
-#include <thread>
 
 Zappy::AI::AI()
 {
+    _priorityQueue.push_back("Forward\n");
+    _priorityQueue.push_back("Inventory\n");
+    _priorityQueue.push_back("Look\n");
+    _priorityQueue.push_back("Right\n");
+    _priorityQueue.push_back("Fork\n");
+    _priorityQueue.push_back("Incantation\n");
+    _priorityQueue.push_back("Broadcast\n");
+    _priorityQueue.push_back("Connect_nbr\n");
+    _priorityQueue.push_back("Eject\n");
 }
 
 void Zappy::AI::checkArg(int argc, char **argv)
@@ -34,107 +40,121 @@ void Zappy::AI::initAI(const std::string port, const std::string teamName, const
     _clientSocket = std::make_unique<Zappy::Socket>();
     _isAlive = true;
     _currentLevel = 1;
-    _numberCmdInQueue = 1;
-    _food = 9;
-    _numberCmdInQueue = 0;
-    _commandQueue.push("Inventory\n");
+    _food = 10;
+}
+
+void Zappy::AI::initConnection(void)
+{
+    int nbInstructions = 0;
+
+    _clientSocket->connectSocket(_port, _ip);
+    _fd = _clientSocket->getSocket();
+    while (true) {
+        if (_clientSocket->selectSocket() == -1) {
+            std::string response = "";
+            _fd >> response;
+            if (nbInstructions == 0 && response == "WELCOME\n") {
+                _fd << (_teamName + "\n");
+            } else if (nbInstructions == 1) {
+                std::cout << "Client number -> " << response << std::endl;
+            } else if (nbInstructions == 2)
+                std::cout << "World size -> " << response << std::endl;
+        }
+        nbInstructions++;
+        if (nbInstructions == 3)
+            break;
+    }
 }
 
 void Zappy::AI::run(void)
 {
-    int fd = 0;
-    _clientSocket->connectSocket(_port, _ip);
-    fd = _clientSocket->getSocket();
-
+    std::string serverResponse = "";
+    std::cout << "Run AI" << std::endl;
     while (_isAlive) {
-        if (_clientSocket->selectSocket() == -1) {
-            handleResponse(fd);
-        } else if (_numberCmdInQueue < 10) {
-            handleDefaultAction(fd);
-        }
+        if (_clientSocket->selectSocket() == -1)
+            handleResponse();
+        else 
+            _fd << _priorityQueue[1];
     }
 }
 
-void Zappy::AI::handleResponse(int fd)
+void Zappy::AI::handleResponse(void)
 {
-    std::string buffer;
-    std::string delimiter = "\n";
-    std::string serverResponse;
-    size_t pos = 0;
+    std::string serverResponse = "";
 
-    fd >> serverResponse;
-    std::cout << "server response -> " << serverResponse << std::endl;
-    buffer.append(serverResponse);
-    while ((pos = buffer.find(delimiter)) != std::string::npos) {
-        std::string response = buffer.substr(0, pos);
-        buffer.erase(0, pos + delimiter.length());
-        handleCommand(response, fd);
-    }
+    _fd >> serverResponse;
+    std::cout << "server response -> " << serverResponse;
+    handleCommand(serverResponse);
 }
 
-void Zappy::AI::handleCommand(std::string response, int fd)
+void Zappy::AI::handleCommand(std::string response)
 {
-    _numberCmdInQueue--;
-    if (response == "WELCOME") {
-        fd << (_teamName + "\n");
-    } else if (response == "dead") {
+    if (response == "dead\n") {
         _isAlive = false;
         _clientSocket->~Socket();
+        std::exit(0);
     } else {
-        handlePriority(response, fd);
+        handlePriority(response);
     }
 }
 
-void Zappy::AI::handlePriority(std::string response, int fd)
+void Zappy::AI::handlePriority(std::string response)
 {
-    if (_lastCommand != "Look\n" && response.find("[") != std::string::npos)
-        parseInventory(response);
-    if (_food <= 2) {
-        std::string fork = "Fork\n";
-        fd << fork;
-        _numberCmdInQueue++;
-    }
+    if (_food <= 2)
+        _fd << _priorityQueue[4];
     if (_food > 2) {
         std::cout << "Food > 2" << std::endl;
-        _commandQueue.push("Forward\n");
-        _commandQueue.push("Right\n");
-        _commandQueue.push("Look\n");
-        _commandQueue.push("Inventory\n");
+        _fd << _priorityQueue[1];
+        if (Utils::isInventory(response) && response != "ok\n" && response != "ko\n")
+            parseInventory(response);
+        if (!Utils::isInventory(response) && response != "ok\n" && response != "ko\n")
+            handleLook(response);
     }
 }
 
-void Zappy::AI::handleDefaultAction(int fd)
+void Zappy::AI::handleLook(const std::string &response)
 {
-    if (!_commandQueue.empty() && _food > 2) {
-        std::string command = _commandQueue.front();
-        std::cout << "commande faite -> " << command;
-        _commandQueue.pop();
-        _lastCommand = command;
-        fd << command;
-        _numberCmdInQueue++;
-    }
+    std::cout << "Look response -> " << response;
 }
 
 void Zappy::AI::parseInventory(const std::string &response)
 {
     std::istringstream stream(response);
     std::string stringFind;
+    int food = 0;
+    int linemate = 0;
+    int deraumere = 0;
+    int sibur = 0;
+    int mendiane = 0;
+    int phiras = 0;
+    int thystame = 0;
 
     while (stream >> stringFind) {
         if (stringFind == "food") {
-            stream >> _food;
+            stream >> food;
         } else if (stringFind == "linemate") {
-            stream >> _linemate;
+            stream >> linemate;
         } else if (stringFind == "deraumere") {
-            stream >> _deraumere;
+            stream >> deraumere;
         } else if (stringFind == "sibur") {
-            stream >> _sibur;
+            stream >> sibur;
         } else if (stringFind == "mendiane") {
-            stream >> _mendiane;
+            stream >> mendiane;
         } else if (stringFind == "phiras") {
-            stream >> _phiras;
+            stream >> phiras;
         } else if (stringFind == "thystame") {
-            stream >> _thystame;
+            stream >> thystame;
         }
     }
+
+    std::cout << "Food: " << food << std::endl;
+    std::cout << "Linemate: " << linemate << std::endl;
+    std::cout << "Deraumere: " << deraumere << std::endl;
+    std::cout << "sibur " << sibur << std::endl;
+    std::cout << "mendiane " << mendiane << std::endl;
+    std::cout << "phiras " << phiras << std::endl;
+    std::cout << "thystame " << thystame << std::endl;
+
+    if (food < 40)
+        _fd << _priorityQueue[2];
 }

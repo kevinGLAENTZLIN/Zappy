@@ -46,7 +46,6 @@ extern "C" {
         struct timeval timeoutStruct;
 
         FD_ZERO(&_rfds);
-       // FD_ZERO(&_wfds);
         FD_SET(_socket, &_rfds);
         timeoutStruct.tv_sec = 1;
         timeoutStruct.tv_usec = 0;

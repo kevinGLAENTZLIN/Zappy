@@ -7,6 +7,9 @@
 
 #pragma once
 #include <unistd.h>
+#include <string>
+#include <sstream>
+#include <iostream>
 
 namespace Zappy {
 
@@ -14,6 +17,7 @@ namespace Zappy {
 
         public:
             static pid_t process(void);
+            static bool isInventory(const std::string &response);
     };
 
 }
