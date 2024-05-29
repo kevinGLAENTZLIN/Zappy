@@ -15,8 +15,7 @@ Raylib::Camera::Camera()
 }
 
 Raylib::Camera::~Camera()
-{
-}
+{}
 
 extern "C" {
     void Raylib::Camera::begin3DMode()

@@ -1,8 +1,8 @@
 ##
-## EPITECH PROJECT, 2022
+## EPITECH PROJECT, 2024
 ## Makefile
 ## File description:
-## do something apparently
+## Make pizza_server binary
 ##
 
 SRC			=	$(shell find . -name "*.c" -type f)
@@ -11,7 +11,7 @@ OBJ			=	$(SRC:.c=.o)
 
 NAME		=	zappy_server
 
-FLAG		=	-W -Wall -Wextra -g
+FLAG		=	-I../include -W -Wall -Wextra -g
 
 CFLAGS	+=	$(FLAG)
 

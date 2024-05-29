@@ -15,11 +15,12 @@ namespace Raylib {
     class Texture {
     public:
         // INFO: the position in the constructor are specified in % of the screen
-        Texture(const std::string &path, double posX, double posY,
-                double rotation, double scale);
+        Texture(const std::string &path, double posX = 0, double posY = 0,
+                double rotation = 0, double scale = 1);
         ~Texture();
+        Texture2D GetTexture();
         void DrawTexture();
-    private:
+    protected:
         void createTexture(const std::string &path);
         void destroyTexture();
         Texture2D _texture;
