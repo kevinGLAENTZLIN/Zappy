@@ -32,7 +32,7 @@ namespace Zappy {
             int &getSocket();
             int selectSocket(void);
             void connectSocket(const std::string port, const std::string serverAdress);
-            void run();
+            void run(std::string port, std::string addr);
 
         private:
             void createSocket(void);

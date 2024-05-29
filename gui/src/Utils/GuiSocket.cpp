@@ -31,13 +31,13 @@ int &Zappy::GuiSocket::getSocket()
     return _socket;
 }
 
-void Zappy::GuiSocket::run()
+void Zappy::GuiSocket::run(std::string port, std::string addr)
 {
     std::string response;
     std::string team = "GRAPHICS";
     int fd = 0;
 
-    connectSocket("4242", "127.0.0.1");
+    connectSocket(port, addr);
     while (true) {
         selectSocket();
         fd = getSocket();

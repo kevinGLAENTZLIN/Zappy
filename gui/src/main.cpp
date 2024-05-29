@@ -15,11 +15,11 @@
 #include "./ErrorGUI.hh"
 #include <memory>
 
-int main()
+int main(int ac, char *av[])
 {
     try {
         Zappy::GuiSocket sock;
-        sock.run();
+        sock.run(av[1], av[2]);
     } catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;
         return 84;
