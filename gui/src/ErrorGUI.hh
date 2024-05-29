@@ -12,8 +12,8 @@
 namespace Zappy {
 
     enum ErrorType {
-        SocketError,
-        ArgError
+        SOCKET_ERROR,
+        ARG_ERROR
     };
 
     class ErrorGUI : public std::exception {

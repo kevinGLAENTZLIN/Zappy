@@ -54,7 +54,7 @@ extern "C" {
     {
         _socket = socket(AF_INET, SOCK_STREAM, 0);
         if (_socket == -1)
-            Zappy::ErrorGUI(SocketError, "socket: " + std::string(strerror(errno)));
+            Zappy::ErrorGUI(SOCKET_ERROR, "socket: " + std::string(strerror(errno)));
     }
 
     int Zappy::GuiSocket::selectSocket(void)
@@ -66,7 +66,7 @@ extern "C" {
         FD_SET(_socket, &_rfds);
         ret = select(_socket + 1, &_rfds, &_wfds, NULL, NULL);
         if (ret == -1)
-            throw Zappy::ErrorGUI(SocketError, "select: " + std::string(strerror(errno)));
+            throw Zappy::ErrorGUI(SOCKET_ERROR, "select: " + std::string(strerror(errno)));
         return ret;
     }
 
@@ -86,14 +86,14 @@ extern "C" {
         sock_serv.sin_port = htons(atoi(port.c_str()));
         sock_serv.sin_addr.s_addr = inet_addr(serverAdress.c_str());
         if (connect(_socket, (struct sockaddr *) &sock_serv, sizeof(sock_serv)) == -1)
-            throw ErrorGUI(SocketError, "connect: " + std::string(strerror(errno)));
+            throw ErrorGUI(SOCKET_ERROR, "connect: " + std::string(strerror(errno)));
     }
 };
 
 int &Zappy::operator<<(int &sock, const std::string &val)
 {
     if (write(sock, val.c_str(), sizeof(char) * (val.length() + 1)) == -1)
-        throw Zappy::ErrorGUI(SocketError, "write: " + std::string(strerror(errno)));
+        throw Zappy::ErrorGUI(SOCKET_ERROR, "write: " + std::string(strerror(errno)));
     return sock;
 }
 
@@ -102,7 +102,7 @@ int &Zappy::operator>>(int &sock, std::string &val)
     char buffer[40000];
 
     if (read(sock, buffer, sizeof(char) * 40000) == -1)
-        throw Zappy::ErrorGUI(SocketError, "read: " + std::string(strerror(errno)));
+        throw Zappy::ErrorGUI(SOCKET_ERROR, "read: " + std::string(strerror(errno)));
     val = std::string(buffer);
     return sock;
 }

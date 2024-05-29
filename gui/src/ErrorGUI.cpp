@@ -20,10 +20,10 @@ Zappy::ErrorGUI::ErrorGUI(const std::string &error)
 Zappy::ErrorGUI::ErrorGUI(ErrorType error)
 {
     switch (error) {
-        case SocketError:
+        case SOCKET_ERROR:
             _msg = "Socket error";
             break;
-        case ArgError:
+        case ARG_ERROR:
             _msg = "Argument error";
             break;
         default:
@@ -35,10 +35,10 @@ Zappy::ErrorGUI::ErrorGUI(ErrorType error)
 Zappy::ErrorGUI::ErrorGUI(ErrorType error, const std::string &msg)
 {
     switch (error) {
-        case SocketError:
+        case SOCKET_ERROR:
             _msg = "Socket error: " + msg;
             break;
-        case ArgError:
+        case ARG_ERROR:
             _msg = "Argument error: " + msg;
             break;
         default:
