@@ -41,6 +41,7 @@
 #define PLAYER          CLIENT->player
 #define BUFF_CLIENT     CLIENT->buffer
 #define FD_CLIENT       CLIENT->fd
+#define PLAYER_TILE     MAP[PLAYER->y][PLAYER->x]
 
 #define GUI             "GRAPHIC"
 #define IA              "TEAM"
