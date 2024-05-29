@@ -31,6 +31,7 @@
 #define ZAPPY           server->zappy
 #define CLIENT          get_client_by_index(server, i)
 #define TEAM            ZAPPY->teams[i]
+#define MAP             ZAPPY->map
 
 #define TEAM_NAME       TEAM->team_name
 
@@ -58,6 +59,18 @@ typedef enum direction_e {
     down,
     left
 } direction_t;
+
+typedef struct tile_s {
+    // Todo ? Player ID
+    int food;
+    int linemate;
+    int deraumere;
+    int sibur;
+    int mendiane;
+    int phiras;
+    int thystame;
+} tile_t;
+
 
 typedef struct player_s {
     char *team_name;
@@ -101,7 +114,7 @@ typedef struct zappy_s {
     int team_size;
     char **teams_name;
     team_t **teams;
-    char **map;
+    tile_t ***map;
     // Todo Tick;
 } zappy_t;
 
@@ -140,9 +153,14 @@ void free_teams(zappy_t *zappy);
 bool is_team_name(server_t *server, const char *name);
 team_t *get_team_by_name(server_t *server, const char *name);
 
+// * map.c functions :
+void init_map(zappy_t *zappy);
+void set_map_ressources(zappy_t *zappy);
+
 // * Zappy functions :
 zappy_t *init_zappy(int argc, char **argv);
 void free_zappy(zappy_t *zappy);
+void free_map(zappy_t *zappy);
 
 // * command.c functions :
 void command_handling(server_t *server, int i);
