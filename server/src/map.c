@@ -78,7 +78,6 @@ void set_map_ressources(zappy_t *zappy)
 
 void free_map(zappy_t *zappy)
 {
-
     if (zappy == NULL || zappy->map == NULL)
         return;
     for (int y = 0; y < zappy->y; y++) {

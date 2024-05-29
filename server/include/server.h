@@ -25,6 +25,8 @@
 #include <strings.h>
 #include <uuid/uuid.h>
 #include <stdbool.h>
+#include <math.h>
+
 
 #define FD_CTRL         server->control_fd
 #define ADDR_CTRL       server->ctrl_addr
