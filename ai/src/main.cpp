@@ -24,6 +24,7 @@ int main(int argc, char **argv)
 
         ai.checkArg(argc, argv);
         ai.initAI(argv[2], argv[4], argv[6]);
+        ai.initConnection();
         ai.run();
         return 0;
     } catch (const std::exception &e) {
