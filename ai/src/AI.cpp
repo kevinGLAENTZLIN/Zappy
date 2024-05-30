@@ -90,26 +90,30 @@ void Zappy::AI::handleResponse(void)
 {
     std::string serverResponse = "";
     std::string command = "";
+    std::string levelUpResponse = "Current level: " + std::to_string(_currentLevel + 1) + "\n";
 
     _fd >> serverResponse;
+    if (serverResponse == levelUpResponse) {
+        _isIncantation = false;
+        _currentLevel++;
+        sendCommand(_commands[LOOK], false);
+        return;
+    }
     _numberCmd--;
+    std::cout << "nbr cmd " << _numberCmd << std::endl;
     if (_numberCmd < 10 && !_commandQueue.empty() && !_isIncantation) {
         command = _commandQueue.front();
         _commandQueue.pop();
-        if (command == "Inventory\n" && serverResponse != "ko\n" && serverResponse != "ok\n") {
-            handleInventoryResponse(serverResponse);
+        if (Utils::isInventory(serverResponse) && serverResponse != "ok\n" && serverResponse != "ko\n") {
+            parseInventory(serverResponse);
         } else if (command == "Look\n" && serverResponse != "ko\n" && serverResponse != "ok\n") {
             handleLook(serverResponse);
         } else if (command == "Take ") {
             handleTakeObjectResponse(serverResponse);
-        } else if (serverResponse == "ok\n" && _isIncantation) {
-            _isIncantation = false;
-            _currentLevel++;
-            sendCommand(_commands[INVENTORY], false);
-        } else if (serverResponse == "ko\n" && _isIncantation) {
-            _isIncantation = false;
-            sendCommand(_commands[LOOK], false);
         }
+    }
+    if (!_isIncantation && _commandQueue.empty()) {
+        sendCommand(_commands[LOOK], false);
     }
 }
 
@@ -161,16 +165,8 @@ void Zappy::AI::handlePlayerMove(int tileIndex)
     }
 }
 
-void Zappy::AI::handleInventoryResponse(const std::string &response)
-{
-    if (Utils::isInventory(response) && response != "ok\n" && response != "ko\n")
-        parseInventory(response);
-}
-
 void Zappy::AI::handleTakeObjectResponse(const std::string &response)
 {
-    std::cout << "Take object response: " << response << std::endl;
-
     if (response == "ok\n")
         sendCommand(_commands[INVENTORY], false);
     else
@@ -210,7 +206,7 @@ void Zappy::AI::parseInventory(const std::string &response)
         _isIncantation = true;
         return;
     }
-    if (_food < 10)
+    if (_food <= 10)
         sendCommand(_commands[LOOK], false);
 }
 
@@ -220,7 +216,7 @@ void Zappy::AI::sendCommand(const std::string &command, bool isObject, const std
     if (_numberCmd > 10)
         return;
     if (isObject) {
-        std::cout << "Object take -> " << object << std::endl;
+        std::cout << "Object take or set -> " << object << std::endl;
         _fd << (command + object + "\n");
         _commandQueue.push(command);
         _numberCmd++;

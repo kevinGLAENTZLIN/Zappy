@@ -48,8 +48,6 @@ namespace Zappy {
 
             void sendCommand(const std::string &command, bool isObject, const std::string &object = "");
 
-            void handleInventoryResponse(const std::string &response);
-            void handleDefaultResponse(const std::string &response);
             void handleTakeObjectResponse(const std::string &response);
 
             bool _isAlive;
