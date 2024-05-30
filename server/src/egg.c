@@ -102,6 +102,7 @@ void hatch_egg(server_t *server, egg_t *egg)
             free_egg(egg);
             return;
         }
+        tmp = tmp->next;
     }
 }
 
