@@ -26,23 +26,11 @@ namespace Zappy {
     class GuiSocket {
 
         public:
-            GuiSocket(void);
-            ~GuiSocket();
-            int getSocket() const;
-            int &getSocket();
-            int selectSocket(void);
-            void connectSocket(const std::string port, const std::string serverAdress);
-            void run(std::string port, std::string addr);
-
+            static std::size_t createSocket(const std::size_t &port, const std::string &ip);
+            static void closeSocket(const std::size_t &sock);
+            static void sendToServer(const std::size_t &sock, const std::string &msg);
+            static std::string receiveFromServer(const std::size_t &socket);
         private:
-            void createSocket(void);
-            void closeSocket(void);
-            int _socket;
-            fd_set _rfds;
-            fd_set _wfds;
-
+            static int selectRead(const std::size_t &sock);
     };
-
-    int &operator<<(int &sock, const std::string &val);
-    int &operator>>(int &sock, std::string &val);
 }
