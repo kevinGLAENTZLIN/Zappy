@@ -93,14 +93,16 @@ void Zappy::AI::handleResponse(void)
     std::string levelUpResponse = "Current level: " + std::to_string(_currentLevel + 1) + "\n";
 
     _fd >> serverResponse;
-    if (serverResponse == levelUpResponse) {
+    if (_isIncantation && serverResponse == levelUpResponse) {
         _isIncantation = false;
         _currentLevel++;
-        sendCommand(_commands[LOOK], false);
         return;
     }
     _numberCmd--;
-    std::cout << "nbr cmd " << _numberCmd << std::endl;
+    if (serverResponse == "dead\n") {
+        _isAlive = false;
+        _clientSocket->~Socket();    
+    }
     if (_numberCmd < 10 && !_commandQueue.empty() && !_isIncantation) {
         command = _commandQueue.front();
         _commandQueue.pop();
@@ -111,9 +113,6 @@ void Zappy::AI::handleResponse(void)
         } else if (command == "Take ") {
             handleTakeObjectResponse(serverResponse);
         }
-    }
-    if (!_isIncantation && _commandQueue.empty()) {
-        sendCommand(_commands[LOOK], false);
     }
 }
 
@@ -206,7 +205,15 @@ void Zappy::AI::parseInventory(const std::string &response)
         _isIncantation = true;
         return;
     }
-    if (_food <= 10)
+    if (_currentLevel == 2 && linemate >= 1 && deraumere >= 1 && sibur >= 1) {
+        sendCommand(_commands[SET_OBJECT], true, "linemate");
+        sendCommand(_commands[SET_OBJECT], true, "deraumere");
+        sendCommand(_commands[SET_OBJECT], true, "sibur");
+        sendCommand(_commands[INCANTATION], false);
+        _isIncantation = true;
+        return;
+    }
+    if (_food < 10)
         sendCommand(_commands[LOOK], false);
 }
 
