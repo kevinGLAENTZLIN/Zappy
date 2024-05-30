@@ -27,6 +27,8 @@
 #define CONNECT_NBR 7
 #define EJECT 8
 #define TAKE_OBJECT 9
+#define SET_OBJECT 10
+#define LEFT 11
 
 namespace Zappy {
     class AI {
@@ -41,6 +43,7 @@ namespace Zappy {
             void handleResponse(void);
             void handleLook(const std::string &response);
             void parseInventory(const std::string &response);
+            void handlePlayerMove(int tileIndex, const std::string &object);
 
             void sendCommand(const std::string &command, bool isObject, const std::string &object = "");
 
@@ -53,8 +56,10 @@ namespace Zappy {
             int _food;
             int _numberCmd;
             int _fd;
+            int _oui;
             int _clientNumber;
             int _sizeWorldX;
+            bool _isIncantation;
             int _sizeWorldY;
             std::string _port;
             std::string _ip;
