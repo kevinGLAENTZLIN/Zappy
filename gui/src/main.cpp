@@ -12,14 +12,14 @@
 #include "./Raylib/Texture/Texture.hh"
 #include "./Utils/GuiSocket.hh"
 #include "./ErrorGUI.hh"
-#include <memory>
+#include "./GUI/GUI.hh"
 
 int main(int ac, char *av[])
 {
-    (void)ac;
+    SetTraceLogLevel(LOG_ERROR);
+    std::vector<std::string> args(av, av + ac);
     try {
-        Zappy::GuiSocket sock;
-        sock.run(av[1], av[2]);
+        Zappy::GUI gui(args);
     } catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;
         return 84;
