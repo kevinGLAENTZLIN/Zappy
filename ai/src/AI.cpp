@@ -92,11 +92,10 @@ void Zappy::AI::handleResponse(void)
     std::string command = "";
 
     _fd >> serverResponse;
-    if (!_commandQueue.empty() && !_isIncantation) {
+    _numberCmd--;
+    if (_numberCmd < 10 && !_commandQueue.empty() && !_isIncantation) {
         command = _commandQueue.front();
         _commandQueue.pop();
-        _numberCmd--;
-        _numberCmd = _commandQueue.size();
         if (command == "Inventory\n" && serverResponse != "ko\n" && serverResponse != "ok\n") {
             handleInventoryResponse(serverResponse);
         } else if (command == "Look\n" && serverResponse != "ko\n" && serverResponse != "ok\n") {
@@ -116,32 +115,47 @@ void Zappy::AI::handleResponse(void)
 
 void Zappy::AI::handleLook(const std::string &response)
 {
-    std::istringstream stream(response);
+    std::istringstream stream(response.substr(1, response.size() - 3));
     std::string tile = "";
     std::string object = "";
     std::istringstream tileStream;
+    bool isObjectTaken = false;
     int tileIndex = 0;
 
-    while (std::getline(stream, tile, ',')) {
+    while (!isObjectTaken && std::getline(stream, tile, ',')) {
         tileStream = std::istringstream(tile);
+        if (tileStream >> object && object != "player") {
+            handlePlayerMove(tileIndex);
+            isObjectTaken = true;
+        }
         while (tileStream >> object)
-            handlePlayerMove(tileIndex, object);
+            takeObject(object);
         tileStream.clear();
         tileIndex++;
     }
+    sendCommand(_commands[LOOK], false);
 }
 
-void Zappy::AI::handlePlayerMove(int tileIndex, const std::string &object)
+void Zappy::AI::takeObject(const std::string &object)
 {
-    if (tileIndex == 0 && (object == "food" || object == "linemate"))
+    if (object != "player" && object != "egg")
         sendCommand(_commands[TAKE_OBJECT], true, object);
-    else if (tileIndex > 0 && (object == "linemate" || object == "food" || object == "deraumere" ||
-    object == "sibur" || object == "mendiane" || object == "phiras" || object == "thystame")) {
+}
+
+void Zappy::AI::handlePlayerMove(int tileIndex)
+{
+    if (tileIndex > 0) {
         if (tileIndex == 1) {
             sendCommand(_commands[FORWARD], false);
-        } else if (tileIndex == 2) {
+            sendCommand(_commands[LEFT], false);
+            sendCommand(_commands[FORWARD], false);
             sendCommand(_commands[RIGHT], false);
+        } else if (tileIndex == 2) {
+            sendCommand(_commands[FORWARD], false);
         } else if (tileIndex == 3) {
+            sendCommand(_commands[FORWARD], false);
+            sendCommand(_commands[RIGHT], false);
+            sendCommand(_commands[FORWARD], false);
             sendCommand(_commands[LEFT], false);
         }
     }
@@ -167,7 +181,6 @@ void Zappy::AI::parseInventory(const std::string &response)
 {
     std::istringstream stream(response);
     std::string stringFind;
-    int food = 0;
     int linemate = 0;
     int deraumere = 0;
     int sibur = 0;
@@ -179,7 +192,7 @@ void Zappy::AI::parseInventory(const std::string &response)
         if (stringFind == "food")
             stream >> _food;
         if (stringFind == "linemate")
-            stream >> _oui;
+            stream >> linemate;
         if (stringFind == "deraumere")
             stream >> deraumere;
         if (stringFind == "sibur")
@@ -191,18 +204,21 @@ void Zappy::AI::parseInventory(const std::string &response)
         if (stringFind == "thystame")
             stream >> thystame;
     }
-    if (_currentLevel == 1 && _oui == 1) {
+    if (_currentLevel == 1 && linemate >= 1) {
+        sendCommand(_commands[SET_OBJECT], true, "linemate");
         sendCommand(_commands[INCANTATION], false);
         _isIncantation = true;
         return;
     }
-    if (_food < 40)
+    if (_food < 10)
         sendCommand(_commands[LOOK], false);
 }
 
 
 void Zappy::AI::sendCommand(const std::string &command, bool isObject, const std::string &object)
 {
+    if (_numberCmd > 10)
+        return;
     if (isObject) {
         std::cout << "Object take -> " << object << std::endl;
         _fd << (command + object + "\n");

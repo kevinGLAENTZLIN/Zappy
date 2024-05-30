@@ -43,7 +43,8 @@ namespace Zappy {
             void handleResponse(void);
             void handleLook(const std::string &response);
             void parseInventory(const std::string &response);
-            void handlePlayerMove(int tileIndex, const std::string &object);
+            void handlePlayerMove(int tileIndex);
+            void takeObject(const std::string &object);
 
             void sendCommand(const std::string &command, bool isObject, const std::string &object = "");
 
