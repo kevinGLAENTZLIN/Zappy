@@ -6,19 +6,19 @@
 */
 
 #include "AI.hpp"
-#include "Utils/Socket.hpp"
 
 Zappy::AI::AI()
 {
-    _priorityQueue.push_back("Forward\n");
-    _priorityQueue.push_back("Inventory\n");
-    _priorityQueue.push_back("Look\n");
-    _priorityQueue.push_back("Right\n");
-    _priorityQueue.push_back("Fork\n");
-    _priorityQueue.push_back("Incantation\n");
-    _priorityQueue.push_back("Broadcast\n");
-    _priorityQueue.push_back("Connect_nbr\n");
-    _priorityQueue.push_back("Eject\n");
+    _commands.push_back("Forward\n");
+    _commands.push_back("Inventory\n");
+    _commands.push_back("Look\n");
+    _commands.push_back("Right\n");
+    _commands.push_back("Fork\n");
+    _commands.push_back("Incantation\n");
+    _commands.push_back("Broadcast\n");
+    _commands.push_back("Connect_nbr\n");
+    _commands.push_back("Eject\n");
+    _commands.push_back("Take ");
 }
 
 void Zappy::AI::checkArg(int argc, char **argv)
@@ -69,52 +69,90 @@ void Zappy::AI::initConnection(void)
 void Zappy::AI::run(void)
 {
     std::string serverResponse = "";
-    std::cout << "Run AI" << std::endl;
+    bool firstRun = true;
+
     while (_isAlive) {
         if (_clientSocket->selectSocket() == -1)
             handleResponse();
-        else 
-            _fd << _priorityQueue[1];
+        if (firstRun) {
+            sendCommand(_commands[INVENTORY]);
+            firstRun = false;
+        }
     }
 }
 
 void Zappy::AI::handleResponse(void)
 {
     std::string serverResponse = "";
-
     _fd >> serverResponse;
-    std::cout << "server response -> " << serverResponse;
-    handleCommand(serverResponse);
-}
 
-void Zappy::AI::handleCommand(std::string response)
-{
-    if (response == "dead\n") {
-        _isAlive = false;
-        _clientSocket->~Socket();
-        std::exit(0);
-    } else {
-        handlePriority(response);
-    }
-}
-
-void Zappy::AI::handlePriority(std::string response)
-{
-    if (_food <= 2)
-        _fd << _priorityQueue[4];
-    if (_food > 2) {
-        std::cout << "Food > 2" << std::endl;
-        _fd << _priorityQueue[1];
-        if (Utils::isInventory(response) && response != "ok\n" && response != "ko\n")
-            parseInventory(response);
-        if (!Utils::isInventory(response) && response != "ok\n" && response != "ko\n")
-            handleLook(response);
+    std::cout << "nbr cmd: " << _numberCmd << std::endl;
+    if (!_commandQueue.empty()) {
+        std::string command = _commandQueue.front();
+        _commandQueue.pop();
+        _numberCmd--;
+        if (command == "Inventory\n" && serverResponse != "ko\n" && serverResponse != "ok\n") {
+            handleInventoryResponse(serverResponse);
+        } else if (command == "Look\n" && serverResponse != "ko\n" && serverResponse != "ok\n") {
+            handleLookResponse(serverResponse);
+        } else if (command == "Take object\n") {
+            handleTakeObjectResponse(serverResponse);
+        } else {
+            handleDefaultResponse(serverResponse);
+        }
     }
 }
 
 void Zappy::AI::handleLook(const std::string &response)
 {
-    std::cout << "Look response -> " << response;
+    std::istringstream stream(response);
+    std::string tile;
+    int tileIndex = 0;
+
+    while (std::getline(stream, tile, ',')) {
+        std::istringstream tileStream(tile);
+        std::string object;
+        while (tileStream >> object) {
+            if (object == "food") {
+                if (_food < 40) {
+                    std::cout << "Pick up food" << std::endl;
+                    _fd << _commands[TAKE_OBJECT] + object + "\n";
+                    _numberCmd++;
+                }
+            }
+            if (object == "linemate") {
+                std::cout << "Move towards linemate" << std::endl;
+                _fd << _commands[FORWARD] + object + "\n";
+                _numberCmd++;
+            }
+        }
+        tileIndex++;
+    }
+}
+
+void Zappy::AI::handleInventoryResponse(const std::string &response)
+{
+    if (Utils::isInventory(response) && response != "ok\n" && response != "ko\n")
+        parseInventory(response);
+}
+
+void Zappy::AI::handleLookResponse(const std::string &response)
+{
+    handleLook(response);
+}
+
+void Zappy::AI::handleDefaultResponse(const std::string &response)
+{
+}
+
+void Zappy::AI::handleTakeObjectResponse(const std::string &response)
+{
+    std::cout << "Take object response: " << response << std::endl;
+    if (response == "ok\n") {
+        sendCommand(_commands[INVENTORY]);
+    } else {
+        sendCommand(_commands[FORWARD]);
+    }
 }
 
 void Zappy::AI::parseInventory(const std::string &response)
@@ -131,7 +169,7 @@ void Zappy::AI::parseInventory(const std::string &response)
 
     while (stream >> stringFind) {
         if (stringFind == "food") {
-            stream >> food;
+            stream >> _food;
         } else if (stringFind == "linemate") {
             stream >> linemate;
         } else if (stringFind == "deraumere") {
@@ -147,14 +185,17 @@ void Zappy::AI::parseInventory(const std::string &response)
         }
     }
 
-    std::cout << "Food: " << food << std::endl;
-    std::cout << "Linemate: " << linemate << std::endl;
-    std::cout << "Deraumere: " << deraumere << std::endl;
-    std::cout << "sibur " << sibur << std::endl;
-    std::cout << "mendiane " << mendiane << std::endl;
-    std::cout << "phiras " << phiras << std::endl;
-    std::cout << "thystame " << thystame << std::endl;
+    std::cout << "Food: " << _food << std::endl;
 
-    if (food < 40)
-        _fd << _priorityQueue[2];
+    if (_food < 40) {
+        sendCommand(_commands[LOOK]);
+    }
+}
+
+
+void Zappy::AI::sendCommand(const std::string &command)
+{
+    _fd << command;
+    _commandQueue.push(command);
+    _numberCmd++;
 }

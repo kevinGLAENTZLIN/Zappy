@@ -79,6 +79,7 @@ extern "C" {
 
 int &Zappy::operator<<(int &sock, const std::string &val)
 {
+    std::cout << "Sending: " << val << std::endl;
     if (write(sock, val.c_str(), val.length()) == -1)
         throw Zappy::ErrorAI(SocketError, "write: " + std::string(strerror(errno)));
     return sock;
@@ -96,5 +97,6 @@ int &Zappy::operator>>(int &sock, std::string &val)
     }
     newBuff += '\n';
     val = newBuff;
+    std::cout << "Received: " << val << std::endl;
     return sock;
 }

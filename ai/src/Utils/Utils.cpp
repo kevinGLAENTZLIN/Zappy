@@ -22,12 +22,8 @@ extern "C" {
         stream >> stringFind;
         stringFind = "";
         stream >> stringFind;
-        std::cout << "STRING FIND: " << stringFind << std::endl;
-        if (stringFind == "food") {
-            std::cout << "INVENTORY" << std::endl;
+        if (stringFind == "food")
             return true;
-        }
-        std::cout << "NOT INVENTORY" << std::endl;
         return false;
     }
 }
