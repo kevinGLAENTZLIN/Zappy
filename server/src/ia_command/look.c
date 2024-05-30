@@ -20,6 +20,8 @@ static void get_tile_info(server_t *server, int i, tile_t *tile, bool opt)
 {
     bool tmp = false;
 
+    for (int j = 0; j < get_nb_player_on_tile(server, tile->x, tile->y); j++)
+        tmp = send_tile_info(server, i, tmp, "player");
     for (int j = 0; j < tile->food; j++)
         tmp = send_tile_info(server, i, tmp, "food");
     for (int j = 0; j < tile->linemate; j++)
@@ -95,7 +97,7 @@ static void display_look(server_t *server, int i)
 {
     int tmp = PLAYER->level + 1;
 
-    dprintf(FD_CLIENT, "[player ");
+    dprintf(FD_CLIENT, "[");
     for (int j = 0; j < tmp; j++) {
         PLAYER->level = j;
         get_look_origin_level(server, i, PLAYER->x, PLAYER->y);

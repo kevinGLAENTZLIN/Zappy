@@ -7,12 +7,14 @@
 
 #include "../include/server.h"
 
-static tile_t *init_tile(void)
+static tile_t *init_tile(int x, int y)
 {
     tile_t *tmp = malloc(sizeof(tile_t));
 
     if (tmp == NULL)
         return NULL;
+    tmp->x = x;
+    tmp->y = y;
     tmp->deraumere = 0;
     tmp->food = 0;
     tmp->linemate = 0;
@@ -34,7 +36,7 @@ void init_map(zappy_t *zappy)
     for (int y = 0; y < zappy->y; y++) {
         map[y] = malloc(sizeof(tile_t *) * zappy->x);
         for (int x = 0; x < zappy->x; x++) {
-            map[y][x] = init_tile();
+            map[y][x] = init_tile(x, y);
         }
     }
     zappy->map = map;
@@ -97,9 +99,7 @@ int get_nb_player_on_tile(server_t *server, int x, int y)
 
     for (int i = 0; ZAPPY->teams_name[i] != NULL; i++) {
         tmp = TEAM->players;
-        printf("team: %s\n", ZAPPY->teams_name[i]);
         while (tmp != NULL) {
-            printf("id: %d\n", PLAYER->id);
             count += (tmp->x == x && tmp->y == y);
             tmp = tmp->next;
         }

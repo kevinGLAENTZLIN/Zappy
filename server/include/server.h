@@ -65,7 +65,8 @@ typedef enum direction_e {
 } direction_t;
 
 typedef struct tile_s {
-    // Todo ? Player ID
+    int x;
+    int y;
     int food;
     int linemate;
     int deraumere;
