@@ -148,9 +148,9 @@ struct sockaddr_in set_address(int port);
 void teams_sigint(int signum);
 
 // * egg.c functions :
-void push_back_egg(server_t *server, int x, int y, team_t *team);
+void push_back_egg(zappy_t *zappy, int x, int y, team_t *team);
 egg_t *get_random_egg(server_t *server, team_t *team);
-void set_n_random_egg(server_t *server, team_t *team, int n);
+void set_n_random_egg(zappy_t *zappy, team_t *team, int n);
 void hatch_egg(server_t *server, egg_t *egg);
 void free_eggs(egg_t *egg);
 

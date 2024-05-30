@@ -20,12 +20,12 @@ static egg_t *init_egg(int x, int y, team_t *team)
     return tmp;
 }
 
-void push_back_egg(server_t *server, int x, int y, team_t *team)
+void push_back_egg(zappy_t *zappy, int x, int y, team_t *team)
 {
-    egg_t *tmp = ZAPPY->eggs;
+    egg_t *tmp = zappy->eggs;
 
     if (tmp == NULL)
-        ZAPPY->eggs = init_egg(x, y, team);
+        zappy->eggs = init_egg(x, y, team);
     else {
         while (tmp->next != NULL)
             tmp = tmp->next;
@@ -57,23 +57,22 @@ egg_t *get_random_egg(server_t *server, team_t *team)
     while (tmp != NULL) {
         if (n == 0 && strcmp(tmp->team_name, team->team_name) == 0)
             return tmp;
-        else if (strcmp(tmp->team_name, team->team_name) == 0)
+        if (strcmp(tmp->team_name, team->team_name) == 0)
             n -= 1;
         tmp = tmp->next;
     }
     return NULL;
 }
 
-void set_n_random_egg(server_t *server, team_t *team, int n)
+void set_n_random_egg(zappy_t *zappy, team_t *team, int n)
 {
     int x = 0;
     int y = 0;
 
-    srand(time(NULL));
     for (int j = 0; j < n; j++) {
-        x = rand() % ZAPPY->x;
-        y = rand() % ZAPPY->y;
-        push_back_egg(server, x, y, team);
+        x = rand() % zappy->x;
+        y = rand() % zappy->y;
+        push_back_egg(zappy, x, y, team);
     }
 }
 
@@ -114,5 +113,5 @@ void free_eggs(egg_t *egg)
         return;
     tmp = egg->next;
     free_egg(egg);
-    return free_eggs(tmp);   
+    return free_eggs(tmp);
 }

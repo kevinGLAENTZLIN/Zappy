@@ -35,6 +35,12 @@ static void load_names(zappy_t *zappy, int argc, char **argv)
     return;
 }
 
+static void set_teams_egg(zappy_t *zappy)
+{
+    for (int j = 0; zappy->teams_name[j] != NULL; j++)
+        set_n_random_egg(zappy, zappy->teams[j], zappy->team_size);
+}
+
 zappy_t *init_zappy(int argc, char **argv)
 {
     zappy_t *zappy = malloc(sizeof(zappy_t));
@@ -52,6 +58,7 @@ zappy_t *init_zappy(int argc, char **argv)
         zappy->frequence = 100;
     init_map(zappy);
     set_map_ressources(zappy);
+    set_teams_egg(zappy);
     return zappy;
 }
 
