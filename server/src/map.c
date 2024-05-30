@@ -89,3 +89,35 @@ void free_map(zappy_t *zappy)
     free(zappy->map);
     zappy->map = NULL;
 }
+
+int get_nb_player_on_tile(server_t *server, int x, int y)
+{
+    int count = 0;
+    player_t *tmp = NULL;
+
+    for (int i = 0; ZAPPY->teams_name[i] != NULL; i++) {
+        tmp = TEAM->players;
+        printf("team: %s\n", ZAPPY->teams_name[i]);
+        while (tmp != NULL) {
+            printf("id: %d\n", PLAYER->id);
+            count += (tmp->x == x && tmp->y == y);
+            tmp = tmp->next;
+        }
+    }
+    return count;
+}
+
+int get_nb_incantor(server_t *server, int x, int y, int lvl)
+{
+    int count = 0;
+    player_t *tmp = NULL;
+
+    for (int i = 0; ZAPPY->teams_name[i] != NULL; i++) {
+        tmp = TEAM->players;
+        while (tmp != NULL) {
+            count += (tmp->x == x && tmp->y == y && tmp->level == lvl);
+            tmp = tmp->next;
+        }
+    }
+    return count;
+}

@@ -42,6 +42,7 @@
 #define BUFF_CLIENT     CLIENT->buffer
 #define FD_CLIENT       CLIENT->fd
 #define PLAYER_TILE     MAP[PLAYER->y][PLAYER->x]
+#define NB_INCANTOR(lvl)  get_nb_incantor(server, PLAYER->x, PLAYER->y, lvl)
 
 #define GUI             "GRAPHIC"
 #define IA              "TEAM"
@@ -49,7 +50,7 @@
 #define MAX_NAME_LENGTH 32
 #define BUFFER_SIZE     1024
 
-#define NB_MAX_LVL      8
+#define NB_MAX_LVL      8 - 1
 #define NB_MAX_CLIENT   42
 
 #define RAISE(x)        write(2, x, strlen(x))
@@ -82,11 +83,11 @@ typedef struct player_s {
     int y;
     int level;
     int food;
-    int linemate;
     int deraumere;
-    int sibur;
+    int linemate;
     int mendiane;
     int phiras;
+    int sibur;
     int thystame;
     direction_t direction;
     struct player_s *next;
@@ -159,6 +160,8 @@ team_t *get_team_by_name(server_t *server, const char *name);
 // * map.c functions :
 void init_map(zappy_t *zappy);
 void set_map_ressources(zappy_t *zappy);
+int get_nb_player_on_tile(server_t *server, int x, int y);
+int get_nb_incantor(server_t *server, int x, int y, int lvl);
 
 // * Zappy functions :
 zappy_t *init_zappy(int argc, char **argv);
