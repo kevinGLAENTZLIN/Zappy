@@ -43,13 +43,17 @@ extern "C" {
     int Zappy::Socket::selectSocket(void)
     {
         int ret = 0;
+        struct timeval timeoutStruct;
 
         FD_ZERO(&_rfds);
-        FD_ZERO(&_wfds);
         FD_SET(_socket, &_rfds);
-        ret = select(_socket + 1, &_rfds, &_wfds, NULL, NULL);
+        timeoutStruct.tv_sec = 1;
+        timeoutStruct.tv_usec = 0;
+        ret = select(_socket + 1, &_rfds, NULL, NULL, &timeoutStruct);
         if (ret == -1)
             throw Zappy::ErrorAI(SocketError, "select: " + std::string(strerror(errno)));
+        if (FD_ISSET(_socket, &_rfds))
+            return -1;
         return ret;
     }
 
@@ -75,17 +79,24 @@ extern "C" {
 
 int &Zappy::operator<<(int &sock, const std::string &val)
 {
-    if (write(sock, val.c_str(), sizeof(char) * (val.length() + 1)) == -1)
+    std::cout << "Sending: " << val << std::endl;
+    if (write(sock, val.c_str(), val.length()) == -1)
         throw Zappy::ErrorAI(SocketError, "write: " + std::string(strerror(errno)));
     return sock;
 }
 
 int &Zappy::operator>>(int &sock, std::string &val)
 {
-    char buffer[40000];
+    char buffer[1];
+    std::string newBuff;
 
-    if (read(sock, buffer, sizeof(char) * 40000) == -1)
-        throw Zappy::ErrorAI(SocketError, "read: " + std::string(strerror(errno)));
-    val = std::string(buffer);
+    while (read(sock, buffer, sizeof(buffer))) {
+        if (buffer[0] == '\n')
+            break;
+        newBuff += buffer[0];
+    }
+    newBuff += '\n';
+    val = newBuff;
+    std::cout << "Received: " << val << std::endl;
     return sock;
 }
