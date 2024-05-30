@@ -45,6 +45,7 @@ zappy_t *init_zappy(int argc, char **argv)
     zappy->port = get_value_by_flag("-p", argc, argv);
     zappy->team_size = get_value_by_flag("-c", argc, argv);
     zappy->map = NULL;
+    zappy->eggs = NULL;
     load_names(zappy, argc, argv);
     load_zappy_teams(zappy);
     if (zappy->frequence == -42)
@@ -60,6 +61,7 @@ void free_zappy(zappy_t *zappy)
         return;
     free_teams(zappy);
     free_map(zappy);
+    free_eggs(zappy->eggs);
     free_tab(zappy->teams_name);
     free(zappy);
 }

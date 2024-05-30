@@ -76,6 +76,12 @@ typedef struct tile_s {
     int thystame;
 } tile_t;
 
+typedef struct egg_s {
+    int x;
+    int y;
+    char *team_name;
+    struct egg_s *next;
+} egg_t;
 
 typedef struct player_s {
     char *team_name;
@@ -120,6 +126,7 @@ typedef struct zappy_s {
     char **teams_name;
     team_t **teams;
     tile_t ***map;
+    egg_t *eggs;
     // Todo Tick;
 } zappy_t;
 
@@ -139,6 +146,13 @@ int my_server(zappy_t *zappy);
 void free_myteams(server_t *server);
 struct sockaddr_in set_address(int port);
 void teams_sigint(int signum);
+
+// * egg.c functions :
+void push_back_egg(server_t *server, int x, int y, team_t *team);
+egg_t *get_random_egg(server_t *server, team_t *team);
+void set_n_random_egg(server_t *server, team_t *team, int n);
+void hatch_egg(server_t *server, egg_t *egg);
+void free_eggs(egg_t *egg);
 
 // * client.c functions :
 void add_client(server_t *server, int fd);
