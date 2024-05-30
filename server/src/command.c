@@ -34,6 +34,8 @@ static void set_client_ia_mode(server_t *server, int i)
     CLIENT->team_name = strdup(team->team_name);
     PLAYER = player;
     push_back_player(team, player);
+    dprintf(FD_CLIENT, "%d\n", team->nb_max_player - team->nb_player);
+    dprintf(FD_CLIENT, "%d %d\n", player->x, player->y);
 }
 
 static bool check_connexion_command(server_t *server, int i)
