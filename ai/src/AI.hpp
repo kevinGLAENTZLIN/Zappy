@@ -42,22 +42,24 @@ namespace Zappy {
             void handleLook(const std::string &response);
             void parseInventory(const std::string &response);
 
-            void sendCommand(const std::string &command);
+            void sendCommand(const std::string &command, bool isObject, const std::string &object = "");
 
             void handleInventoryResponse(const std::string &response);
-            void handleLookResponse(const std::string &response);
             void handleDefaultResponse(const std::string &response);
             void handleTakeObjectResponse(const std::string &response);
 
+            bool _isAlive;
+            int _currentLevel;
+            int _food;
+            int _numberCmd;
+            int _fd;
+            int _clientNumber;
+            int _sizeWorldX;
+            int _sizeWorldY;
             std::string _port;
             std::string _ip;
             std::string _teamName;
             std::unique_ptr<Zappy::Socket> _clientSocket;
-            bool _isAlive;
-            int _currentLevel;
-            int _food;
-            int _numberCmd = 0;
-            int _fd;
             std::vector<std::string> _commands;
             std::queue<std::string> _commandQueue;
     };
