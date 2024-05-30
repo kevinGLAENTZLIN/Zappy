@@ -46,7 +46,6 @@ static void set_ressource(zappy_t *zappy, float f, char *type)
 {
     int n = (int)f;
 
-    srand(time(NULL));
     for (int j = 0; j < n; j++) {
         if (strcmp(type, "food") == 0)
             zappy->map[rand() % zappy->y][rand() % zappy->x]->food += 1;

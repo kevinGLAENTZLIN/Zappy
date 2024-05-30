@@ -95,7 +95,7 @@ static void get_look_origin_level(server_t *server, int i, int x, int y)
 
 static void display_look(server_t *server, int i)
 {
-    int tmp = PLAYER->level + 1;
+    int tmp = PLAYER->level + 2;
 
     dprintf(FD_CLIENT, "[");
     for (int j = 0; j < tmp; j++) {
@@ -105,6 +105,7 @@ static void display_look(server_t *server, int i)
             dprintf(FD_CLIENT, ", ");
     }
     dprintf(FD_CLIENT, "]\n");
+    PLAYER->level = tmp - 2;
 }
 
 void look(server_t *server, int i, char *input)
