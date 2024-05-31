@@ -35,6 +35,7 @@ static void destroy_egg(server_t *server, egg_t *egg)
 
     if (tmp != NULL)
         tmp->nb_max_player -= 1;
+    send_to_all_gui(server, "edi #%d\n", egg->id);
     hatch_egg(server, egg);
 }
 

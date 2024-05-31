@@ -33,18 +33,20 @@ static egg_t *init_egg(int x, int y, team_t *team, int id)
     return tmp;
 }
 
-void push_back_egg(zappy_t *zappy, int x, int y, team_t *team)
+egg_t *push_back_egg(zappy_t *zappy, int x, int y, team_t *team)
 {
     egg_t *tmp = zappy->eggs;
     int id = get_nb_eggs(zappy);
 
-    if (tmp == NULL)
+    if (tmp == NULL) {
         zappy->eggs = init_egg(x, y, team, id);
-    else {
+        return zappy->eggs;
+    } else {
         while (tmp->next != NULL)
             tmp = tmp->next;
         tmp->next = init_egg(x, y, team, id);
     }
+    return tmp->next;
 }
 
 static int get_nb_team_egg(server_t *server, team_t *team)
