@@ -203,6 +203,7 @@ void pin(server_t *server, int i, char *input);
 void plv(server_t *server, int i, char *input);
 void sgt(server_t *server, int i, char *input);
 void sst(server_t *server, int i, char *input);
+void display_tile_info(server_t *server, int i, tile_t *tile);
 
 // * IA commands functions :
 void broadcast(server_t *server, int i, char *input);
