@@ -193,6 +193,9 @@ char **get_parameters(char *input);
 void free_tab(char **tab);
 int my_len(void *delimiter, void **elts);
 
+// * gui_util.c functions :
+void send_to_all_gui(server_t *server, const char *format, ...);
+
 // * GUI commands functions :
 void msz(server_t *server, int i, char *input);
 void bct(server_t *server, int i, char *input);
