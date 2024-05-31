@@ -50,6 +50,7 @@ static bool check_connexion_command(server_t *server, int i)
         set_client_ia_mode(server, i);
         return true;
     }
+    dprintf(FD_CLIENT, "Invalid Client Type\n");
     return false;
 }
 
@@ -73,5 +74,5 @@ void command_handling(server_t *server, int i)
     if (strcmp(CLIENT_TYPE, GUI) != 0 &&
     command_loop_handling(list_ia_cmd, ia_func, server, i))
         return;
-    dprintf(FD_CLIENT, "ko\n");
+    dprintf(FD_CLIENT, (strcmp(CLIENT_TYPE, GUI) == 0 ? "suc\n" : "ko\n"));
 }
