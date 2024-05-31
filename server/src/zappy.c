@@ -16,19 +16,24 @@ static int get_value_by_flag(char *flag, int argc, char **argv)
     return -42;
 }
 
+static void get_names(zappy_t *zappy, int argc, char **argv, int i)
+{
+    int tmp = 0;
+    int size = 0;
+
+    tmp = i + 1;
+    for (size = i + 1; size < argc && argv[size][0] != '-'; size++);
+    zappy->teams_name = malloc(sizeof(char *) * (size - i + 1));
+    for (i += 1; i < argc && argv[i][0] != '-'; i++)
+        zappy->teams_name[i - tmp] = strdup(argv[i]);
+    zappy->teams_name[i - tmp] = NULL;
+}
+
 static void load_names(zappy_t *zappy, int argc, char **argv)
 {
-    int size = 0;
-    int tmp = 0;
-
     for (int i = 0; i < argc; i++) {
         if (strcmp(argv[i], "-n") == 0 && i + 1 < argc) {
-            tmp = i + 1;
-            for (size = i + 1; size < argc && argv[size][0] != '-'; size++);
-            zappy->teams_name = malloc(sizeof(char *) * (size - i + 1));
-            for ( i += 1; i < argc && argv[i][0] != '-'; i++)
-                zappy->teams_name[i - tmp] = strdup(argv[i]);
-            zappy->teams_name[i - tmp] = NULL;
+            get_names(zappy, argc, argv, i);
             return;
         }
     }
