@@ -33,10 +33,10 @@ static void set_client_ia_mode(server_t *server, int i)
     CLIENT->player_id = team->nb_player;
     CLIENT->team_name = strdup(team->team_name);
     PLAYER = player;
-    push_back_player(team, player);
+    push_back_player(team, player, server);
     dprintf(FD_CLIENT, "%d\n", team->nb_max_player - team->nb_player);
     dprintf(FD_CLIENT, "%d %d\n", player->x, player->y);
-    send_to_all_gui(server, "ebo #%d\n", egg->id);
+    // send_to_all_gui(server, "ebo #%d\n", egg->id); // Todo Fix Valgrind
     send_to_all_gui(server, "pnw #%d %d %d %d %d %s\n", player->id, player->x,
     player->y, player->direction + 1, player->level + 1, player->team_name);
 }

@@ -7,7 +7,22 @@
 
 #include "../../include/server.h"
 
-void push_back_player(team_t *team, player_t *player)
+static int get_total_players(server_t *server)
+{
+    int count = 0;
+    player_t *tmp = NULL;
+
+    for (int i = 0; ZAPPY->teams_name[i] != NULL; i++) {
+        tmp = TEAM->players;
+        while (tmp != NULL) {
+            count += 1;
+            tmp = tmp->next;
+        }
+    }
+    return count;
+}
+
+void push_back_player(team_t *team, player_t *player, server_t *server)
 {
     player_t *tmp = team->players;
 
@@ -19,6 +34,6 @@ void push_back_player(team_t *team, player_t *player)
         tmp->next = player;
     }
     player->team_name = strdup(team->team_name);
-    player->id = team->nb_player;
+    player->id = get_total_players(server);
     team->nb_player += 1;
 }

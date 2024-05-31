@@ -167,7 +167,7 @@ client_t *get_client_by_index(server_t *server, int i);
 player_t *init_player(int x, int y);
 void free_player(player_t *player);
 void free_players(team_t *team);
-void push_back_player(team_t *team, player_t *player);
+void push_back_player(team_t *team, player_t *player, server_t *server);
 
 // * team functions :
 void load_zappy_teams(zappy_t *zappy);
