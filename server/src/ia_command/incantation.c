@@ -42,6 +42,7 @@ static void incantation_response(server_t *server, int i)
 {
     dprintf(FD_CLIENT, "Elevation underway\n");
     dprintf(FD_CLIENT, "Current level: %d\n", PLAYER->level + 1);
+    send_to_all_gui(server, "pie %d %d ok\n", PLAYER->x, PLAYER->y);
 }
 
 static void check_incantation3(server_t *server, int i, int lvl)
@@ -61,6 +62,7 @@ static void check_incantation3(server_t *server, int i, int lvl)
         remove_ressources("LLDDSSMMPPT", tile);
         return incantation_response(server, i);
     }
+    send_to_all_gui(server, "pie %d %d ko\n", tile->x, tile->y);
     return (void)dprintf(FD_CLIENT, "ko\n");
 }
 
