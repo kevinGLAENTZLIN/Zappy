@@ -25,12 +25,16 @@ void bct(server_t *server, int i, char *input)
     int y = 0;
 
     if (tab == NULL || tab[0] == NULL || !is_number(tab[1]) ||
-        !is_number(tab[2]))
+        !is_number(tab[2])) {
+        free_tab(tab);
         return (void)dprintf(FD_CLIENT, "sbp\n");
+    }
     x = atoi(tab[1]);
     y = atoi(tab[2]);
-    if (x >= ZAPPY->x || x < 0 || y >= ZAPPY->y || y < 0)
+    if (x >= ZAPPY->x || x < 0 || y >= ZAPPY->y || y < 0) {
+        free_tab(tab);
         return (void)dprintf(FD_CLIENT, "sbp\n");
+    }
     display_tile_info(server, i, MAP[y][x]);
     free_tab(tab);
 }
