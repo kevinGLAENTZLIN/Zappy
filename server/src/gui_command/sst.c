@@ -16,6 +16,6 @@ void sst(server_t *server, int i, char *input)
         return (void)dprintf(FD_CLIENT, "sbp\n");
     }
     ZAPPY->frequence = atoi(tab[0]);
-    dprintf(FD_CLIENT, "sst %d\n", ZAPPY->frequence);
+    send_to_all_gui(server, "sst %d\n", ZAPPY->frequence);
     free_tab(tab);
 }
