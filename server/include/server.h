@@ -79,6 +79,7 @@ typedef struct tile_s {
 } tile_t;
 
 typedef struct egg_s {
+    int id;
     int x;
     int y;
     char *team_name;

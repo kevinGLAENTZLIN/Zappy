@@ -53,6 +53,7 @@ static void set_object2(server_t *server, int i, char *object, tile_t *tile)
         tile->phiras += 1;
         return handle_set_response(server, i, object);
     }
+    set_object3(server, i, object, tile);
 }
 
 static void set_object(server_t *server, int i, char *object)
