@@ -16,23 +16,34 @@ static int get_value_by_flag(char *flag, int argc, char **argv)
     return -42;
 }
 
+static void get_names(zappy_t *zappy, int argc, char **argv, int i)
+{
+    int tmp = 0;
+    int size = 0;
+
+    tmp = i + 1;
+    for (size = i + 1; size < argc && argv[size][0] != '-'; size++);
+    zappy->teams_name = malloc(sizeof(char *) * (size - i + 1));
+    for (i += 1; i < argc && argv[i][0] != '-'; i++)
+        zappy->teams_name[i - tmp] = strdup(argv[i]);
+    zappy->teams_name[i - tmp] = NULL;
+}
+
 static void load_names(zappy_t *zappy, int argc, char **argv)
 {
-    int size = 0;
-    int tmp = 0;
-
     for (int i = 0; i < argc; i++) {
         if (strcmp(argv[i], "-n") == 0 && i + 1 < argc) {
-            tmp = i + 1;
-            for (size = i + 1; size < argc && argv[size][0] != '-'; size++);
-            zappy->teams_name = malloc(sizeof(char *) * (size - i + 1));
-            for ( i += 1; i < argc && argv[i][0] != '-'; i++)
-                zappy->teams_name[i - tmp] = strdup(argv[i]);
-            zappy->teams_name[i - tmp] = NULL;
+            get_names(zappy, argc, argv, i);
             return;
         }
     }
     return;
+}
+
+static void set_teams_egg(zappy_t *zappy)
+{
+    for (int j = 0; zappy->teams_name[j] != NULL; j++)
+        set_n_random_egg(zappy, zappy->teams[j], zappy->team_size);
 }
 
 zappy_t *init_zappy(int argc, char **argv)
@@ -45,10 +56,14 @@ zappy_t *init_zappy(int argc, char **argv)
     zappy->port = get_value_by_flag("-p", argc, argv);
     zappy->team_size = get_value_by_flag("-c", argc, argv);
     zappy->map = NULL;
+    zappy->eggs = NULL;
     load_names(zappy, argc, argv);
     load_zappy_teams(zappy);
     if (zappy->frequence == -42)
         zappy->frequence = 100;
+    init_map(zappy);
+    set_map_ressources(zappy);
+    set_teams_egg(zappy);
     return zappy;
 }
 
@@ -57,7 +72,8 @@ void free_zappy(zappy_t *zappy)
     if (zappy == NULL)
         return;
     free_teams(zappy);
-    free_tab(zappy->map);
+    free_map(zappy);
+    free_eggs(zappy->eggs);
     free_tab(zappy->teams_name);
     free(zappy);
 }

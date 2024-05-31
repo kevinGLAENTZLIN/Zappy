@@ -25,12 +25,17 @@
 #include <strings.h>
 #include <uuid/uuid.h>
 #include <stdbool.h>
+#include <math.h>
+
+#define MAX(a, b)       (a > b ? a : b)
+#define MIN(a, b)       (a < b ? a : b)
 
 #define FD_CTRL         server->control_fd
 #define ADDR_CTRL       server->ctrl_addr
 #define ZAPPY           server->zappy
 #define CLIENT          get_client_by_index(server, i)
 #define TEAM            ZAPPY->teams[i]
+#define MAP             ZAPPY->map
 
 #define TEAM_NAME       TEAM->team_name
 
@@ -38,6 +43,8 @@
 #define PLAYER          CLIENT->player
 #define BUFF_CLIENT     CLIENT->buffer
 #define FD_CLIENT       CLIENT->fd
+#define PLAYER_TILE     MAP[PLAYER->y][PLAYER->x]
+#define NB_INCANTOR(lvl)  get_nb_incantor(server, PLAYER->x, PLAYER->y, lvl)
 
 #define GUI             "GRAPHIC"
 #define IA              "TEAM"
@@ -45,7 +52,7 @@
 #define MAX_NAME_LENGTH 32
 #define BUFFER_SIZE     1024
 
-#define NB_MAX_LVL      8
+#define NB_MAX_LVL      8 - 1
 #define NB_MAX_CLIENT   42
 
 #define RAISE(x)        write(2, x, strlen(x))
@@ -59,6 +66,25 @@ typedef enum direction_e {
     left
 } direction_t;
 
+typedef struct tile_s {
+    int x;
+    int y;
+    int food;
+    int linemate;
+    int deraumere;
+    int sibur;
+    int mendiane;
+    int phiras;
+    int thystame;
+} tile_t;
+
+typedef struct egg_s {
+    int x;
+    int y;
+    char *team_name;
+    struct egg_s *next;
+} egg_t;
+
 typedef struct player_s {
     char *team_name;
     int id;
@@ -66,11 +92,11 @@ typedef struct player_s {
     int y;
     int level;
     int food;
-    int linemate;
     int deraumere;
-    int sibur;
+    int linemate;
     int mendiane;
     int phiras;
+    int sibur;
     int thystame;
     direction_t direction;
     struct player_s *next;
@@ -101,7 +127,8 @@ typedef struct zappy_s {
     int team_size;
     char **teams_name;
     team_t **teams;
-    char **map;
+    tile_t ***map;
+    egg_t *eggs;
     // Todo Tick;
 } zappy_t;
 
@@ -122,6 +149,13 @@ void free_myteams(server_t *server);
 struct sockaddr_in set_address(int port);
 void teams_sigint(int signum);
 
+// * egg.c functions :
+void push_back_egg(zappy_t *zappy, int x, int y, team_t *team);
+egg_t *get_random_egg(server_t *server, team_t *team);
+void set_n_random_egg(zappy_t *zappy, team_t *team, int n);
+void hatch_egg(server_t *server, egg_t *egg);
+void free_eggs(egg_t *egg);
+
 // * client.c functions :
 void add_client(server_t *server, int fd);
 void free_client(client_t *client);
@@ -140,9 +174,16 @@ void free_teams(zappy_t *zappy);
 bool is_team_name(server_t *server, const char *name);
 team_t *get_team_by_name(server_t *server, const char *name);
 
+// * map.c functions :
+void init_map(zappy_t *zappy);
+void set_map_ressources(zappy_t *zappy);
+int get_nb_player_on_tile(server_t *server, int x, int y);
+int get_nb_incantor(server_t *server, int x, int y, int lvl);
+
 // * Zappy functions :
 zappy_t *init_zappy(int argc, char **argv);
 void free_zappy(zappy_t *zappy);
+void free_map(zappy_t *zappy);
 
 // * command.c functions :
 void command_handling(server_t *server, int i);

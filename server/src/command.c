@@ -25,13 +25,17 @@ static bool command_loop_handling(char **list_cmd, void (**list_func)(),
 static void set_client_ia_mode(server_t *server, int i)
 {
     team_t *team = get_team_by_name(server, BUFF_CLIENT);
-    player_t *player = init_player(0, 0);
+    egg_t *egg = get_random_egg(server, team);
+    player_t *player = init_player(egg->x, egg->y);
 
+    hatch_egg(server, egg);
     CLIENT_TYPE = strdup(IA);
     CLIENT->player_id = team->nb_player;
     CLIENT->team_name = strdup(team->team_name);
     PLAYER = player;
     push_back_player(team, player);
+    dprintf(FD_CLIENT, "%d\n", team->nb_max_player - team->nb_player);
+    dprintf(FD_CLIENT, "%d %d\n", player->x, player->y);
 }
 
 static bool check_connexion_command(server_t *server, int i)

@@ -20,7 +20,7 @@ bool is_team_name(server_t *server, const char *name)
 team_t *get_team_by_name(server_t *server, const char *name)
 {
     for (int i = 0; ZAPPY->teams_name[i] != NULL; i++) {
-        if (strncmp(TEAM_NAME, name, strlen(TEAM_NAME)) == 0)
+        if (name != NULL && strncmp(TEAM_NAME, name, strlen(TEAM_NAME)) == 0)
             return TEAM;
     }
     return NULL;
