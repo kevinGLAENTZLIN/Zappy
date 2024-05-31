@@ -27,6 +27,8 @@
 #include <stdbool.h>
 #include <math.h>
 
+#define MAX(a, b)       (a > b ? a : b)
+#define MIN(a, b)       (a < b ? a : b)
 
 #define FD_CTRL         server->control_fd
 #define ADDR_CTRL       server->ctrl_addr

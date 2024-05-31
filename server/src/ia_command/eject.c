@@ -52,7 +52,6 @@ static void egg_destruction(server_t *server, player_t *player)
         } else
             tmp = tmp->next;
     }
-    
 }
 
 static void eject_players(server_t *server, int i, player_t *player)
@@ -69,6 +68,7 @@ static void eject_players(server_t *server, int i, player_t *player)
         player->y = ((PLAYER->y + 1) + ZAPPY->y) % ZAPPY->y;
     if (PLAYER->direction == left)
         player->x = ((PLAYER->x - 1) + ZAPPY->x) % ZAPPY->x;
+    egg_destruction(server, player);
     send_eject(server, i, player);
     eject_players(server, i, player->next);
 }
