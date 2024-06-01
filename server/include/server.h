@@ -146,7 +146,7 @@ int is_number(char *str);
 
 // * my_server.c functions :
 int my_server(zappy_t *zappy);
-void free_myteams(server_t *server);
+void free_server(server_t *server);
 struct sockaddr_in set_address(int port);
 void teams_sigint(int signum);
 
