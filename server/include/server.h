@@ -116,6 +116,11 @@ typedef struct team_s {
     player_t *players;
 } team_t;
 
+typedef struct command_s {
+    char *command;
+    struct command_s *next;
+} command_t;
+
 typedef struct client_s {
     int fd;
     char *buffer;
@@ -124,6 +129,7 @@ typedef struct client_s {
     int player_id;
     char *client_type;
     player_t *player;
+    command_t *cmds;
 } client_t;
 
 typedef struct zappy_s {
@@ -169,6 +175,11 @@ void add_client(server_t *server, int fd);
 void free_client(client_t *client);
 void read_client(server_t *server, int i);
 client_t *get_client_by_index(server_t *server, int i);
+
+// * command_vector.c functions:
+void push_back_command(server_t *server, int i);
+void display_command_list(server_t *server, int i);
+void free_commands(client_t *client);
 
 // * player functions :
 player_t *init_player(int x, int y);
