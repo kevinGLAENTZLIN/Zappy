@@ -83,7 +83,7 @@ void add_client_loop(server_t *server)
     struct timeval time;
 
     time.tv_sec = 0;
-    time.tv_usec = 100000;
+    time.tv_usec = 500;
     FD_ZERO(&fd);
     FD_SET(FD_CTRL, &fd);
     tmp = select(FD_CTRL + 1, &fd, NULL, NULL, &time);
@@ -104,7 +104,7 @@ void read_client_loop(server_t *server)
     struct timeval time;
 
     time.tv_sec = 0;
-    time.tv_usec = 100000;
+    time.tv_usec = 500;
     for (int i = 0; i < server->nb_client; i++) {
         if (CLIENT == NULL)
             continue;
@@ -116,6 +116,27 @@ void read_client_loop(server_t *server)
         if (tmp == 1)
             read_client(server, i);
     }
+}
+
+static void server_loop(server_t *server)
+{
+    struct timeval current_time;
+    struct timeval elapsed_time;
+
+    gettimeofday(&current_time, NULL);
+    timersub(&current_time, &server->last_tick, &elapsed_time);
+    if (elapsed_time.tv_sec >= 1 ||
+        (elapsed_time.tv_sec == 0 && elapsed_time.tv_usec >= TICK)) {
+        server->zappy->ticks += 1;
+        gettimeofday(&server->last_tick, NULL);
+    }
+    if (server != NULL)
+        add_client_loop(server);
+    if (server != NULL)
+        read_client_loop(server);
+    else
+        return;
+    server_loop(server);
 }
 
 /// @brief Initialize a server with Zappy information and start it
@@ -133,10 +154,7 @@ int my_server(zappy_t *zappy)
     signal(SIGINT, teams_sigint);
     config_control(server, zappy->port);
     listen(server->control_fd, NB_MAX_CLIENT);
-    while (server != NULL) {
-        add_client_loop(server);
-        if (server != NULL)
-            read_client_loop(server);
-    }
+    gettimeofday(&server->last_tick, NULL);
+    server_loop(server);
     return 0;
 }

@@ -26,6 +26,7 @@
 #include <uuid/uuid.h>
 #include <stdbool.h>
 #include <math.h>
+#include <time.h>
 
 #define MAX(a, b)       (a > b ? a : b)
 #define MIN(a, b)       (a < b ? a : b)
@@ -45,6 +46,11 @@
 #define FD_CLIENT       CLIENT->fd
 #define PLAYER_TILE     MAP[PLAYER->y][PLAYER->x]
 #define NB_INCANTOR(lvl)  get_nb_incantor(server, PLAYER->x, PLAYER->y, lvl)
+
+#define TICK            (1000000 / ZAPPY->frequence)
+#define TIMEOUT_ADD     (TICK * 0.4) / (server->nb_client + 1)
+#define TIMEOUT_READ    (TICK * 0.6) / (server->nb_client + 1)
+#define TIMEOUT         TICK / (server->nb_client + 1)
 
 #define GUI             "GRAPHIC"
 #define IA              "TEAM"
@@ -130,7 +136,7 @@ typedef struct zappy_s {
     team_t **teams;
     tile_t ***map;
     egg_t *eggs;
-    // Todo Tick;
+    int ticks;
 } zappy_t;
 
 typedef struct server_s {
@@ -139,6 +145,7 @@ typedef struct server_s {
     zappy_t *zappy;
     struct sockaddr_in ctrl_addr;
     client_t *clients;
+    struct timeval last_tick;
 } server_t;
 
 // * main.c functions :
