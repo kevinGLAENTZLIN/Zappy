@@ -20,5 +20,6 @@ void forward(server_t *server, int i, char *input)
         if (PLAYER->direction == left)
             PLAYER->x = ((PLAYER->x - 1) + ZAPPY->x) % ZAPPY->x;
         dprintf(FD_CLIENT, "ok\n");
+        CLIENT->time_to_wait = 7;
     }
 }

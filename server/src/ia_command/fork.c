@@ -21,5 +21,6 @@ void my_fork(server_t *server, int i, char *input)
         send_to_all_gui(server, "enw #%d #%d %d %d\n", egg->id, PLAYER->id,
         egg->x, egg->y);
         dprintf(FD_CLIENT, "ok\n");
+        CLIENT->time_to_wait = 42;
     }
 }

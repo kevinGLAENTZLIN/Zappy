@@ -43,6 +43,7 @@ static void incantation_response(server_t *server, int i)
     dprintf(FD_CLIENT, "Elevation underway\n");
     dprintf(FD_CLIENT, "Current level: %d\n", PLAYER->level + 1);
     send_to_all_gui(server, "pie %d %d ok\n", PLAYER->x, PLAYER->y);
+    CLIENT->time_to_wait = 300;
 }
 
 static void check_incantation3(server_t *server, int i, int lvl)

@@ -51,5 +51,6 @@ void broadcast(server_t *server, int i, char *input)
         for (int i = 0; ZAPPY->teams_name[i] != NULL; i++)
             get_shortest_way_players(server, i, TEAM->players);
         dprintf(FD_CLIENT, "ok\n");
+        CLIENT->time_to_wait = 7;
     }
 }

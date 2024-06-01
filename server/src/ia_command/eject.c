@@ -81,5 +81,6 @@ void eject(server_t *server, int i, char *input)
     if (PLAYER != NULL) {
         for (int i = 0; ZAPPY->teams_name[i] != NULL; i++)
             eject_players(server, i, TEAM->players);
+        CLIENT->time_to_wait = 7;
     }
 }

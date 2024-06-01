@@ -18,6 +18,7 @@ static void send_inventory(server_t *server, int i)
     dprintf(FD_CLIENT, " sibur %d,", PLAYER->sibur);
     dprintf(FD_CLIENT, " thystame %d", PLAYER->thystame);
     dprintf(FD_CLIENT, "]\n");
+    CLIENT->time_to_wait = 1;
 }
 
 void inventory(server_t *server, int i, char *input)

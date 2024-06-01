@@ -87,5 +87,6 @@ void take(server_t *server, int i, char *input)
     if (tab == NULL || tab[0] == NULL || tab[1] == NULL)
         return (void)dprintf(FD_CLIENT, "ko\n");
     take_object(server, i, tab[1]);
+    CLIENT->time_to_wait = 7;
     free_tab(tab);
 }
