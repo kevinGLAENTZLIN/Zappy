@@ -43,6 +43,7 @@
 #define CLIENT_TYPE     CLIENT->client_type
 #define PLAYER          CLIENT->player
 #define BUFF_CLIENT     CLIENT->buffer
+#define CMD_CLIENT      CLIENT->cmds->command
 #define FD_CLIENT       CLIENT->fd
 #define PLAYER_TILE     MAP[PLAYER->y][PLAYER->x]
 #define NB_INCANTOR(lvl)  get_nb_incantor(server, PLAYER->x, PLAYER->y, lvl)
@@ -130,6 +131,7 @@ typedef struct client_s {
     char *client_type;
     player_t *player;
     command_t *cmds;
+    int time_to_wait;
 } client_t;
 
 typedef struct zappy_s {
@@ -180,6 +182,7 @@ client_t *get_client_by_index(server_t *server, int i);
 void push_back_command(server_t *server, int i);
 void display_command_list(server_t *server, int i);
 void free_commands(client_t *client);
+void check_command_vector(server_t *server);
 
 // * player functions :
 player_t *init_player(int x, int y);

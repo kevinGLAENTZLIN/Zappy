@@ -13,9 +13,9 @@ static bool command_loop_handling(char **list_cmd, void (**list_func)(),
     void (*command)();
 
     for (int j = 0; j < my_len(NULL, (void **)list_cmd); j++) {
-        if (strncmp(BUFF_CLIENT, list_cmd[j], strlen(list_cmd[j])) == 0) {
+        if (strncmp(CMD_CLIENT, list_cmd[j], strlen(list_cmd[j])) == 0) {
             command = list_func[j];
-            command(server, i, BUFF_CLIENT);
+            command(server, i, CMD_CLIENT);
             return true;
         }
     }
@@ -24,7 +24,7 @@ static bool command_loop_handling(char **list_cmd, void (**list_func)(),
 
 static void set_client_ia_mode(server_t *server, int i)
 {
-    team_t *team = get_team_by_name(server, BUFF_CLIENT);
+    team_t *team = get_team_by_name(server, CMD_CLIENT);
     egg_t *egg = get_random_egg(server, team);
     player_t *player = init_player(egg->x, egg->y);
 
@@ -45,11 +45,11 @@ static bool check_connexion_command(server_t *server, int i)
 {
     if (CLIENT_TYPE != NULL)
         return false;
-    if (strncmp(BUFF_CLIENT, GUI, strlen(GUI)) == 0) {
+    if (strncmp(CMD_CLIENT, GUI, strlen(GUI)) == 0) {
         CLIENT_TYPE = strdup(GUI);
         return true;
     }
-    if (is_team_name(server, BUFF_CLIENT)) {
+    if (is_team_name(server, CMD_CLIENT)) {
         set_client_ia_mode(server, i);
         return true;
     }
