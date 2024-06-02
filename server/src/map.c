@@ -42,7 +42,7 @@ void init_map(zappy_t *zappy)
     zappy->map = map;
 }
 
-static void set_ressource(zappy_t *zappy, float f, char *type)
+static void set_resource(zappy_t *zappy, float f, char *type)
 {
     int n = (int)f;
 
@@ -64,17 +64,17 @@ static void set_ressource(zappy_t *zappy, float f, char *type)
     }
 }
 
-void set_map_ressources(zappy_t *zappy)
+void set_map_resources(zappy_t *zappy)
 {
     if (zappy->map == NULL)
         return;
-    set_ressource(zappy, zappy->x * zappy->y * 0.5, "food");
-    set_ressource(zappy, zappy->x * zappy->y * 0.3, "linemate");
-    set_ressource(zappy, zappy->x * zappy->y * 0.15, "deraumere");
-    set_ressource(zappy, zappy->x * zappy->y * 0.1, "sibur");
-    set_ressource(zappy, zappy->x * zappy->y * 0.1, "mendiane");
-    set_ressource(zappy, zappy->x * zappy->y * 0.08, "phiras");
-    set_ressource(zappy, zappy->x * zappy->y * 0.05, "thystame");
+    set_resource(zappy, zappy->x * zappy->y * 0.5, "food");
+    set_resource(zappy, zappy->x * zappy->y * 0.3, "linemate");
+    set_resource(zappy, zappy->x * zappy->y * 0.15, "deraumere");
+    set_resource(zappy, zappy->x * zappy->y * 0.1, "sibur");
+    set_resource(zappy, zappy->x * zappy->y * 0.1, "mendiane");
+    set_resource(zappy, zappy->x * zappy->y * 0.08, "phiras");
+    set_resource(zappy, zappy->x * zappy->y * 0.05, "thystame");
 }
 
 void free_map(zappy_t *zappy)

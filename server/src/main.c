@@ -24,7 +24,7 @@ void print_help(void)
     printf("\t-p port \t\tPort Number\n");
     printf("\t-x width\t\tWidth of the world\n");
     printf("\t-y height\t\tHeight of the world\n");
-    printf("\t-n name1 name2...\tLookme of the team\n");
+    printf("\t-n name1 name2...\tname of the team\n");
     printf("\t-c clientsNB\t\tNumber of authorized clients per team\n");
     printf("\t-f freq \t\tReciprocal of time unit for execution of actions\n");
     printf("\n");

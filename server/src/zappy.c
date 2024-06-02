@@ -57,12 +57,13 @@ zappy_t *init_zappy(int argc, char **argv)
     zappy->team_size = get_value_by_flag("-c", argc, argv);
     zappy->map = NULL;
     zappy->eggs = NULL;
+    zappy->ticks = 0;
     load_names(zappy, argc, argv);
     load_zappy_teams(zappy);
     if (zappy->frequence == -42)
         zappy->frequence = 100;
     init_map(zappy);
-    set_map_ressources(zappy);
+    set_map_resources(zappy);
     set_teams_egg(zappy);
     return zappy;
 }

@@ -13,5 +13,6 @@ void my_left(server_t *server, int i, char *input)
     if (PLAYER != NULL) {
         PLAYER->direction = ((PLAYER->direction - 1) + 4) % 4;
         dprintf(FD_CLIENT, "ok\n");
+        CLIENT->time_to_wait = 7;
     }
 }

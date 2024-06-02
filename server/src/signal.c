@@ -12,7 +12,7 @@ extern server_t *server;
 void teams_sigint(int signum)
 {
     (void) signum;
-    free_myteams(server);
+    free_server(server);
     server = NULL;
     exit(0);
 }

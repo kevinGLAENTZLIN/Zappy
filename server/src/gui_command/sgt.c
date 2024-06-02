@@ -10,5 +10,5 @@
 void sgt(server_t *server, int i, char *input)
 {
     (void) input;
-    dprintf(FD_CLIENT, "sgt %d\n", 0);
+    dprintf(FD_CLIENT, "sgt %d\n", ZAPPY->ticks);
 }

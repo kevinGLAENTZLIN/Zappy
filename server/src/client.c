@@ -18,6 +18,10 @@ static client_t *init_client(int fd)
     client->next = NULL;
     client->player = NULL;
     client->player_id = -1;
+    client->cmds = NULL;
+    client->time_to_wait = 0;
+    client->gui_action_message = NULL;
+    client->ai_action_message = NULL;
     return client;
 }
 
@@ -25,7 +29,12 @@ void free_client(client_t *client)
 {
     if (client == NULL)
         return;
+    free_commands(client);
     free(client->buffer);
+    if (client->ai_action_message != NULL)
+        free(client->ai_action_message);
+    if (client->gui_action_message != NULL)
+        free(client->gui_action_message);
     if (client->client_type != NULL)
         free(client->client_type);
     if (client->fd != 0)
@@ -72,7 +81,8 @@ void read_client(server_t *server, int i)
         strcat(BUFF_CLIENT, buffer);
     if (strstr(BUFF_CLIENT, "\n") != NULL) {
         printf("Buffer [%s]\n", BUFF_CLIENT);
-        command_handling(server, i);
+        push_back_command(server, i);
+        display_command_list(server, i);
         memset(BUFF_CLIENT, 0, 1024);
     }
 }

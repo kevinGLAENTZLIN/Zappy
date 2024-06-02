@@ -7,15 +7,6 @@
 
 #include "../../include/server.h"
 
-static client_t *get_client_by_player(server_t *server, player_t *player)
-{
-    for (int i = 0; i < server->nb_client; i++) {
-        if (strcmp(CLIENT_TYPE, IA) == 0 && PLAYER == player)
-            return CLIENT;
-    }
-    return NULL;
-}
-
 static int get_shortest_difference(int a1, int a2, int a_max)
 {
     int r1 = ((a_max - a1 + a2) + a_max * 2) % a_max;
@@ -51,5 +42,6 @@ void broadcast(server_t *server, int i, char *input)
         for (int i = 0; ZAPPY->teams_name[i] != NULL; i++)
             get_shortest_way_players(server, i, TEAM->players);
         dprintf(FD_CLIENT, "ok\n");
+        CLIENT->time_to_wait = 7;
     }
 }

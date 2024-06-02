@@ -52,7 +52,7 @@ static void free_clients(server_t *server)
     return free_clients(server);
 }
 
-void free_myteams(server_t *server)
+void free_server(server_t *server)
 {
     close(FD_CTRL);
     free_zappy(server->zappy);
@@ -70,7 +70,7 @@ void add_client_loop(server_t *server)
     struct timeval time;
 
     time.tv_sec = 0;
-    time.tv_usec = 100000;
+    time.tv_usec = 500;
     FD_ZERO(&fd);
     FD_SET(FD_CTRL, &fd);
     tmp = select(FD_CTRL + 1, &fd, NULL, NULL, &time);
@@ -89,7 +89,7 @@ void read_client_loop(server_t *server)
     struct timeval time;
 
     time.tv_sec = 0;
-    time.tv_usec = 100000;
+    time.tv_usec = 500;
     for (int i = 0; i < server->nb_client; i++) {
         if (CLIENT == NULL)
             continue;
@@ -103,22 +103,42 @@ void read_client_loop(server_t *server)
     }
 }
 
+static void server_loop(server_t *server)
+{
+    struct timeval current_time;
+    struct timeval elapsed_time;
+
+    gettimeofday(&current_time, NULL);
+    timersub(&current_time, &server->last_tick, &elapsed_time);
+    if (elapsed_time.tv_sec >= 1 ||
+        (elapsed_time.tv_sec == 0 && elapsed_time.tv_usec >= TICK)) {
+        server->zappy->ticks += 1;
+        gettimeofday(&server->last_tick, NULL);
+        check_game_condition(server);
+        check_command_vector(server);
+    }
+    if (server != NULL)
+        add_client_loop(server);
+    if (server != NULL)
+        read_client_loop(server);
+    else
+        return;
+    server_loop(server);
+}
+
 int my_server(zappy_t *zappy)
 {
     server = init_server();
     if (server->control_fd == -1) {
         RAISE("No socket available\n");
-        free_myteams(server);
+        free_server(server);
         return 84;
     }
     server->zappy = zappy;
     signal(SIGINT, teams_sigint);
     config_control(server, zappy->port);
     listen(server->control_fd, NB_MAX_CLIENT);
-    while (server != NULL) {
-        add_client_loop(server);
-        if (server != NULL)
-            read_client_loop(server);
-    }
+    gettimeofday(&server->last_tick, NULL);
+    server_loop(server);
     return 0;
 }

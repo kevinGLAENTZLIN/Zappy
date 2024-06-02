@@ -106,6 +106,7 @@ static void display_look(server_t *server, int i)
     }
     dprintf(FD_CLIENT, "]\n");
     PLAYER->level = tmp - 2;
+    CLIENT->time_to_wait = 7;
 }
 
 void look(server_t *server, int i, char *input)
