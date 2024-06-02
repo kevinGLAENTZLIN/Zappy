@@ -132,6 +132,8 @@ typedef struct client_s {
     player_t *player;
     command_t *cmds;
     int time_to_wait;
+    char *gui_action_message;
+    char *ai_action_message;
 } client_t;
 
 typedef struct zappy_s {

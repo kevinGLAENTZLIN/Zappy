@@ -29,7 +29,7 @@ static void check_dead(server_t *server, player_t *player)
     if (player->food <= 0) {
         client = get_client_by_player(server, player);
         send_to_all_gui(server, "pdi #%d\n", player->id);
-        dprintf(client->fd, "U are dead bro\n");
+        dprintf(client->fd, "dead\n");
         // Todo Deconnecte et free le client du player
     }
     check_dead(server, player->next);

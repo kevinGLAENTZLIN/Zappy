@@ -20,6 +20,8 @@ static client_t *init_client(int fd)
     client->player_id = -1;
     client->cmds = NULL;
     client->time_to_wait = 0;
+    client->gui_action_message = NULL;
+    client->ai_action_message = NULL;
     return client;
 }
 
@@ -29,6 +31,10 @@ void free_client(client_t *client)
         return;
     free_commands(client);
     free(client->buffer);
+    if (client->ai_action_message != NULL)
+        free(client->ai_action_message);
+    if (client->gui_action_message != NULL)
+        free(client->gui_action_message);
     if (client->client_type != NULL)
         free(client->client_type);
     if (client->fd != 0)
