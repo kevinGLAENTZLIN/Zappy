@@ -79,6 +79,7 @@ typedef struct tile_s {
 } tile_t;
 
 typedef struct egg_s {
+    int id;
     int x;
     int y;
     char *team_name;
@@ -150,7 +151,7 @@ struct sockaddr_in set_address(int port);
 void teams_sigint(int signum);
 
 // * egg.c functions :
-void push_back_egg(zappy_t *zappy, int x, int y, team_t *team);
+egg_t *push_back_egg(zappy_t *zappy, int x, int y, team_t *team);
 egg_t *get_random_egg(server_t *server, team_t *team);
 void set_n_random_egg(zappy_t *zappy, team_t *team, int n);
 void hatch_egg(server_t *server, egg_t *egg);
@@ -166,7 +167,7 @@ client_t *get_client_by_index(server_t *server, int i);
 player_t *init_player(int x, int y);
 void free_player(player_t *player);
 void free_players(team_t *team);
-void push_back_player(team_t *team, player_t *player);
+void push_back_player(team_t *team, player_t *player, server_t *server);
 
 // * team functions :
 void load_zappy_teams(zappy_t *zappy);
@@ -193,6 +194,9 @@ char **get_parameters(char *input);
 void free_tab(char **tab);
 int my_len(void *delimiter, void **elts);
 
+// * gui_util.c functions :
+void send_to_all_gui(server_t *server, const char *format, ...);
+
 // * GUI commands functions :
 void msz(server_t *server, int i, char *input);
 void bct(server_t *server, int i, char *input);
@@ -203,6 +207,7 @@ void pin(server_t *server, int i, char *input);
 void plv(server_t *server, int i, char *input);
 void sgt(server_t *server, int i, char *input);
 void sst(server_t *server, int i, char *input);
+void display_tile_info(server_t *server, int i, tile_t *tile);
 
 // * IA commands functions :
 void broadcast(server_t *server, int i, char *input);

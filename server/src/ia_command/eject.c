@@ -25,6 +25,7 @@ static void send_eject(server_t *server, int i, player_t *player)
     if (tmp == NULL)
         return (void)dprintf(FD_CLIENT, "ko\n");
     dprintf(FD_CLIENT, "ok\n");
+    send_to_all_gui(server, "pex #%d\n", tmp->player->id);
     dprintf(tmp->fd, "eject: %d\n", (((2 * (a - b) + 4) + 16) % 8) + 1);
 }
 
@@ -34,6 +35,7 @@ static void destroy_egg(server_t *server, egg_t *egg)
 
     if (tmp != NULL)
         tmp->nb_max_player -= 1;
+    send_to_all_gui(server, "edi #%d\n", egg->id);
     hatch_egg(server, egg);
 }
 

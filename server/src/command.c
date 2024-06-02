@@ -33,9 +33,12 @@ static void set_client_ia_mode(server_t *server, int i)
     CLIENT->player_id = team->nb_player;
     CLIENT->team_name = strdup(team->team_name);
     PLAYER = player;
-    push_back_player(team, player);
+    push_back_player(team, player, server);
     dprintf(FD_CLIENT, "%d\n", team->nb_max_player - team->nb_player);
     dprintf(FD_CLIENT, "%d %d\n", player->x, player->y);
+    // send_to_all_gui(server, "ebo #%d\n", egg->id); // Todo Fix Valgrind
+    send_to_all_gui(server, "pnw #%d %d %d %d %d %s\n", player->id, player->x,
+    player->y, player->direction + 1, player->level + 1, player->team_name);
 }
 
 static bool check_connexion_command(server_t *server, int i)
@@ -50,6 +53,7 @@ static bool check_connexion_command(server_t *server, int i)
         set_client_ia_mode(server, i);
         return true;
     }
+    dprintf(FD_CLIENT, "Invalid Client Type\n");
     return false;
 }
 
@@ -73,5 +77,5 @@ void command_handling(server_t *server, int i)
     if (strcmp(CLIENT_TYPE, GUI) != 0 &&
     command_loop_handling(list_ia_cmd, ia_func, server, i))
         return;
-    dprintf(FD_CLIENT, "ko\n");
+    dprintf(FD_CLIENT, (strcmp(CLIENT_TYPE, GUI) == 0 ? "suc\n" : "ko\n"));
 }

@@ -30,6 +30,7 @@ static void get_shortest_way(server_t *server, int i, player_t *player)
     int y = get_shortest_difference(player->y, PLAYER->y, ZAPPY->y);
     client_t *tmp = get_client_by_player(server, player);
 
+    send_to_all_gui(server, "pbc #%d\n", tmp->player->id);
     dprintf(tmp->fd, "Broadcast: %d %d\n", x, y);
 }
 

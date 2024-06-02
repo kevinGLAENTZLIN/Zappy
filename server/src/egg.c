@@ -7,12 +7,25 @@
 
 #include "../include/server.h"
 
-static egg_t *init_egg(int x, int y, team_t *team)
+static int get_nb_eggs(zappy_t *zappy)
+{
+    int count = 0;
+    egg_t *tmp = zappy->eggs;
+
+    while (tmp != NULL) {
+        count += 1;
+        tmp = tmp->next;
+    }
+    return count;
+}
+
+static egg_t *init_egg(int x, int y, team_t *team, int id)
 {
     egg_t *tmp = malloc(sizeof(egg_t));
 
     if (tmp == NULL)
         return NULL;
+    tmp->id = id;
     tmp->x = x;
     tmp->y = y;
     tmp->team_name = strdup(team->team_name);
@@ -20,17 +33,20 @@ static egg_t *init_egg(int x, int y, team_t *team)
     return tmp;
 }
 
-void push_back_egg(zappy_t *zappy, int x, int y, team_t *team)
+egg_t *push_back_egg(zappy_t *zappy, int x, int y, team_t *team)
 {
     egg_t *tmp = zappy->eggs;
+    int id = get_nb_eggs(zappy);
 
-    if (tmp == NULL)
-        zappy->eggs = init_egg(x, y, team);
-    else {
+    if (tmp == NULL) {
+        zappy->eggs = init_egg(x, y, team, id);
+        return zappy->eggs;
+    } else {
         while (tmp->next != NULL)
             tmp = tmp->next;
-        tmp->next = init_egg(x, y, team);
+        tmp->next = init_egg(x, y, team, id);
     }
+    return tmp->next;
 }
 
 static int get_nb_team_egg(server_t *server, team_t *team)

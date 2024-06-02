@@ -9,10 +9,12 @@
 
 int is_number(char *str)
 {
+    if (str == NULL)
+        return false;
     for (int i = 0; str[i] != 0 && str[i] != '\r'; i++)
         if (str[i] > '9' || str[i] < '0')
-            return 0;
-    return 1;
+            return false;
+    return true;
 }
 
 void print_help(void)
