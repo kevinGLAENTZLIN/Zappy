@@ -199,7 +199,7 @@ team_t *get_team_by_name(server_t *server, const char *name);
 
 // * map.c functions :
 void init_map(zappy_t *zappy);
-void set_map_ressources(zappy_t *zappy);
+void set_map_resources(zappy_t *zappy);
 int get_nb_player_on_tile(server_t *server, int x, int y);
 int get_nb_incantor(server_t *server, int x, int y, int lvl);
 

@@ -7,9 +7,6 @@
 
 #include "../include/server.h"
 
-/// @brief Send the given message to all grahic client connected
-/// @param server Structure that contain all server data
-/// @param txt Message send
 static void send_guis_text(server_t *server, char *txt)
 {
     for (int i = 0; i < server->nb_client; i++) {
@@ -19,9 +16,6 @@ static void send_guis_text(server_t *server, char *txt)
     free(txt);
 }
 
-/// @brief Write formatted output to all GUI clients
-/// @param server Structure that contain all server data
-/// @param format Format of the message following printf function format
 void send_to_all_gui(server_t *server, const char *format, ...)
 {
     va_list ap;

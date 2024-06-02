@@ -9,8 +9,6 @@
 
 server_t *server;
 
-/// @brief Set an address on a default IP to a given port
-/// @param port Port of the address
 struct sockaddr_in set_address(int port)
 {
     struct sockaddr_in address;
@@ -21,9 +19,6 @@ struct sockaddr_in set_address(int port)
     return address;
 }
 
-/// @brief Set an address and a Socket to the given port, then bind them
-/// @param server Structure that contain all server data
-/// @param port Port of the address
 static void config_control(server_t *server, int port)
 {
     int socket_opt = 1;
@@ -34,8 +29,6 @@ static void config_control(server_t *server, int port)
     bind(FD_CTRL, (struct sockaddr*)&ADDR_CTRL, sizeof(ADDR_CTRL));
 }
 
-/// @brief Initialize a default server
-/// @return Server structure with default values
 static server_t *init_server(void)
 {
     server_t *server = malloc(sizeof(server_t));
@@ -46,8 +39,6 @@ static server_t *init_server(void)
     return server;
 }
 
-/// @brief Free all clients of the given server
-/// @param server Structure that contain all server data
 static void free_clients(server_t *server)
 {
     client_t *tmp = NULL;
@@ -61,8 +52,6 @@ static void free_clients(server_t *server)
     return free_clients(server);
 }
 
-/// @brief Free the given server
-/// @param server Structure that contain all server data
 void free_server(server_t *server)
 {
     close(FD_CTRL);
@@ -72,8 +61,6 @@ void free_server(server_t *server)
     free(server);
 }
 
-/// @brief Server loop that allow new client connexion and add it to the server
-/// @param server Structure that contain all server data
 void add_client_loop(server_t *server)
 {
     int tmp = 0;
@@ -95,8 +82,6 @@ void add_client_loop(server_t *server)
     }
 }
 
-/// @brief Server loop that read client already connected
-/// @param server Structure that contain all server data
 void read_client_loop(server_t *server)
 {
     int tmp = 0;
@@ -141,9 +126,6 @@ static void server_loop(server_t *server)
     server_loop(server);
 }
 
-/// @brief Initialize a server with Zappy information and start it
-/// @param zappy Structure that contains all games information
-/// @return 0 if the server was created with success, else returns 84
 int my_server(zappy_t *zappy)
 {
     server = init_server();
