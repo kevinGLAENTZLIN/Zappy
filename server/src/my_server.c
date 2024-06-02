@@ -129,6 +129,7 @@ static void server_loop(server_t *server)
         (elapsed_time.tv_sec == 0 && elapsed_time.tv_usec >= TICK)) {
         server->zappy->ticks += 1;
         gettimeofday(&server->last_tick, NULL);
+        check_game_condition(server);
         check_command_vector(server);
     }
     if (server != NULL)

@@ -7,15 +7,6 @@
 
 #include "../../include/server.h"
 
-static client_t *get_client_by_player(server_t *server, player_t *player)
-{
-    for (int i = 0; i < server->nb_client; i++) {
-        if (strcmp(CLIENT_TYPE, IA) == 0 && PLAYER == player)
-            return CLIENT;
-    }
-    return NULL;
-}
-
 static void send_eject(server_t *server, int i, player_t *player)
 {
     client_t *tmp = get_client_by_player(server, player);

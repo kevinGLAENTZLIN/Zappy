@@ -189,6 +189,7 @@ player_t *init_player(int x, int y);
 void free_player(player_t *player);
 void free_players(team_t *team);
 void push_back_player(team_t *team, player_t *player, server_t *server);
+client_t *get_client_by_player(server_t *server, player_t *player);
 
 // * team functions :
 void load_zappy_teams(zappy_t *zappy);
@@ -201,6 +202,9 @@ void init_map(zappy_t *zappy);
 void set_map_ressources(zappy_t *zappy);
 int get_nb_player_on_tile(server_t *server, int x, int y);
 int get_nb_incantor(server_t *server, int x, int y, int lvl);
+
+// * game_condition.c functions :
+void check_game_condition(server_t *server);
 
 // * Zappy functions :
 zappy_t *init_zappy(int argc, char **argv);

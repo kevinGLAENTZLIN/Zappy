@@ -7,6 +7,15 @@
 
 #include "../../include/server.h"
 
+client_t *get_client_by_player(server_t *server, player_t *player)
+{
+    for (int i = 0; i < server->nb_client; i++) {
+        if (strcmp(CLIENT_TYPE, IA) == 0 && PLAYER == player)
+            return CLIENT;
+    }
+    return NULL;
+}
+
 static int get_total_players(server_t *server)
 {
     int count = 0;
