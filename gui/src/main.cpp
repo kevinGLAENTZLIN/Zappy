@@ -7,17 +7,22 @@
 
 #include <raylib.h>
 
-int main(void)
-{
-    InitWindow(800, 450, "raylib [core] example - basic window");
+#include "./Raylib/Window/Window.hh"
+#include "./Raylib/Text/Text.hh"
+#include "./Raylib/Texture/Texture.hh"
+#include "./Utils/GuiSocket.hh"
+#include "./ErrorGUI.hh"
+#include "./GUI/GUI.hh"
 
-    while (!WindowShouldClose())
-    {
-        BeginDrawing();
-            ClearBackground(RAYWHITE);
-            DrawText("Hello World", 190, 200, 20, LIGHTGRAY);
-        EndDrawing();
+int main(int ac, char *av[])
+{
+    SetTraceLogLevel(LOG_ERROR);
+    std::vector<std::string> args(av, av + ac);
+    try {
+        Zappy::GUI gui(args);
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        return 84;
     }
-    CloseWindow();
     return 0;
 }
