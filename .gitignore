@@ -8,6 +8,8 @@ zappy_gui
 zappy_server
 vgcore.*
 .vscode/
+*.data
+coding-style-reports.log
 
 ### C ###
 # Prerequisites

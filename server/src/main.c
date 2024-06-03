@@ -7,6 +7,9 @@
 
 #include "../include/server.h"
 
+/// @brief Return if the string contains only digit
+/// @param str Inspected string
+/// @return True if string contains only digit, else false
 int is_number(char *str)
 {
     if (str == NULL)
@@ -17,6 +20,7 @@ int is_number(char *str)
     return true;
 }
 
+/// @brief Display help message
 void print_help(void)
 {
     printf("\nUSAGE: ./zappy_server -p port -x width -y height -n name1 name");
@@ -31,6 +35,10 @@ void print_help(void)
     exit(0);
 }
 
+/// @brief Argument error handling
+/// @param argc Total number of arguments
+/// @param argv Arguments list
+/// @return Return True if there is an error, else False
 static int check_flags(int argc, char **argv)
 {
     int score = 1;
@@ -54,6 +62,10 @@ static int check_flags(int argc, char **argv)
     return (score == 2310 || score == 30030) ? 0 : 1;
 }
 
+/// @brief Argument error handling
+/// @param argc Total number of arguments
+/// @param argv Arguments list
+/// @return Return True if there is an error, else False
 static int error_handling(int argc, char **argv)
 {
     bool tmp = false;
@@ -78,6 +90,10 @@ static int error_handling(int argc, char **argv)
     return (check_flags(argc, argv) ? 1 : 0);
 }
 
+/// @brief Start a server to play the Zappy game
+/// @param argc Total number of arguments
+/// @param argv Arguments list
+/// @return Return 0 if the server start successfully, else 84
 int main(int argc, char **argv)
 {
     if (argc == 2 && (strcmp(argv[1], "-help") == 0 ||

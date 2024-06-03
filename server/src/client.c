@@ -7,6 +7,9 @@
 
 #include "../include/server.h"
 
+/// @brief Initialize a default Client with the given File Descriptor
+/// @param fd File Descriptor corresponding to the Client Socket
+/// @return Initialized Client
 static client_t *init_client(int fd)
 {
     client_t *client = malloc(sizeof(client_t));
@@ -25,6 +28,7 @@ static client_t *init_client(int fd)
     return client;
 }
 
+/// @brief Free the given Client
 void free_client(client_t *client)
 {
     if (client == NULL)
@@ -43,6 +47,11 @@ void free_client(client_t *client)
     client = NULL;
 }
 
+/// @brief Returns the pointer of the Nth Client in the Server client
+/// linked list
+/// @param server Structure that contain all server data
+/// @param i Index of the Client
+/// @return NULL if not corresponding client or the pointer of the Client
 client_t *get_client_by_index(server_t *server, int i)
 {
     client_t *tmp = server->clients;
@@ -54,6 +63,9 @@ client_t *get_client_by_index(server_t *server, int i)
     return tmp;
 }
 
+/// @brief Add a new Client with the given File Descriptor
+/// @param server Structure that contain all server data
+/// @param fd File Descriptor corresponding to the Client Socket
 void add_client(server_t *server, int fd)
 {
     client_t *tmp = server->clients;
@@ -70,6 +82,9 @@ void add_client(server_t *server, int fd)
     server->nb_client += 1;
 }
 
+/// @brief Read the given Client command
+/// @param server Structure that contain all server data
+/// @param i Index of the Client
 void read_client(server_t *server, int i)
 {
     ssize_t size;

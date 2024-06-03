@@ -7,6 +7,12 @@
 
 #include "../include/server.h"
 
+/// @brief Server command interpreter
+/// @param list_cmd Command's list handled by the interpreter
+/// @param list_func Function's list corresponding to the Command's list
+/// @param server Structure that contain all server data
+/// @param i Index of the Client
+/// @return True if it execute a command, else returns False
 static bool command_loop_handling(char **list_cmd, void (**list_func)(),
     server_t *server, int i)
 {
@@ -22,6 +28,9 @@ static bool command_loop_handling(char **list_cmd, void (**list_func)(),
     return false;
 }
 
+/// @brief Set the Client as an AI
+/// @param server Structure that contain all server data
+/// @param i Index of the Client
 static void set_client_ia_mode(server_t *server, int i)
 {
     team_t *team = get_team_by_name(server, CMD_CLIENT);
@@ -41,7 +50,11 @@ static void set_client_ia_mode(server_t *server, int i)
     player->y, player->direction + 1, player->level + 1, player->team_name);
 }
 
-static bool check_connexion_command(server_t *server, int i)
+/// @brief Check and connect client if necessary
+/// @param server Structure that contain all server data
+/// @param i Index of the Client
+/// @return Return True if it connected, else False
+static bool check_connection_command(server_t *server, int i)
 {
     if (CLIENT_TYPE != NULL)
         return false;
@@ -57,6 +70,9 @@ static bool check_connexion_command(server_t *server, int i)
     return false;
 }
 
+/// @brief Server command interpreter
+/// @param server Structure that contain all server data
+/// @param i Index of the Client
 void command_handling(server_t *server, int i)
 {
     char *list_gui_cmd[] = {"msz", "bct", "mct", "tna", "ppo", "plv", "pin",
@@ -69,7 +85,7 @@ void command_handling(server_t *server, int i)
     void (*ia_func[])() = {&forward, &my_right, &my_left, &look, &inventory,
         &broadcast, &my_connect, &my_fork, &eject, &take, &set, &incantation};
 
-    if (check_connexion_command(server, i) || CLIENT_TYPE == NULL)
+    if (check_connection_command(server, i) || CLIENT_TYPE == NULL)
         return;
     if (strcmp(CLIENT_TYPE, GUI) == 0 &&
     command_loop_handling(list_gui_cmd, gui_func, server, i))
