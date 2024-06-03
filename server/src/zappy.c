@@ -74,7 +74,7 @@ zappy_t *check_zappy(zappy_t *zappy)
     error |= (zappy->port <= 0);
     error |= (zappy->team_size <= 0);
     error |= (zappy->frequence <= 0 || zappy->frequence > 2000);
-    error |= (my_len(NULL, (void**)zappy->teams_name) < 2);
+    error |= (my_len(NULL, (void **)zappy->teams_name) < 2);
     if (error) {
         RAISE("Argument error\n");
         free_zappy(zappy);

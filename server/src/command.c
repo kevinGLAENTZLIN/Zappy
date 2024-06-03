@@ -60,6 +60,7 @@ static void set_client_ia_mode(server_t *server, int i)
 static bool check_connection_command(server_t *server, int i)
 {
     client_t *client = CLIENT;
+    team_t *team = NULL;
 
     if (client->client_type != NULL)
         return false;
@@ -68,6 +69,11 @@ static bool check_connection_command(server_t *server, int i)
         return true;
     }
     if (is_team_name(server, client->cmds->command)) {
+        team = get_team_by_name(server, client->cmds->command);
+        if (team->nb_player >= team->nb_max_player) {
+            dprintf(client->fd, "Too many player in these team\n");
+            return false;
+        }
         set_client_ia_mode(server, i);
         return true;
     }
