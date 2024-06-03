@@ -152,6 +152,8 @@ static void server_loop(server_t *server)
 /// @return 0 if the server was created with success, else returns 84
 int my_server(zappy_t *zappy)
 {
+    if (zappy == NULL)
+        return 84;
     server = init_server();
     if (server->control_fd == -1) {
         RAISE("No socket available\n");

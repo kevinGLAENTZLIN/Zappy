@@ -62,6 +62,27 @@ static void set_teams_egg(zappy_t *zappy)
         set_n_random_egg(zappy, zappy->teams[j], zappy->team_size);
 }
 
+/// @brief Check if all zappy values are correct
+/// @param zappy Structure that contains all games information
+/// @return Zappy structure if everything is okay, else returns NULL
+zappy_t *check_zappy(zappy_t *zappy)
+{
+    bool error = false;
+
+    error |= (zappy->x <= 0);
+    error |= (zappy->y <= 0);
+    error |= (zappy->port <= 0);
+    error |= (zappy->team_size <= 0);
+    error |= (zappy->frequence <= 0 || zappy->frequence > 2000);
+    error |= (my_len(NULL, (void**)zappy->teams_name) < 2);
+    if (error) {
+        RAISE("Argument error\n");
+        free_zappy(zappy);
+        return NULL;
+    }
+    return zappy;
+}
+
 /// @brief Initialize Zappy following arguments
 /// @param argc Total number of arguments
 /// @param argv Arguments list

@@ -214,6 +214,7 @@ void check_game_condition(server_t *server);
 zappy_t *init_zappy(int argc, char **argv);
 void free_zappy(zappy_t *zappy);
 void free_map(zappy_t *zappy);
+zappy_t *check_zappy(zappy_t *zappy);
 
 // * command.c functions :
 void command_handling(server_t *server, int i);

@@ -104,5 +104,5 @@ int main(int argc, char **argv)
         RAISE("Argument error\n");
         return 84;
     }
-    return my_server(init_zappy(argc, argv));
+    return my_server(check_zappy(init_zappy(argc, argv)));
 }
