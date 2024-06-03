@@ -96,15 +96,13 @@ void Zappy::AI::run(void)
 
 /* Response global ------------------------------------------------------------------------------------------------------------------------ */
 
-void Zappy::AI::handleResponse(void)
+void Zappy::AI::handleUniqueCommand(const std::string &serverResponse, const std::string &response)
 {
-    std::string serverResponse = "";
-    std::string command = "";
     std::string levelUpResponse = "Current level: " + std::to_string(_currentLevel + 1) + "\n";
 
-    _fd >> serverResponse;
     if (_isIncantation && serverResponse == levelUpResponse) {
         _isIncantation = false;
+        _isBroadcast = false;
         _currentLevel++;
         return;
     }
@@ -112,12 +110,26 @@ void Zappy::AI::handleResponse(void)
         _isAlive = false;
         _clientSocket->~Socket();    
     }
-    std::cout << "nbr cmd -> " << _numberCmd << std::endl;
-    if (_isBroadcast && serverResponse != "ok\n" && serverResponse != "ko\n"
-    && serverResponse[0] != '[' && serverResponse != "dead\n") {
+    if (response == "message") {
         handleBroadcast(serverResponse);
+        sendCommand(_commands[LOOK], false);
+        sendCommand(_commands[BROADCAST], true, std::to_string(_currentLevel));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
         return;
     }
+}
+
+void Zappy::AI::handleResponse(void)
+{
+    std::string serverResponse = "";
+    std::string response = "";
+    std::string command = "";
+    std::istringstream stream;
+
+    _fd >> serverResponse;
+    stream = std::istringstream(serverResponse);
+    stream >> response;
+    handleUniqueCommand(serverResponse, response);
     _numberCmd--;
     if (_numberCmd < 10 && !_commandQueue.empty() && !_isIncantation) {
         command = _commandQueue.front();
@@ -181,7 +193,7 @@ void Zappy::AI::moveToBroadcastPosition(int position)
             sendCommand(_commands[FORWARD], false);
             break;
         default:
-            std::cerr << "erreur: " << position << std::endl;
+            std::cerr << "error : " << position << std::endl;
             break;
     }
 }
@@ -190,7 +202,6 @@ void Zappy::AI::handleBroadcast(const std::string &response)
 {
     std::istringstream stream(response);
     std::string position;
-    int level = 0;
     int positionInt = 0;
 
     stream >> position;
@@ -211,17 +222,32 @@ void Zappy::AI::handleLook(const std::string &response)
     bool actionTaken = false;
     int tileIndex = 0;
 
+    _nbPlayer = 0;
     if (!_isBroadcast) {
         while (!isObjectTaken && std::getline(stream, tile, ',')) {
             tileStream = std::istringstream(tile);
             if (tileStream >> object && object != "player") {
-                handlePlayerMove(tileIndex);
-                isObjectTaken = true;
-                actionTaken = true;
+                    handlePlayerMove(tileIndex);
+                    isObjectTaken = true;
+                    actionTaken = true;
             }
             while (tileStream >> object) {
-                takeObject(object);
-                actionTaken = true;
+                if (object != "player" && object != "egg") {
+                    takeObject(object);
+                    actionTaken = true;
+                    isObjectTaken = true;
+                }
+            }
+            tileStream.clear();
+            tileIndex++;
+        }
+    }
+    if (_isBroadcast) {
+        while (std::getline(stream, tile, ',')) {
+            tileStream = std::istringstream(tile);
+            while (tileStream >> object) {
+                if (object == "player")
+                    _nbPlayer++;
             }
             tileStream.clear();
             tileIndex++;
@@ -268,7 +294,7 @@ void Zappy::AI::handleTakeObjectResponse(const std::string &response)
 
 /* Incantation method --------------------------------------------------------------------------------------------------------------------- */
 
-bool Zappy::AI::handleIncantation(const std::string &response, int linemate, int deraumere, int sibur, int nbPlayer)
+bool Zappy::AI::handleIncantation(int linemate, int deraumere, int sibur)
 {
     if (_currentLevel == 1 && linemate >= 1) {
         sendCommand(_commands[SET_OBJECT], true, "linemate");
@@ -276,12 +302,13 @@ bool Zappy::AI::handleIncantation(const std::string &response, int linemate, int
         _isIncantation = true;
         return true;
     }
-    if (_currentLevel == 2 && linemate >= 1 && deraumere >= 1 && sibur >= 1 && nbPlayer == 2) {
+    if (_currentLevel == 2 && linemate >= 1 && deraumere >= 1 && sibur >= 1 && _nbPlayer == 2) {
         sendCommand(_commands[SET_OBJECT], true, "linemate");
         sendCommand(_commands[SET_OBJECT], true, "deraumere");
         sendCommand(_commands[SET_OBJECT], true, "sibur");
         sendCommand(_commands[INCANTATION], false);
         _isIncantation = true;
+        _isBroadcast = false;
         return true;
     }
     return false;
@@ -299,13 +326,10 @@ void Zappy::AI::parseInventory(const std::string &response)
     int mendiane = 0;
     int phiras = 0;
     int thystame = 0;
-    int nbPlayer = 0;
 
     while (stream >> stringFind) {
         if (stringFind == "food")
             stream >> _food;
-        if (stringFind == "player")
-            stream >> nbPlayer;
         if (stringFind == "linemate")
             stream >> linemate;
         if (stringFind == "deraumere")
@@ -319,13 +343,11 @@ void Zappy::AI::parseInventory(const std::string &response)
         if (stringFind == "thystame")
             stream >> thystame;
     }
-    if (_currentLevel == 2 && linemate >= 1 && deraumere >= 1 && sibur >= 1) {
-        std::cout << "nb player -> " << nbPlayer << std::endl;
+    if (_currentLevel == 2 && linemate >= 1 && deraumere >= 1 && sibur >= 1 && !_isBroadcast) {
         sendCommand(_commands[BROADCAST], true, std::to_string(_currentLevel));
         _isBroadcast = true;
-        return;
     }
-    if (handleIncantation(response, linemate, deraumere, sibur, nbPlayer))
+    if (handleIncantation(linemate, deraumere, sibur))
         return;
     if (_food < 15)
         sendCommand(_commands[LOOK], false);

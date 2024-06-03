@@ -12,6 +12,8 @@
 #include <vector>
 #include <queue>
 #include <memory>
+#include <chrono>
+#include <thread>
 
 #include "Utils/Socket.hpp"
 #include "Utils/Utils.hh"
@@ -44,9 +46,10 @@ namespace Zappy {
             void handleLook(const std::string &response);
             void handleBroadcast(const std::string &response);
             void parseInventory(const std::string &response);
-            bool handleIncantation(const std::string &response, int linemate, int deraumere, int sibur, int nbPlayer);
+            bool handleIncantation(int linemate, int deraumere, int sibur);
             void handlePlayerMove(int tileIndex);
             void takeObject(const std::string &object);
+            void handleUniqueCommand(const std::string &serverResponse, const std::string &response);
 
             void sendCommand(const std::string &command, bool isObject, const std::string &object = "");
             void moveToBroadcastPosition(int position);
@@ -56,10 +59,10 @@ namespace Zappy {
             bool _isIncantation;
             bool _isBroadcast;
             int _currentLevel;
+            int _nbPlayer;
             int _food;
             int _numberCmd;
             int _fd;
-            int _oui;
             int _clientNumber;
             int _sizeWorldX;
             int _sizeWorldY;
