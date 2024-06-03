@@ -104,15 +104,17 @@ void read_client_loop(server_t *server)
     int tmp = 0;
     fd_set fd;
     struct timeval time;
+    client_t *client = NULL;
 
     time.tv_sec = 0;
     time.tv_usec = 500;
     for (int i = 0; i < server->nb_client; i++) {
-        if (CLIENT == NULL)
+        client = CLIENT;
+        if (client == NULL)
             continue;
         FD_ZERO(&fd);
-        FD_SET(FD_CLIENT, &fd);
-        tmp = select(FD_CLIENT + 1, &fd, NULL, NULL, &time);
+        FD_SET(client->fd, &fd);
+        tmp = select(client->fd + 1, &fd, NULL, NULL, &time);
         if (tmp == -1)
             return;
         if (tmp == 1)

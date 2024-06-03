@@ -37,11 +37,13 @@ static void get_shortest_way_players(server_t *server, int i, player_t *player)
 
 void broadcast(server_t *server, int i, char *input)
 {
+    client_t *client = CLIENT;
+
     (void) input;
-    if (PLAYER != NULL) {
-        for (int i = 0; ZAPPY->teams_name[i] != NULL; i++)
-            get_shortest_way_players(server, i, TEAM->players);
-        dprintf(FD_CLIENT, "ok\n");
-        CLIENT->time_to_wait = 7;
+    if (client->player != NULL) {
+        for (int j = 0; ZAPPY->teams_name[j] != NULL; j++)
+            get_shortest_way_players(server, j, ZAPPY->teams[j]->players);
+        dprintf(client->fd, "ok\n");
+        client->time_to_wait = 7;
     }
 }

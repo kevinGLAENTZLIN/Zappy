@@ -82,11 +82,12 @@ static void set_object(server_t *server, int i, char *object)
 
 void set(server_t *server, int i, char *input)
 {
+    client_t *client = CLIENT;
     char **tab = get_parameters(input);
 
     if (tab == NULL || tab[0] == NULL || tab[1] == NULL)
-        return (void)dprintf(FD_CLIENT, "ko\n");
+        return (void)dprintf(client->fd, "ko\n");
     set_object(server, i, tab[1]);
-    CLIENT->time_to_wait = 7;
+    client->time_to_wait = 7;
     free_tab(tab);
 }

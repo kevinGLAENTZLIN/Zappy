@@ -47,11 +47,12 @@ void free_commands(client_t *client)
 /// @param i Index of the Client
 void push_back_command(server_t *server, int i)
 {
-    command_t *cmd = CLIENT->cmds;
+    client_t *client = CLIENT;
+    command_t *cmd = client->cmds;
     int count = 1;
 
     if (cmd == NULL)
-        CLIENT->cmds = init_command(BUFF_CLIENT);
+        client->cmds = init_command(client->buffer);
     else {
         while (cmd->next != NULL) {
             cmd = cmd->next;
@@ -59,7 +60,7 @@ void push_back_command(server_t *server, int i)
         }
         if (count >= 10)
             return;
-        cmd->next = init_command(BUFF_CLIENT);
+        cmd->next = init_command(client->buffer);
     }
 }
 
@@ -119,12 +120,15 @@ static void check_action_message(server_t *server, client_t *client)
 /// @param server Structure that contain all server data
 void check_command_vector(server_t *server)
 {
+    client_t *client = NULL;
+
     for (int i = 0; i < server->nb_client; i++) {
-        if (CLIENT->time_to_wait == 0)
-            check_action_message(server, CLIENT);
-        if (CLIENT->time_to_wait == 0 && CLIENT->cmds != NULL)
+        client = CLIENT;
+        if (client->time_to_wait == 0)
+            check_action_message(server, client);
+        if (client->time_to_wait == 0 && client->cmds != NULL)
             return exec_client_command(server, i);
-        if (CLIENT->time_to_wait > 0)
-            CLIENT->time_to_wait -= 1;
+        if (client->time_to_wait > 0)
+            client->time_to_wait -= 1;
     }
 }

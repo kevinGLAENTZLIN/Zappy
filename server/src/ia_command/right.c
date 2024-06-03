@@ -9,10 +9,12 @@
 
 void my_right(server_t *server, int i, char *input)
 {
+    client_t *client = CLIENT;
+
     (void) input;
-    if (PLAYER != NULL) {
-        PLAYER->direction = ((PLAYER->direction + 1) + 4) % 4;
-        dprintf(FD_CLIENT, "ok\n");
-        CLIENT->time_to_wait = 7;
+    if (client->player != NULL) {
+        client->player->direction = ((client->player->direction + 1) + 4) % 4;
+        dprintf(client->fd, "ok\n");
+        client->time_to_wait = 7;
     }
 }

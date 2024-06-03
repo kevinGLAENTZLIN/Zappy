@@ -51,21 +51,23 @@ static void incantation_player_checking(server_t *server, int i,
 
 static void incantation_response(server_t *server, int i)
 {
+    client_t *client = CLIENT;
+    player_t *player = client->player;
     char *gui_tmp = malloc(sizeof(char) * 48);
     char *ai_tmp = malloc(sizeof(char) * 48);
 
-    send_to_all_gui(server, "pic %d %d %d", PLAYER->x, PLAYER->y,
-    PLAYER->level + 1);
+    send_to_all_gui(server, "pic %d %d %d", player->x, player->y,
+    player->level + 1);
     for (int j = 0; ZAPPY->teams_name[j] != NULL; j++)
         incantation_player_checking(server, i, ZAPPY->teams[j]->players);
     send_to_all_gui(server, "\n");
-    dprintf(FD_CLIENT, "Elevation underway\n");
-    elevate_player_on_tile(server, PLAYER->x, PLAYER->y, PLAYER->level);
-    sprintf(ai_tmp, "Current level: %d\n", PLAYER->level + 1);
-    CLIENT->ai_action_message = ai_tmp;
-    sprintf(gui_tmp, "pie %d %d ok\n", PLAYER->x, PLAYER->y);
-    CLIENT->gui_action_message = gui_tmp;
-    CLIENT->time_to_wait = 300;
+    dprintf(client->fd, "Elevation underway\n");
+    elevate_player_on_tile(server, player->x, player->y, player->level);
+    sprintf(ai_tmp, "Current level: %d\n", player->level + 1);
+    client->ai_action_message = ai_tmp;
+    sprintf(gui_tmp, "pie %d %d ok\n", player->x, player->y);
+    client->gui_action_message = gui_tmp;
+    client->time_to_wait = 300;
 }
 
 static void check_incantation3(server_t *server, int i, int lvl)

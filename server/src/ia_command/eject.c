@@ -68,10 +68,12 @@ static void eject_players(server_t *server, int i, player_t *player)
 
 void eject(server_t *server, int i, char *input)
 {
+    client_t *client = CLIENT;
+
     (void) input;
-    if (PLAYER != NULL) {
-        for (int i = 0; ZAPPY->teams_name[i] != NULL; i++)
-            eject_players(server, i, TEAM->players);
-        CLIENT->time_to_wait = 7;
+    if (client->player != NULL) {
+        for (int j = 0; ZAPPY->teams_name[j] != NULL; j++)
+            eject_players(server, j, ZAPPY->teams[j]->players);
+        client->time_to_wait = 7;
     }
 }

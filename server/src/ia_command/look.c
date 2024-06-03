@@ -95,18 +95,19 @@ static void get_look_origin_level(server_t *server, int i, int x, int y)
 
 static void display_look(server_t *server, int i)
 {
-    int tmp = PLAYER->level + 2;
+    client_t *client = CLIENT;
+    int tmp = client->player->level + 2;
 
-    dprintf(FD_CLIENT, "[");
+    dprintf(client->fd, "[");
     for (int j = 0; j < tmp; j++) {
-        PLAYER->level = j;
-        get_look_origin_level(server, i, PLAYER->x, PLAYER->y);
+        client->player->level = j;
+        get_look_origin_level(server, i, client->player->x, client->player->y);
         if (j + 1 != tmp)
-            dprintf(FD_CLIENT, ", ");
+            dprintf(client->fd, ", ");
     }
-    dprintf(FD_CLIENT, "]\n");
-    PLAYER->level = tmp - 2;
-    CLIENT->time_to_wait = 7;
+    dprintf(client->fd, "]\n");
+    client->player->level = tmp - 2;
+    client->time_to_wait = 7;
 }
 
 void look(server_t *server, int i, char *input)
