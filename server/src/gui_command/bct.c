@@ -9,13 +9,15 @@
 
 void display_tile_info(server_t *server, int i, tile_t *tile)
 {
+    int fd = FD_CLIENT;
+
     if (tile == NULL)
-        return (void)dprintf(FD_CLIENT, "sbp\n");
-    dprintf(FD_CLIENT, "bct %d %d", tile->x, tile->y);
-    dprintf(FD_CLIENT, " %d %d", tile->food, tile->linemate);
-    dprintf(FD_CLIENT, " %d %d", tile->deraumere, tile->sibur);
-    dprintf(FD_CLIENT, " %d %d", tile->mendiane, tile->phiras);
-    dprintf(FD_CLIENT, " %d\n", tile->thystame);
+        return (void)dprintf(fd, "sbp\n");
+    dprintf(fd, "bct %d %d", tile->x, tile->y);
+    dprintf(fd, " %d %d", tile->food, tile->linemate);
+    dprintf(fd, " %d %d", tile->deraumere, tile->sibur);
+    dprintf(fd, " %d %d", tile->mendiane, tile->phiras);
+    dprintf(fd, " %d\n", tile->thystame);
 }
 
 void bct(server_t *server, int i, char *input)

@@ -9,9 +9,12 @@
 
 client_t *get_client_by_player(server_t *server, player_t *player)
 {
+    client_t *client = NULL;
+
     for (int i = 0; i < server->nb_client; i++) {
-        if (strcmp(CLIENT_TYPE, IA) == 0 && PLAYER == player)
-            return CLIENT;
+        client = CLIENT;
+        if (strcmp(client->client_type, IA) == 0 && client->player == player)
+            return client;
     }
     return NULL;
 }

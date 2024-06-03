@@ -16,12 +16,13 @@
 static bool command_loop_handling(char **list_cmd, void (**list_func)(),
     server_t *server, int i)
 {
+    client_t *client = CLIENT;
     void (*command)();
 
     for (int j = 0; j < my_len(NULL, (void **)list_cmd); j++) {
-        if (strncmp(CMD_CLIENT, list_cmd[j], strlen(list_cmd[j])) == 0) {
+        if (strncmp(client->cmds->command, list_cmd[j], strlen(list_cmd[j])) == 0) {
             command = list_func[j];
-            command(server, i, CMD_CLIENT);
+            command(server, i, client->cmds->command);
             return true;
         }
     }
@@ -57,17 +58,19 @@ static void set_client_ia_mode(server_t *server, int i)
 /// @return Return True if it connected, else False
 static bool check_connection_command(server_t *server, int i)
 {
-    if (CLIENT_TYPE != NULL)
+    client_t *client = CLIENT;
+
+    if (client->client_type != NULL)
         return false;
-    if (strncmp(CMD_CLIENT, GUI, strlen(GUI)) == 0) {
-        CLIENT_TYPE = strdup(GUI);
+    if (strncmp(client->cmds->command, GUI, strlen(GUI)) == 0) {
+        client->client_type = strdup(GUI);
         return true;
     }
-    if (is_team_name(server, CMD_CLIENT)) {
+    if (is_team_name(server, client->cmds->command)) {
         set_client_ia_mode(server, i);
         return true;
     }
-    dprintf(FD_CLIENT, "Invalid Client Type\n");
+    dprintf(client->fd, "Invalid Client Type\n");
     return false;
 }
 

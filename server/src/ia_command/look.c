@@ -51,22 +51,23 @@ static int n_square(int n)
 
 static void display_look_level(server_t *server, int i, int x, int y)
 {
+    player_t *player = PLAYER;
     bool o = true;
-    int tmp = (n_square(PLAYER->level + 1) - n_square(PLAYER->level));
+    int tmp = (n_square(player->level + 1) - n_square(player->level));
 
     for (int j = 0; j < tmp; j++) {
         if (j + 1 == tmp)
             o = false;
-        if (PLAYER->direction == up)
+        if (player->direction == up)
             get_tile_info(server, i, MAP[y][(x + j + (ZAPPY->x * 8)) %
             ZAPPY->x], o);
-        if (PLAYER->direction == right)
+        if (player->direction == right)
             get_tile_info(server, i, MAP[(y + j + (ZAPPY->y * 8)) %
             ZAPPY->y][x], o);
-        if (PLAYER->direction == down)
+        if (player->direction == down)
             get_tile_info(server, i, MAP[y][(x - j + (ZAPPY->x * 8)) %
             ZAPPY->x], o);
-        if (PLAYER->direction == left)
+        if (player->direction == left)
             get_tile_info(server, i, MAP[(y - j + (ZAPPY->y * 8)) %
             ZAPPY->y][x], o);
     }
@@ -74,21 +75,23 @@ static void display_look_level(server_t *server, int i, int x, int y)
 
 static void get_look_origin_level(server_t *server, int i, int x, int y)
 {
-    if (PLAYER->direction == up) {
-        y = ((PLAYER->y - PLAYER->level) + (ZAPPY->y * 8)) % ZAPPY->y;
-        x = ((PLAYER->x - PLAYER->level) + (ZAPPY->x * 8)) % ZAPPY->x;
+    player_t *player = PLAYER;
+
+    if (player->direction == up) {
+        y = ((player->y - player->level) + (ZAPPY->y * 8)) % ZAPPY->y;
+        x = ((player->x - player->level) + (ZAPPY->x * 8)) % ZAPPY->x;
     }
-    if (PLAYER->direction == right) {
-        x = ((PLAYER->x + PLAYER->level) + (ZAPPY->x * 8)) % ZAPPY->x;
-        y = ((PLAYER->y - PLAYER->level) + (ZAPPY->y * 8)) % ZAPPY->y;
+    if (player->direction == right) {
+        x = ((player->x + player->level) + (ZAPPY->x * 8)) % ZAPPY->x;
+        y = ((player->y - player->level) + (ZAPPY->y * 8)) % ZAPPY->y;
     }
-    if (PLAYER->direction == down) {
-        y = ((PLAYER->y + PLAYER->level) + (ZAPPY->y * 8)) % ZAPPY->y;
-        x = ((PLAYER->x + PLAYER->level) + (ZAPPY->x * 8)) % ZAPPY->x;
+    if (player->direction == down) {
+        y = ((player->y + player->level) + (ZAPPY->y * 8)) % ZAPPY->y;
+        x = ((player->x + player->level) + (ZAPPY->x * 8)) % ZAPPY->x;
     }
-    if (PLAYER->direction == left) {
-        x = ((PLAYER->x - PLAYER->level) + (ZAPPY->x * 8)) % ZAPPY->x;
-        y = ((PLAYER->y + PLAYER->level) + (ZAPPY->y * 8)) % ZAPPY->y;
+    if (player->direction == left) {
+        x = ((player->x - player->level) + (ZAPPY->x * 8)) % ZAPPY->x;
+        y = ((player->y + player->level) + (ZAPPY->y * 8)) % ZAPPY->y;
     }
     display_look_level(server, i, x, y);
 }

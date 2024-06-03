@@ -12,9 +12,12 @@
 /// @param txt Message send
 static void send_guis_text(server_t *server, char *txt)
 {
+    client_t *client = NULL;
+
     for (int i = 0; i < server->nb_client; i++) {
-        if (strcmp(CLIENT_TYPE, GUI) == 0)
-            dprintf(FD_CLIENT, "%s", txt);
+        client = CLIENT;
+        if (strcmp(client->client_type, GUI) == 0)
+            dprintf(client->fd, "%s", txt);
     }
     free(txt);
 }

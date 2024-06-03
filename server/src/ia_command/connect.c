@@ -10,11 +10,12 @@
 void my_connect(server_t *server, int i, char *input)
 {
     team_t *tmp = NULL;
+    client_t *client = CLIENT;
 
     (void) input;
-    if (PLAYER != NULL) {
-        tmp = get_team_by_name(server, PLAYER->team_name);
+    if (client->player != NULL) {
+        tmp = get_team_by_name(server, client->player->team_name);
         if (tmp != NULL)
-            dprintf(FD_CLIENT, "%d\n", tmp->nb_max_player - tmp->nb_player);
+            dprintf(client->fd, "%d\n", tmp->nb_max_player - tmp->nb_player);
     }
 }

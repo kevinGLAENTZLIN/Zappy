@@ -87,17 +87,18 @@ void add_client(server_t *server, int fd)
 /// @param i Index of the Client
 void read_client(server_t *server, int i)
 {
+    client_t *client = CLIENT;
     ssize_t size;
     char buffer[BUFFER_SIZE];
 
-    size = read(FD_CLIENT, buffer, BUFFER_SIZE);
+    size = read(client->fd, buffer, BUFFER_SIZE);
     buffer[size] = 0;
     if (size != 0)
-        strcat(BUFF_CLIENT, buffer);
-    if (strstr(BUFF_CLIENT, "\n") != NULL) {
-        printf("Buffer [%s]\n", BUFF_CLIENT);
+        strcat(client->buffer, buffer);
+    if (strstr(client->buffer, "\n") != NULL) {
+        printf("Buffer [%s]\n", client->buffer);
         push_back_command(server, i);
         display_command_list(server, i);
-        memset(BUFF_CLIENT, 0, 1024);
+        memset(client->buffer, 0, 1024);
     }
 }

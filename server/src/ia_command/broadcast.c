@@ -17,8 +17,10 @@ static int get_shortest_difference(int a1, int a2, int a_max)
 
 static void get_shortest_way(server_t *server, int i, player_t *player)
 {
-    int x = get_shortest_difference(player->x, PLAYER->x, ZAPPY->x);
-    int y = get_shortest_difference(player->y, PLAYER->y, ZAPPY->y);
+    player_t *player2 = PLAYER;
+
+    int x = get_shortest_difference(player->x, player2->x, ZAPPY->x);
+    int y = get_shortest_difference(player->y, player2->y, ZAPPY->y);
     client_t *tmp = get_client_by_player(server, player);
 
     send_to_all_gui(server, "pbc #%d\n", tmp->player->id);
