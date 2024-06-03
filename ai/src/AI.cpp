@@ -227,12 +227,24 @@ void Zappy::AI::handleLook(const std::string &response)
         while (!isObjectTaken && std::getline(stream, tile, ',')) {
             tileStream = std::istringstream(tile);
             if (tileStream >> object && object != "player") {
-                    handlePlayerMove(tileIndex);
-                    isObjectTaken = true;
-                    actionTaken = true;
+                handlePlayerMove(tileIndex);
+                isObjectTaken = true;
+                actionTaken = true;
             }
             while (tileStream >> object) {
-                if (object != "player" && object != "egg") {
+                if (object != "player" && object != "egg" && _currentLevel == 1 && (object == "food" || object == "linemate")) {
+                    takeObject(object);
+                    actionTaken = true;
+                    isObjectTaken = true;
+                }
+                if (object != "player" && object != "egg" && _currentLevel == 2 && (object == "food" ||
+                object == "linemate" || object == "deraumere" || object == "sibur")) {
+                    takeObject(object);
+                    actionTaken = true;
+                    isObjectTaken = true;
+                }
+                if (object != "player" && object != "egg" && _currentLevel == 3 && (object == "food" ||
+                object == "linemate" || object == "phiras" || object == "sibur")) {
                     takeObject(object);
                     actionTaken = true;
                     isObjectTaken = true;
@@ -294,7 +306,7 @@ void Zappy::AI::handleTakeObjectResponse(const std::string &response)
 
 /* Incantation method --------------------------------------------------------------------------------------------------------------------- */
 
-bool Zappy::AI::handleIncantation(int linemate, int deraumere, int sibur)
+bool Zappy::AI::handleIncantation(int linemate, int deraumere, int sibur, int mendiane, int phiras, int thystame)
 {
     if (_currentLevel == 1 && linemate >= 1) {
         sendCommand(_commands[SET_OBJECT], true, "linemate");
@@ -306,6 +318,70 @@ bool Zappy::AI::handleIncantation(int linemate, int deraumere, int sibur)
         sendCommand(_commands[SET_OBJECT], true, "linemate");
         sendCommand(_commands[SET_OBJECT], true, "deraumere");
         sendCommand(_commands[SET_OBJECT], true, "sibur");
+        sendCommand(_commands[INCANTATION], false);
+        _isIncantation = true;
+        _isBroadcast = false;
+        return true;
+    }
+    if (_currentLevel == 3 && linemate >= 2 && phiras >= 1 && sibur >= 1 && _nbPlayer == 2) {
+        sendCommand(_commands[SET_OBJECT], true, "linemate");
+        sendCommand(_commands[SET_OBJECT], true, "linemate");
+        sendCommand(_commands[SET_OBJECT], true, "phiras");
+        sendCommand(_commands[SET_OBJECT], true, "sibur");
+        sendCommand(_commands[INCANTATION], false);
+        _isIncantation = true;
+        _isBroadcast = false;
+        return true;
+    }
+    if (_currentLevel == 4 && linemate >= 1 && deraumere >= 1 && sibur >= 2 && phiras >= 1 && _nbPlayer == 4) {
+        sendCommand(_commands[SET_OBJECT], true, "linemate");
+        sendCommand(_commands[SET_OBJECT], true, "deraumere");
+        sendCommand(_commands[SET_OBJECT], true, "sibur");
+        sendCommand(_commands[SET_OBJECT], true, "sibur");
+        sendCommand(_commands[SET_OBJECT], true, "phiras");
+        sendCommand(_commands[INCANTATION], false);
+        _isIncantation = true;
+        _isBroadcast = false;
+        return true;
+    }
+    if (_currentLevel == 5 && linemate >= 1 && deraumere >= 2 && sibur >= 1 && mendiane >= 3 && _nbPlayer == 4) {
+        sendCommand(_commands[SET_OBJECT], true, "linemate");
+        sendCommand(_commands[SET_OBJECT], true, "deraumere");
+        sendCommand(_commands[SET_OBJECT], true, "deraumere");
+        sendCommand(_commands[SET_OBJECT], true, "sibur");
+        sendCommand(_commands[SET_OBJECT], true, "mendiane");
+        sendCommand(_commands[SET_OBJECT], true, "mendiane");
+        sendCommand(_commands[SET_OBJECT], true, "mendiane");
+        sendCommand(_commands[INCANTATION], false);
+        _isIncantation = true;
+        _isBroadcast = false;
+        return true;
+    }
+    if (_currentLevel == 6 && linemate >= 1 && deraumere >= 2 && sibur >= 3 && phiras >= 1 && _nbPlayer == 6) {
+        sendCommand(_commands[SET_OBJECT], true, "linemate");
+        sendCommand(_commands[SET_OBJECT], true, "deraumere");
+        sendCommand(_commands[SET_OBJECT], true, "deraumere");
+        sendCommand(_commands[SET_OBJECT], true, "sibur");
+        sendCommand(_commands[SET_OBJECT], true, "sibur");
+        sendCommand(_commands[SET_OBJECT], true, "sibur");
+        sendCommand(_commands[SET_OBJECT], true, "phiras");
+        sendCommand(_commands[INCANTATION], false);
+        _isIncantation = true;
+        _isBroadcast = false;
+        return true;
+    }
+    if (_currentLevel == 7 && linemate >= 2 && deraumere >= 2 && sibur >= 2 && mendiane >= 2 && phiras >= 2 && thystame >= 1 && _nbPlayer == 6) {
+        sendCommand(_commands[SET_OBJECT], true, "linemate");
+        sendCommand(_commands[SET_OBJECT], true, "linemate");
+        sendCommand(_commands[SET_OBJECT], true, "deraumere");
+        sendCommand(_commands[SET_OBJECT], true, "deraumere");
+        sendCommand(_commands[SET_OBJECT], true, "sibur");
+        sendCommand(_commands[SET_OBJECT], true, "sibur");
+        sendCommand(_commands[SET_OBJECT], true, "mendiane");
+        sendCommand(_commands[SET_OBJECT], true, "mendiane");
+        sendCommand(_commands[SET_OBJECT], true, "phiras");
+        sendCommand(_commands[SET_OBJECT], true, "phiras");
+        sendCommand(_commands[SET_OBJECT], true, "thystame");
         sendCommand(_commands[INCANTATION], false);
         _isIncantation = true;
         _isBroadcast = false;
@@ -347,9 +423,29 @@ void Zappy::AI::parseInventory(const std::string &response)
         sendCommand(_commands[BROADCAST], true, std::to_string(_currentLevel));
         _isBroadcast = true;
     }
-    if (handleIncantation(linemate, deraumere, sibur))
+    if (_currentLevel == 3 && linemate >= 2 && phiras >= 1 && sibur >= 1 && !_isBroadcast) {
+        sendCommand(_commands[BROADCAST], true, std::to_string(_currentLevel));
+        _isBroadcast = true;
+    }
+    if (_currentLevel == 4 && linemate >= 1 && deraumere >= 1 && sibur >= 2 && phiras >= 1) {
+        sendCommand(_commands[BROADCAST], true, std::to_string(_currentLevel));
+        _isBroadcast = true;
+    }
+    if (_currentLevel == 5 && linemate >= 1 && deraumere >= 2 && sibur >= 1 && mendiane >= 3) {
+        sendCommand(_commands[BROADCAST], true, std::to_string(_currentLevel));
+        _isBroadcast = true;
+    }
+    if (_currentLevel == 6 && linemate >= 1 && deraumere >= 2 && sibur >= 3 && phiras >= 1) {
+        sendCommand(_commands[BROADCAST], true, std::to_string(_currentLevel));
+        _isBroadcast = true;
+    }
+    if (_currentLevel == 7 && linemate >= 2 && deraumere >= 2 && sibur >= 2 && mendiane >= 2 && phiras >= 2 && thystame >= 1) {
+        sendCommand(_commands[BROADCAST], true, std::to_string(_currentLevel));
+        _isBroadcast = true;
+    }
+    if (handleIncantation(linemate, deraumere, sibur, mendiane, phiras, thystame))
         return;
-    if (_food < 15)
+    if (_food < 30)
         sendCommand(_commands[LOOK], false);
 }
 
