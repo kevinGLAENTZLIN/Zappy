@@ -15,13 +15,15 @@ Zappy::AI::AI()
     _commands.push_back("Right\n");
     _commands.push_back("Fork\n");
     _commands.push_back("Incantation\n");
-    _commands.push_back("Broadcast\n");
+    _commands.push_back("Broadcast ");
     _commands.push_back("Connect_nbr\n");
     _commands.push_back("Eject\n");
     _commands.push_back("Take ");
     _commands.push_back("Set ");
     _commands.push_back("Left\n");
 }
+
+/* Check arg method ----------------------------------------------------------------------------------------------------------------------- */
 
 void Zappy::AI::checkArg(int argc, char **argv)
 {
@@ -32,6 +34,8 @@ void Zappy::AI::checkArg(int argc, char **argv)
         throw Zappy::ErrorAI(ArgError, "-p or -n or -h missing, check -h");
     }
 }
+
+/* Init method ---------------------------------------------------------------------------------------------------------------------------- */
 
 void Zappy::AI::initAI(const std::string port, const std::string teamName, const std::string ip)
 {
@@ -71,12 +75,16 @@ void Zappy::AI::initConnection(void)
     }
 }
 
+/* Run method ----------------------------------------------------------------------------------------------------------------------------- */
+
 void Zappy::AI::run(void)
 {
     std::string serverResponse = "";
     bool firstRun = true;
 
     while (_isAlive) {
+        if ((_numberCmd == 0 && !firstRun && !_isBroadcast) || (_numberCmd == 1 && !_isBroadcast && !firstRun))
+            sendCommand(_commands[LOOK], false);
         if (_clientSocket->selectSocket() == -1)
             handleResponse();
         if (firstRun) {
@@ -85,6 +93,8 @@ void Zappy::AI::run(void)
         }
     }
 }
+
+/* Response global ------------------------------------------------------------------------------------------------------------------------ */
 
 void Zappy::AI::handleResponse(void)
 {
@@ -98,11 +108,17 @@ void Zappy::AI::handleResponse(void)
         _currentLevel++;
         return;
     }
-    _numberCmd--;
     if (serverResponse == "dead\n") {
         _isAlive = false;
         _clientSocket->~Socket();    
     }
+    std::cout << "nbr cmd -> " << _numberCmd << std::endl;
+    if (_isBroadcast && serverResponse != "ok\n" && serverResponse != "ko\n"
+    && serverResponse[0] != '[' && serverResponse != "dead\n") {
+        handleBroadcast(serverResponse);
+        return;
+    }
+    _numberCmd--;
     if (_numberCmd < 10 && !_commandQueue.empty() && !_isIncantation) {
         command = _commandQueue.front();
         _commandQueue.pop();
@@ -116,6 +132,75 @@ void Zappy::AI::handleResponse(void)
     }
 }
 
+/* Broadcast method ----------------------------------------------------------------------------------------------------------------------- */
+
+void Zappy::AI::moveToBroadcastPosition(int position)
+{
+    switch(position) {
+        case 0:
+            sendCommand(_commands[LOOK], false);
+            sendCommand(_commands[INVENTORY], false);
+            break;
+        case 1:
+            sendCommand(_commands[FORWARD], false);
+            break;
+        case 2:
+            sendCommand(_commands[FORWARD], false);
+            sendCommand(_commands[LEFT], false);
+            sendCommand(_commands[FORWARD], false);
+            break;
+        case 3:
+            sendCommand(_commands[LEFT], false);
+            sendCommand(_commands[FORWARD], false);
+            break;
+        case 4:
+            sendCommand(_commands[LEFT], false);
+            sendCommand(_commands[FORWARD], false);
+            sendCommand(_commands[LEFT], false);
+            sendCommand(_commands[FORWARD], false);
+            break;
+        case 5:
+            sendCommand(_commands[LEFT], false);
+            sendCommand(_commands[LEFT], false);
+            sendCommand(_commands[FORWARD], false);
+            break;
+        case 6:
+            sendCommand(_commands[RIGHT], false);
+            sendCommand(_commands[FORWARD], false);
+            sendCommand(_commands[RIGHT], false);
+            sendCommand(_commands[FORWARD], false);
+            break;
+        case 7:
+            sendCommand(_commands[RIGHT], false);
+            sendCommand(_commands[FORWARD], false);
+            break;
+        case 8:
+            sendCommand(_commands[RIGHT], false);
+            sendCommand(_commands[FORWARD], false);
+            sendCommand(_commands[LEFT], false);
+            sendCommand(_commands[FORWARD], false);
+            break;
+        default:
+            std::cerr << "erreur: " << position << std::endl;
+            break;
+    }
+}
+
+void Zappy::AI::handleBroadcast(const std::string &response)
+{
+    std::istringstream stream(response);
+    std::string position;
+    int level = 0;
+    int positionInt = 0;
+
+    stream >> position;
+    stream >> position;
+    positionInt = std::stoi(position);
+    moveToBroadcastPosition(positionInt);
+}
+
+/* Look method ---------------------------------------------------------------------------------------------------------------------------- */
+
 void Zappy::AI::handleLook(const std::string &response)
 {
     std::istringstream stream(response.substr(1, response.size() - 3));
@@ -123,26 +208,27 @@ void Zappy::AI::handleLook(const std::string &response)
     std::string object = "";
     std::istringstream tileStream;
     bool isObjectTaken = false;
+    bool actionTaken = false;
     int tileIndex = 0;
 
-    while (!isObjectTaken && std::getline(stream, tile, ',')) {
-        tileStream = std::istringstream(tile);
-        if (tileStream >> object && object != "player") {
-            handlePlayerMove(tileIndex);
-            isObjectTaken = true;
+    if (!_isBroadcast) {
+        while (!isObjectTaken && std::getline(stream, tile, ',')) {
+            tileStream = std::istringstream(tile);
+            if (tileStream >> object && object != "player") {
+                handlePlayerMove(tileIndex);
+                isObjectTaken = true;
+                actionTaken = true;
+            }
+            while (tileStream >> object) {
+                takeObject(object);
+                actionTaken = true;
+            }
+            tileStream.clear();
+            tileIndex++;
         }
-        while (tileStream >> object)
-            takeObject(object);
-        tileStream.clear();
-        tileIndex++;
     }
-    sendCommand(_commands[LOOK], false);
-}
-
-void Zappy::AI::takeObject(const std::string &object)
-{
-    if (object != "player" && object != "egg")
-        sendCommand(_commands[TAKE_OBJECT], true, object);
+    if (!actionTaken && !_isBroadcast)
+        sendCommand(_commands[FORWARD], false);
 }
 
 void Zappy::AI::handlePlayerMove(int tileIndex)
@@ -164,6 +250,14 @@ void Zappy::AI::handlePlayerMove(int tileIndex)
     }
 }
 
+/* Object handeling ----------------------------------------------------------------------------------------------------------------------- */
+
+void Zappy::AI::takeObject(const std::string &object)
+{
+    if (object != "player" && object != "egg")
+        sendCommand(_commands[TAKE_OBJECT], true, object);
+}
+
 void Zappy::AI::handleTakeObjectResponse(const std::string &response)
 {
     if (response == "ok\n")
@@ -171,6 +265,29 @@ void Zappy::AI::handleTakeObjectResponse(const std::string &response)
     else
         sendCommand(_commands[FORWARD], false);
 }
+
+/* Incantation method --------------------------------------------------------------------------------------------------------------------- */
+
+bool Zappy::AI::handleIncantation(const std::string &response, int linemate, int deraumere, int sibur, int nbPlayer)
+{
+    if (_currentLevel == 1 && linemate >= 1) {
+        sendCommand(_commands[SET_OBJECT], true, "linemate");
+        sendCommand(_commands[INCANTATION], false);
+        _isIncantation = true;
+        return true;
+    }
+    if (_currentLevel == 2 && linemate >= 1 && deraumere >= 1 && sibur >= 1 && nbPlayer == 2) {
+        sendCommand(_commands[SET_OBJECT], true, "linemate");
+        sendCommand(_commands[SET_OBJECT], true, "deraumere");
+        sendCommand(_commands[SET_OBJECT], true, "sibur");
+        sendCommand(_commands[INCANTATION], false);
+        _isIncantation = true;
+        return true;
+    }
+    return false;
+}
+
+/* Inventory method ----------------------------------------------------------------------------------------------------------------------- */
 
 void Zappy::AI::parseInventory(const std::string &response)
 {
@@ -182,10 +299,13 @@ void Zappy::AI::parseInventory(const std::string &response)
     int mendiane = 0;
     int phiras = 0;
     int thystame = 0;
+    int nbPlayer = 0;
 
     while (stream >> stringFind) {
         if (stringFind == "food")
             stream >> _food;
+        if (stringFind == "player")
+            stream >> nbPlayer;
         if (stringFind == "linemate")
             stream >> linemate;
         if (stringFind == "deraumere")
@@ -199,31 +319,25 @@ void Zappy::AI::parseInventory(const std::string &response)
         if (stringFind == "thystame")
             stream >> thystame;
     }
-    if (_currentLevel == 1 && linemate >= 1) {
-        sendCommand(_commands[SET_OBJECT], true, "linemate");
-        sendCommand(_commands[INCANTATION], false);
-        _isIncantation = true;
-        return;
-    }
     if (_currentLevel == 2 && linemate >= 1 && deraumere >= 1 && sibur >= 1) {
-        sendCommand(_commands[SET_OBJECT], true, "linemate");
-        sendCommand(_commands[SET_OBJECT], true, "deraumere");
-        sendCommand(_commands[SET_OBJECT], true, "sibur");
-        sendCommand(_commands[INCANTATION], false);
-        _isIncantation = true;
+        std::cout << "nb player -> " << nbPlayer << std::endl;
+        sendCommand(_commands[BROADCAST], true, std::to_string(_currentLevel));
+        _isBroadcast = true;
         return;
     }
-    if (_food < 10)
+    if (handleIncantation(response, linemate, deraumere, sibur, nbPlayer))
+        return;
+    if (_food < 15)
         sendCommand(_commands[LOOK], false);
 }
 
+/* Send command --------------------------------------------------------------------------------------------------------------------------- */
 
 void Zappy::AI::sendCommand(const std::string &command, bool isObject, const std::string &object)
 {
     if (_numberCmd > 10)
         return;
     if (isObject) {
-        std::cout << "Object take or set -> " << object << std::endl;
         _fd << (command + object + "\n");
         _commandQueue.push(command);
         _numberCmd++;

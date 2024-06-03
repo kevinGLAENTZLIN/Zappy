@@ -42,15 +42,19 @@ namespace Zappy {
         private:
             void handleResponse(void);
             void handleLook(const std::string &response);
+            void handleBroadcast(const std::string &response);
             void parseInventory(const std::string &response);
+            bool handleIncantation(const std::string &response, int linemate, int deraumere, int sibur, int nbPlayer);
             void handlePlayerMove(int tileIndex);
             void takeObject(const std::string &object);
 
             void sendCommand(const std::string &command, bool isObject, const std::string &object = "");
-
+            void moveToBroadcastPosition(int position);
             void handleTakeObjectResponse(const std::string &response);
 
             bool _isAlive;
+            bool _isIncantation;
+            bool _isBroadcast;
             int _currentLevel;
             int _food;
             int _numberCmd;
@@ -58,7 +62,6 @@ namespace Zappy {
             int _oui;
             int _clientNumber;
             int _sizeWorldX;
-            bool _isIncantation;
             int _sizeWorldY;
             std::string _port;
             std::string _ip;
