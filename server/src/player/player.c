@@ -49,3 +49,30 @@ void push_back_player(team_t *team, player_t *player, server_t *server)
     player->id = get_total_players(server);
     team->nb_player += 1;
 }
+
+static void kill_player_loop(player_t *player, player_t *tmp)
+{
+    if (tmp->next != player)
+        return;
+    tmp->next = player->next;
+    free_player(player);
+    return;
+}
+
+void kill_player(server_t *server, player_t *player)
+{
+    player_t *tmp = NULL;
+
+    for (int i = 0; ZAPPY->teams_name[i] != NULL; i++) {
+        tmp = TEAM->players;
+        if (player == tmp) {
+            TEAM->players = player->next;
+            free_player(player);
+            return;
+        }
+        while (tmp->next != NULL) {
+            kill_player_loop(player, tmp);
+            tmp = tmp->next;
+        }
+    }
+}

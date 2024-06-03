@@ -18,6 +18,7 @@ static client_t *init_client(int fd)
     client->buffer = malloc(sizeof(char) * BUFFER_SIZE);
     client->buffer[0] = 0;
     client->client_type = NULL;
+    client->team_name = NULL;
     client->next = NULL;
     client->player = NULL;
     client->player_id = -1;
@@ -35,6 +36,8 @@ void free_client(client_t *client)
         return;
     free_commands(client);
     free(client->buffer);
+    if (client->team_name != NULL)
+        free(client->team_name);
     if (client->ai_action_message != NULL)
         free(client->ai_action_message);
     if (client->gui_action_message != NULL)
@@ -91,14 +94,39 @@ void read_client(server_t *server, int i)
     ssize_t size;
     char buffer[BUFFER_SIZE];
 
+    if (client == NULL)
+        return;
     size = read(client->fd, buffer, BUFFER_SIZE);
     buffer[size] = 0;
     if (size != 0)
         strcat(client->buffer, buffer);
+    if (size == 0)
+        return disconnect_client(server, CLIENT);
     if (strstr(client->buffer, "\n") != NULL) {
         printf("Buffer [%s]\n", client->buffer);
         push_back_command(server, i);
         display_command_list(server, i);
         memset(client->buffer, 0, 1024);
+    }
+}
+
+void disconnect_client(server_t *server, client_t *client)
+{
+    client_t *tmp = server->clients;
+
+    if (tmp == client) {
+        server->nb_client -= 1;
+        server->clients = client->next;
+        free_client(client);
+        return;
+    }
+    while (tmp->next != NULL) {
+        if (tmp->next == client) {
+            server->nb_client -= 1;
+            tmp->next = client->next;
+            free_client(client);
+            return;
+        }
+        tmp = tmp->next;
     }
 }

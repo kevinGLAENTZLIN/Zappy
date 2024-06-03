@@ -20,7 +20,8 @@ static bool command_loop_handling(char **list_cmd, void (**list_func)(),
     void (*command)();
 
     for (int j = 0; j < my_len(NULL, (void **)list_cmd); j++) {
-        if (strncmp(client->cmds->command, list_cmd[j], strlen(list_cmd[j])) == 0) {
+        if (strncmp(client->cmds->command, list_cmd[j],
+        strlen(list_cmd[j])) == 0) {
             command = list_func[j];
             command(server, i, client->cmds->command);
             return true;

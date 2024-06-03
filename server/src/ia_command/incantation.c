@@ -42,6 +42,7 @@ static void incantation_player_checking(server_t *server, int i,
     player_t *player)
 {
     player_t *player2 = PLAYER;
+
     if (player == NULL)
         return;
     if (player->x == player2->x && player->y == player2->y &&
@@ -134,6 +135,7 @@ static void check_incantation1(server_t *server, int i, int lvl)
 void incantation(server_t *server, int i, char *input)
 {
     player_t *player = PLAYER;
+
     (void) input;
     if (player != NULL) {
         check_incantation1(server, i, player->level);

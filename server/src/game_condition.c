@@ -28,16 +28,19 @@ static void consume_food(server_t *server)
 static void check_dead(server_t *server, player_t *player)
 {
     client_t *client = NULL;
+    player_t *next = NULL;
 
     if (player == NULL)
         return;
+    next = player->next;
     if (player->food <= 0) {
         client = get_client_by_player(server, player);
         send_to_all_gui(server, "pdi #%d\n", player->id);
         dprintf(client->fd, "dead\n");
-        // Todo Deconnecte et free le client du player
+        disconnect_client(server, get_client_by_player(server, player));
+        kill_player(server, player);
     }
-    check_dead(server, player->next);
+    check_dead(server, next);
 }
 
 /// @brief Check if the given team won
