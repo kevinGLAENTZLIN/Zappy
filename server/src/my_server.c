@@ -85,7 +85,7 @@ void add_client_loop(server_t *server)
     struct timeval time;
 
     time.tv_sec = 0;
-    time.tv_usec = 500;
+    time.tv_usec = TIMEOUT;
     FD_ZERO(&fd);
     FD_SET(FD_CTRL, &fd);
     tmp = select(FD_CTRL + 1, &fd, NULL, NULL, &time);
@@ -107,7 +107,7 @@ void read_client_loop(server_t *server)
     client_t *client = NULL;
 
     time.tv_sec = 0;
-    time.tv_usec = 500;
+    time.tv_usec = TIMEOUT;
     for (int i = 0; i < server->nb_client; i++) {
         client = CLIENT;
         if (client == NULL)
