@@ -124,7 +124,7 @@ void read_client_loop(server_t *server)
 
 /// @brief Server loop, handle the tick rate
 /// @param server Structure that contain all server data
-static void server_loop(server_t *server)
+static bool server_loop(server_t *server)
 {
     struct timeval current_time;
     struct timeval elapsed_time;
@@ -143,8 +143,8 @@ static void server_loop(server_t *server)
     if (server != NULL)
         read_client_loop(server);
     else
-        return;
-    server_loop(server);
+        return false;
+    return true;
 }
 
 /// @brief Initialize a server with Zappy information and start it
@@ -165,6 +165,6 @@ int my_server(zappy_t *zappy)
     config_control(server, zappy->port);
     listen(server->control_fd, NB_MAX_CLIENT);
     gettimeofday(&server->last_tick, NULL);
-    server_loop(server);
+    while(server_loop(server));
     return 0;
 }
