@@ -33,8 +33,10 @@ static void check_dead(server_t *server, player_t *player)
     if (player == NULL)
         return;
     next = player->next;
-    if (player->food <= 0) {
+    if (player != NULL && player->food <= 0) {
         client = get_client_by_player(server, player);
+        if (client == NULL || player == NULL)
+            return check_dead(server, next);
         send_to_all_gui(server, "pdi #%d\n", player->id);
         send_client(client->fd, "dead\n");
         disconnect_client(server, get_client_by_player(server, player));

@@ -83,7 +83,6 @@ static void set_resource(zappy_t *zappy, float f, char *type)
     int n = (int)f - get_nb_resource(zappy, type);
 
     for (int j = 0; j < n; j++) {
-        printf("Refilling %s\n", type);
         if (strcmp(type, "food") == 0)
             zappy->map[rand() % zappy->y][rand() % zappy->x]->food += 1;
         if (strcmp(type, "linemate") == 0)
