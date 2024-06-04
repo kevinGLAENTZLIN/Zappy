@@ -75,12 +75,12 @@ void add_client(server_t *server, int fd)
 
     if (tmp == NULL) {
         server->clients = init_client(fd);
-        dprintf(server->clients->fd, "WELCOME\n");
+        send_client(server->clients->fd, "WELCOME\n");
     } else {
         while (tmp->next != NULL)
             tmp = tmp->next;
         tmp->next = init_client(fd);
-        dprintf(tmp->next->fd, "WELCOME\n");
+        send_client(tmp->next->fd, "WELCOME\n");
     }
     server->nb_client += 1;
 }

@@ -104,7 +104,7 @@ static void exec_client_command(server_t *server, int i)
 static void check_action_message(server_t *server, client_t *client)
 {
     if (client->ai_action_message != NULL) {
-        dprintf(client->fd, client->ai_action_message);
+        send_client(client->fd, client->ai_action_message);
         free(client->ai_action_message);
         client->ai_action_message = NULL;
     }

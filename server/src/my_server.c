@@ -165,6 +165,6 @@ int my_server(zappy_t *zappy)
     config_control(server, zappy->port);
     listen(server->control_fd, NB_MAX_CLIENT);
     gettimeofday(&server->last_tick, NULL);
-    while(server_loop(server));
+    while (server_loop(server));
     return 0;
 }

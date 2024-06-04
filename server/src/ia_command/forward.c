@@ -22,7 +22,7 @@ void forward(server_t *server, int i, char *input)
             player->y = ((player->y + 1) + ZAPPY->y) % ZAPPY->y;
         if (player->direction == left)
             player->x = ((player->x - 1) + ZAPPY->x) % ZAPPY->x;
-        dprintf(client->fd, "ok\n");
+        send_client(client->fd, "ok\n");
         client->time_to_wait = 7;
     }
 }

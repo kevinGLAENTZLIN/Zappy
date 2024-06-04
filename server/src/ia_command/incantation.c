@@ -63,7 +63,7 @@ static void incantation_response(server_t *server, int i)
     for (int j = 0; ZAPPY->teams_name[j] != NULL; j++)
         incantation_player_checking(server, i, ZAPPY->teams[j]->players);
     send_to_all_gui(server, "\n");
-    dprintf(client->fd, "Elevation underway\n");
+    send_client(client->fd, "Elevation underway\n");
     elevate_player_on_tile(server, player->x, player->y, player->level);
     sprintf(ai_tmp, "Current level: %d\n", player->level + 1);
     client->ai_action_message = ai_tmp;
@@ -89,7 +89,7 @@ static void check_incantation3(server_t *server, int i, int lvl)
         return incantation_response(server, i);
     }
     send_to_all_gui(server, "pie %d %d ko\n", tile->x, tile->y);
-    return (void)dprintf(FD_CLIENT, "ko\n");
+    return (void)send_client(FD_CLIENT, "ko\n");
 }
 
 static void check_incantation2(server_t *server, int i, int lvl)

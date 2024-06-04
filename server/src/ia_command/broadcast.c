@@ -23,7 +23,7 @@ static void get_shortest_way(server_t *server, int i, player_t *player)
     client_t *tmp = get_client_by_player(server, player);
 
     send_to_all_gui(server, "pbc #%d\n", tmp->player->id);
-    dprintf(tmp->fd, "Broadcast: %d %d\n", x, y);
+    send_client(tmp->fd, "Broadcast: %d %d\n", x, y);
 }
 
 static void get_shortest_way_players(server_t *server, int i, player_t *player)
@@ -44,7 +44,7 @@ void broadcast(server_t *server, int i, char *input)
     if (client->player != NULL) {
         for (int j = 0; ZAPPY->teams_name[j] != NULL; j++)
             get_shortest_way_players(server, j, ZAPPY->teams[j]->players);
-        dprintf(client->fd, "ok\n");
+        send_client(client->fd, "ok\n");
         client->time_to_wait = 7;
     }
 }

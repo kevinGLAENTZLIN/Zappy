@@ -16,6 +16,7 @@ void my_connect(server_t *server, int i, char *input)
     if (client->player != NULL) {
         tmp = get_team_by_name(server, client->player->team_name);
         if (tmp != NULL)
-            dprintf(client->fd, "%d\n", tmp->nb_max_player - tmp->nb_player);
+            send_client(client->fd, "%d\n", tmp->nb_max_player -
+            tmp->nb_player);
     }
 }

@@ -11,15 +11,15 @@ static void send_inventory(server_t *server, int i)
 {
     client_t *client = CLIENT;
 
-    dprintf(client->fd, "[");
-    dprintf(client->fd, "food %d,", client->player->food);
-    dprintf(client->fd, " deraumere %d,", client->player->deraumere);
-    dprintf(client->fd, " linemate %d,", client->player->linemate);
-    dprintf(client->fd, " mendiane %d,", client->player->mendiane);
-    dprintf(client->fd, " phiras %d,", client->player->phiras);
-    dprintf(client->fd, " sibur %d,", client->player->sibur);
-    dprintf(client->fd, " thystame %d", client->player->thystame);
-    dprintf(client->fd, "]\n");
+    send_client(client->fd, "[");
+    send_client(client->fd, "food %d,", client->player->food);
+    send_client(client->fd, " deraumere %d,", client->player->deraumere);
+    send_client(client->fd, " linemate %d,", client->player->linemate);
+    send_client(client->fd, " mendiane %d,", client->player->mendiane);
+    send_client(client->fd, " phiras %d,", client->player->phiras);
+    send_client(client->fd, " sibur %d,", client->player->sibur);
+    send_client(client->fd, " thystame %d", client->player->thystame);
+    send_client(client->fd, "]\n");
     client->time_to_wait = 1;
 }
 

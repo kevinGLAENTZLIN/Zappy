@@ -25,7 +25,7 @@ static void handle_set_response(server_t *server, int i, char *object)
         send_to_all_gui(server, "pdr #%d %d", player->id, 5);
     if (strcmp(object, "thystame") == 0)
         send_to_all_gui(server, "pdr #%d %d", player->id, 6);
-    dprintf(FD_CLIENT, "ok\n");
+    send_client(FD_CLIENT, "ok\n");
 }
 
 static void set_object3(server_t *server, int i, char *object, tile_t *tile)
@@ -35,7 +35,7 @@ static void set_object3(server_t *server, int i, char *object, tile_t *tile)
         tile->thystame += 1;
         return handle_set_response(server, i, object);
     }
-    return (void)dprintf(FD_CLIENT, "ko\n");
+    return (void)send_client(FD_CLIENT, "ko\n");
 }
 
 static void set_object2(server_t *server, int i, char *object, tile_t *tile)
@@ -63,7 +63,7 @@ static void set_object(server_t *server, int i, char *object)
     tile_t *tile = PLAYER_TILE;
 
     if (tile == NULL)
-        return (void)dprintf(FD_CLIENT, "ko\n");
+        return (void)send_client(FD_CLIENT, "ko\n");
     if (strcmp(object, "food") == 0 && PLAYER->food > 0) {
         PLAYER->food -= 1;
         tile->food += 1;
@@ -88,7 +88,7 @@ void set(server_t *server, int i, char *input)
     char **tab = get_parameters(input);
 
     if (tab == NULL || tab[0] == NULL || tab[1] == NULL)
-        return (void)dprintf(client->fd, "ko\n");
+        return (void)send_client(client->fd, "ko\n");
     set_object(server, i, tab[1]);
     client->time_to_wait = 7;
     free_tab(tab);

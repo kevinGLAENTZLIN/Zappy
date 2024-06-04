@@ -24,7 +24,7 @@ void my_fork(server_t *server, int i, char *input)
         sprintf(tmp, "enw #%d #%d %d %d\n", egg->id, client->player->id,
         egg->x, egg->y);
         client->gui_action_message = tmp;
-        dprintf(client->fd, "ok\n");
+        send_client(client->fd, "ok\n");
         client->time_to_wait = 42;
     }
 }

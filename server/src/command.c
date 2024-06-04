@@ -46,8 +46,8 @@ static void set_client_ia_mode(server_t *server, int i)
     client->team_name = strdup(team->team_name);
     client->player = player;
     push_back_player(team, player, server);
-    dprintf(client->fd, "%d\n", team->nb_max_player - team->nb_player);
-    dprintf(client->fd, "%d %d\n", player->x, player->y);
+    send_client(client->fd, "%d\n", team->nb_max_player - team->nb_player);
+    send_client(client->fd, "%d %d\n", player->x, player->y);
     // send_to_all_gui(server, "ebo #%d\n", egg->id); // Todo Fix Valgrind
     send_to_all_gui(server, "pnw #%d %d %d %d %d %s\n", player->id, player->x,
     player->y, player->direction + 1, player->level + 1, player->team_name);
@@ -71,13 +71,13 @@ static bool check_connection_command(server_t *server, int i)
     if (is_team_name(server, client->cmds->command)) {
         team = get_team_by_name(server, client->cmds->command);
         if (team->nb_player >= team->nb_max_player) {
-            dprintf(client->fd, "Too many player in these team\n");
+            send_client(client->fd, "Too many player in these team\n");
             return false;
         }
         set_client_ia_mode(server, i);
         return true;
     }
-    dprintf(client->fd, "Invalid Client Type\n");
+    send_client(client->fd, "Invalid Client Type\n");
     return false;
 }
 
@@ -104,5 +104,5 @@ void command_handling(server_t *server, int i)
     if (strcmp(CLIENT_TYPE, GUI) != 0 &&
     command_loop_handling(list_ia_cmd, ia_func, server, i))
         return;
-    dprintf(FD_CLIENT, (strcmp(CLIENT_TYPE, GUI) == 0 ? "suc\n" : "ko\n"));
+    send_client(FD_CLIENT, (strcmp(CLIENT_TYPE, GUI) == 0 ? "suc\n" : "ko\n"));
 }

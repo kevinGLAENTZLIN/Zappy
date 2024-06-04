@@ -15,10 +15,10 @@ static void send_eject(server_t *server, int i, player_t *player)
     int b = client->player->direction;
 
     if (tmp == NULL)
-        return (void)dprintf(client->fd, "ko\n");
-    dprintf(client->fd, "ok\n");
+        return (void)send_client(client->fd, "ko\n");
+    send_client(client->fd, "ok\n");
     send_to_all_gui(server, "pex #%d\n", tmp->player->id);
-    dprintf(tmp->fd, "eject: %d\n", (((2 * (a - b) + 4) + 16) % 8) + 1);
+    send_client(tmp->fd, "eject: %d\n", (((2 * (a - b) + 4) + 16) % 8) + 1);
 }
 
 static void destroy_egg(server_t *server, egg_t *egg)

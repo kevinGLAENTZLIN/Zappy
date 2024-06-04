@@ -10,9 +10,9 @@
 static bool send_tile_info(server_t *server, int i, bool opt, char *txt)
 {
     if (opt)
-        dprintf(FD_CLIENT, " %s", txt);
+        send_client(FD_CLIENT, " %s", txt);
     else
-        dprintf(FD_CLIENT, "%s", txt);
+        send_client(FD_CLIENT, "%s", txt);
     return true;
 }
 
@@ -37,7 +37,7 @@ static void get_tile_info(server_t *server, int i, tile_t *tile, bool opt)
     for (int j = 0; j < tile->thystame; j++)
         tmp = send_tile_info(server, i, tmp, "thystame");
     if (opt)
-        dprintf(FD_CLIENT, ", ");
+        send_client(FD_CLIENT, ", ");
 }
 
 static int n_square(int n)
@@ -101,14 +101,14 @@ static void display_look(server_t *server, int i)
     client_t *client = CLIENT;
     int tmp = client->player->level + 2;
 
-    dprintf(client->fd, "[");
+    send_client(client->fd, "[");
     for (int j = 0; j < tmp; j++) {
         client->player->level = j;
         get_look_origin_level(server, i, client->player->x, client->player->y);
         if (j + 1 != tmp)
-            dprintf(client->fd, ", ");
+            send_client(client->fd, ", ");
     }
-    dprintf(client->fd, "]\n");
+    send_client(client->fd, "]\n");
     client->player->level = tmp - 2;
     client->time_to_wait = 7;
 }

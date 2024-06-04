@@ -226,6 +226,7 @@ int my_len(void *delimiter, void **elts);
 
 // * gui_util.c functions :
 void send_to_all_gui(server_t *server, const char *format, ...);
+void send_client(int fd, const char *format, ...);
 
 // * GUI commands functions :
 void msz(server_t *server, int i, char *input);

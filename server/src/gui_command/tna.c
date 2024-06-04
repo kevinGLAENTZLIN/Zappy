@@ -11,5 +11,5 @@ void tna(server_t *server, int i, char *input)
 {
     (void) input;
     for (int j = 0; ZAPPY->teams_name[j] != NULL; j++)
-        dprintf(FD_CLIENT, "tna %s\n", ZAPPY->teams_name[j]);
+        send_client(FD_CLIENT, "tna %s\n", ZAPPY->teams_name[j]);
 }
