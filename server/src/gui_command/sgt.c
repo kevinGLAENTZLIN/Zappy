@@ -10,5 +10,5 @@
 void sgt(server_t *server, int i, char *input)
 {
     (void) input;
-    send_client(FD_CLIENT, "sgt %d\n", ZAPPY->ticks);
+    send_client(FD_CLIENT, "sgt %d\n", ZAPPY->frequence);
 }
