@@ -15,7 +15,8 @@ client_t *get_client_by_player(server_t *server, player_t *player)
         return NULL;
     for (int i = 0; i < server->nb_client; i++) {
         client = CLIENT;
-        if (client->client_type != NULL && strcmp(client->client_type, IA) == 0 && client->player == player)
+        if (client->client_type != NULL && strcmp(client->client_type, IA) == 0
+        && client->player == player)
             return client;
     }
     return NULL;
