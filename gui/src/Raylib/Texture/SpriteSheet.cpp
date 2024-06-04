@@ -29,14 +29,9 @@ void Raylib::SpriteSheet::DrawSpriteSheet()
 
 void Raylib::SpriteSheet::updateFrame(std::size_t frame)
 {
-    std::size_t newPosX = 0;
-    std::size_t newPosY = _frameRec.getPosition().second;
+    std::size_t newPosX = _frameRec.getSize().first * (frame % static_cast<std::size_t>(_spriteSheetSize.x));
+    std::size_t newPosY = 0;
 
-    _currentFrame = frame % _nbFrames;
-    newPosX = _frameRec.getPosition().first + _frameSize.x;
-    if (_currentFrame % static_cast<std::size_t>(_spriteSheetSize.x) == 0) {
-        newPosX = 0;
-        newPosY = _frameRec.getPosition().second + _frameSize.y;
-    }
+    newPosY = _frameRec.getSize().second * static_cast<std::size_t>(frame % static_cast<std::size_t>(_spriteSheetSize.y));
     _frameRec.setPosition(newPosX, newPosY);
 }

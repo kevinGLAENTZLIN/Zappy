@@ -9,35 +9,24 @@
 #include <raylib.h>
 
 Raylib::Text::Text(const std::string &text, const std::size_t &textSize,
-                   const FontEnc &font, const double &posX, const double &posY,
-                   const double &spacing, const Color &color,
-                   const std::size_t &textAlignment):
-    _text(text), _textSize(textSize), _font(font), _spacing(spacing), _textColor(color)
-{
-    double posPixelX = Screen::myGetScreenWidth() * (posX / 100);
-    double posPixelY = Screen::myGetScreenHeight() * (posY / 100) - getTextHeight() / 2;
-
-    if (textAlignment == RIGHT)
-        posPixelX -= getTextWidth();
-    if (textAlignment == CENTER)
-        posPixelX -= getTextWidth() / 2;
-    _position = {static_cast<float>(posPixelX), static_cast<float>(posPixelY)};
-}
-
-Raylib::Text::Text(const std::string &text, const std::size_t &textSize,
                    const std::string &font, const double &posX, const double &posY,
-                   const double &spacing, const Color &color,
-                   const std::size_t &textAlignment):
+                   const double &spacing, const Color &color, const TextFormat &textFormat,
+                   const TextAlignment &textAlign):
     _text(text), _textSize(textSize), _font(font), _spacing(spacing), _textColor(color)
 {
-    float posPixelX = Screen::myGetScreenWidth() * (posX / 100);
-    float posPixelY = Screen::myGetScreenHeight() * (posY / 100);
+    float newPosX = posX;
+    float newPosY = posY;
 
-    if (textAlignment == RIGHT)
-        posPixelX -= getTextWidth();
-    if (textAlignment == CENTER)
-        posPixelX -= getTextWidth() / 2;
-    _position = (Vector2){posPixelX, posPixelY};
+    if (textFormat == PERCENT) {
+        newPosX = Screen::myGetScreenWidth() * (posX / 100);
+        newPosY = Screen::myGetScreenHeight() * (posY / 100);
+    }
+    if (textAlign == RIGHT)
+        newPosX -= getTextWidth();
+    if (textAlign == CENTER)
+        newPosX -= getTextWidth() / 2;
+    newPosY -= getTextHeight() / 2;
+    _position = (Vector2){newPosX, newPosY};
 }
 
 Raylib::Text::~Text()

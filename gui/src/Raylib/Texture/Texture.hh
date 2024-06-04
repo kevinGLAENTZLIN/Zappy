@@ -18,7 +18,8 @@ namespace Raylib {
         Texture(const std::string &path, double posX = 0, double posY = 0,
                 double rotation = 0, double scale = 1);
         ~Texture();
-        Texture2D GetTexture();
+        Texture2D GetTexture() const;
+        Vector2 getPosition() const;
         void DrawTexture();
     protected:
         void createTexture(const std::string &path);

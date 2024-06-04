@@ -21,9 +21,14 @@ Raylib::Texture::Texture(const std::string &fileName, double posX, double posY,
     _position = {static_cast<float>(posPixelX), static_cast<float>(posPixelY)};
 }
 
-Texture2D Raylib::Texture::GetTexture()
+Texture2D Raylib::Texture::GetTexture() const
 {
     return _texture;
+}
+
+Vector2 Raylib::Texture::getPosition() const
+{
+    return _position;
 }
 
 extern "C" {

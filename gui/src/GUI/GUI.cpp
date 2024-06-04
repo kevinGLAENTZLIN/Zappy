@@ -42,18 +42,22 @@ void Zappy::GUI::handleArguments(const std::vector<std::string> &args)
 
 void Zappy::GUI::runGUI()
 {
-    GuiSocket socket;
     std::string serverInput;
-    std::size_t fd;
 
-    fd = socket.createSocket(_port, _ip);
     _window = std::make_unique<Raylib::Window>(KEY_ESCAPE, "Zappy");
     _commonElements = std::make_shared<CommonElements>();
+    _commonElements->setPort(_port);
+    _commonElements->setIp(_ip);
     initScenes();
+    _commonElements->getMusic().play();
+    _commonElements->getMusic().setVolume(1.);
     while (_window->myWindowShouldClose() == false) {
-        serverInput = GuiSocket::receiveFromServer(fd);
-        if (serverInput == "WELCOME")
-            GuiSocket::sendToServer(fd, "GRAPHIC\n");
+        _commonElements->getMusic().updateMusic();
+        if (_commonElements->getConnect()) {
+            serverInput = GuiSocket::receiveFromServer(_commonElements->getSocket());
+            if (serverInput == "WELCOME")
+                GuiSocket::sendToServer(_commonElements->getSocket(), "GRAPHIC\n");
+        }
         _scenes[_commonElements->getCurrentScene()]->computeLogic();
         _window->myBeginDrawing();
             _window->myClearBackground();

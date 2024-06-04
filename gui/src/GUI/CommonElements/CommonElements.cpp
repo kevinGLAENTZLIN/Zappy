@@ -9,7 +9,7 @@
 #include <map>
 
 Zappy::CommonElements::CommonElements():
-    _currentScene(0), _camera(), _socket(0), _musicVolume(0.5), _soundVolume(0.5)
+    _currentScene(0), _camera(), _socket(0), _musicVolume(0.5), _soundVolume(0.5), _music("gui/assets/audio/menu.mp3")
 {
 }
 
@@ -35,6 +35,21 @@ void Zappy::CommonElements::setSocket(const std::size_t &socket)
 void Zappy::CommonElements::setMusicVolume(const double &volume)
 {
     _musicVolume = volume;
+}
+
+void Zappy::CommonElements::setPort(const std::size_t &port)
+{
+    _port = port;
+}
+
+void Zappy::CommonElements::setIp(const std::string &ip)
+{
+    _ip = ip;
+}
+
+void Zappy::CommonElements::setConnect(const bool &connected)
+{
+    _connected = connected;
 }
 
 void Zappy::CommonElements::setSoundVolume(const double &volume)
@@ -65,4 +80,24 @@ double Zappy::CommonElements::getMusicVolume() const
 double Zappy::CommonElements::getSoundVolume() const
 {
     return _soundVolume;
+}
+
+std::size_t Zappy::CommonElements::getPort() const
+{
+    return _port;
+}
+
+std::string Zappy::CommonElements::getIp() const
+{
+    return _ip;
+}
+
+bool Zappy::CommonElements::getConnect() const
+{
+    return _connected;
+}
+
+Raylib::MusicEnc Zappy::CommonElements::getMusic() const
+{
+    return _music;
 }
