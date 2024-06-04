@@ -59,7 +59,7 @@ static void check_win(server_t *server, team_t *team)
     }
     if (count >= 6) {
         printf("Team %s has won !\n", team->team_name);
-        send_to_all_gui(server, "seg %s\n", team->team_name);
+        send_to_all_gui(server, "seg \"%s\"\n", team->team_name);
     }
 }
 
