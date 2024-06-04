@@ -10,5 +10,5 @@
 void msz(server_t *server, int i, char *input)
 {
     (void) input;
-    dprintf(FD_CLIENT, "msz %d %d\n", ZAPPY->x, ZAPPY->y);
+    send_client(FD_CLIENT, "msz %d %d\n", ZAPPY->x, ZAPPY->y);
 }

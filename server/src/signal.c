@@ -9,6 +9,7 @@
 
 extern server_t *server;
 
+/// @brief Redirect Ctrl-C Signal in order to free the Server structure
 void teams_sigint(int signum)
 {
     (void) signum;

@@ -9,15 +9,16 @@
 
 static void send_eject(server_t *server, int i, player_t *player)
 {
+    client_t *client = CLIENT;
     client_t *tmp = get_client_by_player(server, player);
     int a = player->direction;
-    int b = PLAYER->direction;
+    int b = client->player->direction;
 
     if (tmp == NULL)
-        return (void)dprintf(FD_CLIENT, "ko\n");
-    dprintf(FD_CLIENT, "ok\n");
+        return (void)send_client(client->fd, "ko\n");
+    send_client(client->fd, "ok\n");
     send_to_all_gui(server, "pex #%d\n", tmp->player->id);
-    dprintf(tmp->fd, "eject: %d\n", (((2 * (a - b) + 4) + 16) % 8) + 1);
+    send_client(tmp->fd, "eject: %d\n", (((2 * (a - b) + 4) + 16) % 8) + 1);
 }
 
 static void destroy_egg(server_t *server, egg_t *egg)
@@ -47,31 +48,35 @@ static void egg_destruction(server_t *server, player_t *player)
     }
 }
 
-static void eject_players(server_t *server, int i, player_t *player)
+static void eject_players(server_t *server, int i, player_t *tmp)
 {
-    if (player == NULL)
+    player_t *player = PLAYER;
+
+    if (tmp == NULL)
         return;
-    if (player == PLAYER || player->x != PLAYER->x || player->y != PLAYER->y)
-        return eject_players(server, i, player->next);
-    if (PLAYER->direction == up)
-        player->y = ((PLAYER->y - 1) + ZAPPY->y) % ZAPPY->y;
-    if (PLAYER->direction == right)
-        player->x = ((PLAYER->x + 1) + ZAPPY->x) % ZAPPY->x;
-    if (PLAYER->direction == down)
-        player->y = ((PLAYER->y + 1) + ZAPPY->y) % ZAPPY->y;
-    if (PLAYER->direction == left)
-        player->x = ((PLAYER->x - 1) + ZAPPY->x) % ZAPPY->x;
-    egg_destruction(server, player);
-    send_eject(server, i, player);
-    eject_players(server, i, player->next);
+    if (tmp == player || tmp->x != player->x || tmp->y != player->y)
+        return eject_players(server, i, tmp->next);
+    if (player->direction == up)
+        tmp->y = ((player->y - 1) + ZAPPY->y) % ZAPPY->y;
+    if (player->direction == right)
+        tmp->x = ((player->x + 1) + ZAPPY->x) % ZAPPY->x;
+    if (player->direction == down)
+        tmp->y = ((player->y + 1) + ZAPPY->y) % ZAPPY->y;
+    if (player->direction == left)
+        tmp->x = ((player->x - 1) + ZAPPY->x) % ZAPPY->x;
+    egg_destruction(server, tmp);
+    send_eject(server, i, tmp);
+    eject_players(server, i, tmp->next);
 }
 
 void eject(server_t *server, int i, char *input)
 {
+    client_t *client = CLIENT;
+
     (void) input;
-    if (PLAYER != NULL) {
-        for (int i = 0; ZAPPY->teams_name[i] != NULL; i++)
-            eject_players(server, i, TEAM->players);
-        CLIENT->time_to_wait = 7;
+    if (client->player != NULL) {
+        for (int j = 0; ZAPPY->teams_name[j] != NULL; j++)
+            eject_players(server, j, ZAPPY->teams[j]->players);
+        client->time_to_wait = 7;
     }
 }

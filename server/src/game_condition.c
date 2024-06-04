@@ -7,6 +7,8 @@
 
 #include "../include/server.h"
 
+/// @brief Consume one food to each player
+/// @param server Structure that contain all server data
 static void consume_food(server_t *server)
 {
     player_t *tmp = NULL;
@@ -20,21 +22,32 @@ static void consume_food(server_t *server)
     }
 }
 
+/// @brief Check if there is dead player in the given player list
+/// @param server Structure that contain all server data
+/// @param player Linked list of player
 static void check_dead(server_t *server, player_t *player)
 {
     client_t *client = NULL;
+    player_t *next = NULL;
 
     if (player == NULL)
         return;
-    if (player->food <= 0) {
+    next = player->next;
+    if (player != NULL && player->food <= 0) {
         client = get_client_by_player(server, player);
+        if (client == NULL || player == NULL)
+            return check_dead(server, next);
         send_to_all_gui(server, "pdi #%d\n", player->id);
-        dprintf(client->fd, "dead\n");
-        // Todo Deconnecte et free le client du player
+        send_client(client->fd, "dead\n");
+        disconnect_client(server, get_client_by_player(server, player));
+        kill_player(server, player);
     }
-    check_dead(server, player->next);
+    check_dead(server, next);
 }
 
+/// @brief Check if the given team won
+/// @param server Structure that contain all server data
+/// @param team Concerned team
 static void check_win(server_t *server, team_t *team)
 {
     player_t *player = team->players;
@@ -48,10 +61,12 @@ static void check_win(server_t *server, team_t *team)
     }
     if (count >= 6) {
         printf("Team %s has won !\n", team->team_name);
-        send_to_all_gui(server, "seg %s\n", team->team_name);
+        send_to_all_gui(server, "seg \"%s\"\n", team->team_name);
     }
 }
 
+/// @brief Call all tick relative function
+/// @param server Structure that contain all server data
 void check_game_condition(server_t *server)
 {
     if (ZAPPY->ticks % 20 == 0)

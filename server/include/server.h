@@ -179,6 +179,7 @@ void add_client(server_t *server, int fd);
 void free_client(client_t *client);
 void read_client(server_t *server, int i);
 client_t *get_client_by_index(server_t *server, int i);
+void disconnect_client(server_t *server, client_t *client);
 
 // * command_vector.c functions:
 void push_back_command(server_t *server, int i);
@@ -192,6 +193,7 @@ void free_player(player_t *player);
 void free_players(team_t *team);
 void push_back_player(team_t *team, player_t *player, server_t *server);
 client_t *get_client_by_player(server_t *server, player_t *player);
+void kill_player(server_t *server, player_t *player);
 
 // * team functions :
 void load_zappy_teams(zappy_t *zappy);
@@ -212,6 +214,7 @@ void check_game_condition(server_t *server);
 zappy_t *init_zappy(int argc, char **argv);
 void free_zappy(zappy_t *zappy);
 void free_map(zappy_t *zappy);
+zappy_t *check_zappy(zappy_t *zappy);
 
 // * command.c functions :
 void command_handling(server_t *server, int i);
@@ -223,6 +226,7 @@ int my_len(void *delimiter, void **elts);
 
 // * gui_util.c functions :
 void send_to_all_gui(server_t *server, const char *format, ...);
+void send_client(int fd, const char *format, ...);
 
 // * GUI commands functions :
 void msz(server_t *server, int i, char *input);

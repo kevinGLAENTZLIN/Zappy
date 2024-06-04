@@ -7,6 +7,9 @@
 
 #include "../include/server.h"
 
+/// @brief Initialize a default Client with the given File Descriptor
+/// @param fd File Descriptor corresponding to the Client Socket
+/// @return Initialized Client
 static client_t *init_client(int fd)
 {
     client_t *client = malloc(sizeof(client_t));
@@ -15,6 +18,7 @@ static client_t *init_client(int fd)
     client->buffer = malloc(sizeof(char) * BUFFER_SIZE);
     client->buffer[0] = 0;
     client->client_type = NULL;
+    client->team_name = NULL;
     client->next = NULL;
     client->player = NULL;
     client->player_id = -1;
@@ -25,12 +29,15 @@ static client_t *init_client(int fd)
     return client;
 }
 
+/// @brief Free the given Client
 void free_client(client_t *client)
 {
     if (client == NULL)
         return;
     free_commands(client);
     free(client->buffer);
+    if (client->team_name != NULL)
+        free(client->team_name);
     if (client->ai_action_message != NULL)
         free(client->ai_action_message);
     if (client->gui_action_message != NULL)
@@ -43,6 +50,11 @@ void free_client(client_t *client)
     client = NULL;
 }
 
+/// @brief Returns the pointer of the Nth Client in the Server client
+/// linked list
+/// @param server Structure that contain all server data
+/// @param i Index of the Client
+/// @return NULL if not corresponding client or the pointer of the Client
 client_t *get_client_by_index(server_t *server, int i)
 {
     client_t *tmp = server->clients;
@@ -54,35 +66,67 @@ client_t *get_client_by_index(server_t *server, int i)
     return tmp;
 }
 
+/// @brief Add a new Client with the given File Descriptor
+/// @param server Structure that contain all server data
+/// @param fd File Descriptor corresponding to the Client Socket
 void add_client(server_t *server, int fd)
 {
     client_t *tmp = server->clients;
 
     if (tmp == NULL) {
         server->clients = init_client(fd);
-        dprintf(server->clients->fd, "WELCOME\n");
+        send_client(server->clients->fd, "WELCOME\n");
     } else {
         while (tmp->next != NULL)
             tmp = tmp->next;
         tmp->next = init_client(fd);
-        dprintf(tmp->next->fd, "WELCOME\n");
+        send_client(tmp->next->fd, "WELCOME\n");
     }
     server->nb_client += 1;
 }
 
+/// @brief Read the given Client command
+/// @param server Structure that contain all server data
+/// @param i Index of the Client
 void read_client(server_t *server, int i)
 {
+    client_t *client = CLIENT;
     ssize_t size;
     char buffer[BUFFER_SIZE];
 
-    size = read(FD_CLIENT, buffer, BUFFER_SIZE);
+    if (client == NULL)
+        return;
+    size = read(client->fd, buffer, BUFFER_SIZE);
     buffer[size] = 0;
     if (size != 0)
-        strcat(BUFF_CLIENT, buffer);
-    if (strstr(BUFF_CLIENT, "\n") != NULL) {
-        printf("Buffer [%s]\n", BUFF_CLIENT);
+        strcat(client->buffer, buffer);
+    if (size == 0)
+        return disconnect_client(server, CLIENT);
+    if (strstr(client->buffer, "\n") != NULL) {
+        printf("Buffer [%s]\n", client->buffer);
         push_back_command(server, i);
         display_command_list(server, i);
-        memset(BUFF_CLIENT, 0, 1024);
+        memset(client->buffer, 0, 1024);
+    }
+}
+
+void disconnect_client(server_t *server, client_t *client)
+{
+    client_t *tmp = server->clients;
+
+    if (tmp == client) {
+        server->nb_client -= 1;
+        server->clients = client->next;
+        free_client(client);
+        return;
+    }
+    while (tmp->next != NULL) {
+        if (tmp->next == client) {
+            server->nb_client -= 1;
+            tmp->next = client->next;
+            free_client(client);
+            return;
+        }
+        tmp = tmp->next;
     }
 }

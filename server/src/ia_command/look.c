@@ -10,9 +10,9 @@
 static bool send_tile_info(server_t *server, int i, bool opt, char *txt)
 {
     if (opt)
-        dprintf(FD_CLIENT, " %s", txt);
+        send_client(FD_CLIENT, " %s", txt);
     else
-        dprintf(FD_CLIENT, "%s", txt);
+        send_client(FD_CLIENT, "%s", txt);
     return true;
 }
 
@@ -37,7 +37,7 @@ static void get_tile_info(server_t *server, int i, tile_t *tile, bool opt)
     for (int j = 0; j < tile->thystame; j++)
         tmp = send_tile_info(server, i, tmp, "thystame");
     if (opt)
-        dprintf(FD_CLIENT, ", ");
+        send_client(FD_CLIENT, ", ");
 }
 
 static int n_square(int n)
@@ -51,22 +51,23 @@ static int n_square(int n)
 
 static void display_look_level(server_t *server, int i, int x, int y)
 {
+    player_t *player = PLAYER;
     bool o = true;
-    int tmp = (n_square(PLAYER->level + 1) - n_square(PLAYER->level));
+    int tmp = (n_square(player->level + 1) - n_square(player->level));
 
     for (int j = 0; j < tmp; j++) {
         if (j + 1 == tmp)
             o = false;
-        if (PLAYER->direction == up)
+        if (player->direction == up)
             get_tile_info(server, i, MAP[y][(x + j + (ZAPPY->x * 8)) %
             ZAPPY->x], o);
-        if (PLAYER->direction == right)
+        if (player->direction == right)
             get_tile_info(server, i, MAP[(y + j + (ZAPPY->y * 8)) %
             ZAPPY->y][x], o);
-        if (PLAYER->direction == down)
+        if (player->direction == down)
             get_tile_info(server, i, MAP[y][(x - j + (ZAPPY->x * 8)) %
             ZAPPY->x], o);
-        if (PLAYER->direction == left)
+        if (player->direction == left)
             get_tile_info(server, i, MAP[(y - j + (ZAPPY->y * 8)) %
             ZAPPY->y][x], o);
     }
@@ -74,39 +75,42 @@ static void display_look_level(server_t *server, int i, int x, int y)
 
 static void get_look_origin_level(server_t *server, int i, int x, int y)
 {
-    if (PLAYER->direction == up) {
-        y = ((PLAYER->y - PLAYER->level) + (ZAPPY->y * 8)) % ZAPPY->y;
-        x = ((PLAYER->x - PLAYER->level) + (ZAPPY->x * 8)) % ZAPPY->x;
+    player_t *player = PLAYER;
+
+    if (player->direction == up) {
+        y = ((player->y - player->level) + (ZAPPY->y * 8)) % ZAPPY->y;
+        x = ((player->x - player->level) + (ZAPPY->x * 8)) % ZAPPY->x;
     }
-    if (PLAYER->direction == right) {
-        x = ((PLAYER->x + PLAYER->level) + (ZAPPY->x * 8)) % ZAPPY->x;
-        y = ((PLAYER->y - PLAYER->level) + (ZAPPY->y * 8)) % ZAPPY->y;
+    if (player->direction == right) {
+        x = ((player->x + player->level) + (ZAPPY->x * 8)) % ZAPPY->x;
+        y = ((player->y - player->level) + (ZAPPY->y * 8)) % ZAPPY->y;
     }
-    if (PLAYER->direction == down) {
-        y = ((PLAYER->y + PLAYER->level) + (ZAPPY->y * 8)) % ZAPPY->y;
-        x = ((PLAYER->x + PLAYER->level) + (ZAPPY->x * 8)) % ZAPPY->x;
+    if (player->direction == down) {
+        y = ((player->y + player->level) + (ZAPPY->y * 8)) % ZAPPY->y;
+        x = ((player->x + player->level) + (ZAPPY->x * 8)) % ZAPPY->x;
     }
-    if (PLAYER->direction == left) {
-        x = ((PLAYER->x - PLAYER->level) + (ZAPPY->x * 8)) % ZAPPY->x;
-        y = ((PLAYER->y + PLAYER->level) + (ZAPPY->y * 8)) % ZAPPY->y;
+    if (player->direction == left) {
+        x = ((player->x - player->level) + (ZAPPY->x * 8)) % ZAPPY->x;
+        y = ((player->y + player->level) + (ZAPPY->y * 8)) % ZAPPY->y;
     }
     display_look_level(server, i, x, y);
 }
 
 static void display_look(server_t *server, int i)
 {
-    int tmp = PLAYER->level + 2;
+    client_t *client = CLIENT;
+    int tmp = client->player->level + 2;
 
-    dprintf(FD_CLIENT, "[");
+    send_client(client->fd, "[");
     for (int j = 0; j < tmp; j++) {
-        PLAYER->level = j;
-        get_look_origin_level(server, i, PLAYER->x, PLAYER->y);
+        client->player->level = j;
+        get_look_origin_level(server, i, client->player->x, client->player->y);
         if (j + 1 != tmp)
-            dprintf(FD_CLIENT, ", ");
+            send_client(client->fd, ", ");
     }
-    dprintf(FD_CLIENT, "]\n");
-    PLAYER->level = tmp - 2;
-    CLIENT->time_to_wait = 7;
+    send_client(client->fd, "]\n");
+    client->player->level = tmp - 2;
+    client->time_to_wait = 7;
 }
 
 void look(server_t *server, int i, char *input)

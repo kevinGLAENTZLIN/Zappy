@@ -7,41 +7,70 @@
 
 #include "../../include/server.h"
 
-static int get_shortest_difference(int a1, int a2, int a_max)
+static int get_way_direction(double angle)
 {
-    int r1 = ((a_max - a1 + a2) + a_max * 2) % a_max;
-    int r2 = ((a_max - a2 + a1) + a_max * 2) % a_max;
-
-    return MIN(r1, r2);
+    if (angle <= -67.5 && angle >= -112.5)
+        return 0;
+    if (angle < -22.5 && angle > 67.5)
+        return 1;
+    if (angle <= 22.5 && angle >= -22.5)
+        return 2;
+    if (angle < 67.5 && angle > 22.5)
+        return 3;
+    if (angle <= 112.5 && angle >= 67.5)
+        return 4;
+    if (angle < 157.5 && angle > 112.5)
+        return 5;
+    if (angle <= -157.5 || angle >= 157.5)
+        return 6;
+    if (angle < -112.5 && angle > -157.5)
+        return 7;
+    return -42;
 }
 
-static void get_shortest_way(server_t *server, int i, player_t *player)
+static int get_client_tile(int direction, player_t *player)
 {
-    int x = get_shortest_difference(player->x, PLAYER->x, ZAPPY->x);
-    int y = get_shortest_difference(player->y, PLAYER->y, ZAPPY->y);
+    return (2 * player->direction - direction + 4) % 8;
+}
+
+static void get_shortest_way(server_t *server, int i, player_t *player,
+    char *input)
+{
+    player_t *player2 = PLAYER;
     client_t *tmp = get_client_by_player(server, player);
+    int x = player2->x - player->x;
+    int y = player2->y - player->y;
+    double angle = atan2(y, x) * 180 / M_PI;
+    int tile = get_client_tile(get_way_direction(angle), player);
 
-    send_to_all_gui(server, "pbc #%d\n", tmp->player->id);
-    dprintf(tmp->fd, "Broadcast: %d %d\n", x, y);
+    if (tmp == NULL)
+        return;
+    send_client(tmp->fd, "message %d, %s\n", tile, &input[10]);
 }
 
-static void get_shortest_way_players(server_t *server, int i, player_t *player)
+static void get_shortest_way_players(server_t *server, int i, player_t *player,
+    char *input)
 {
     if (player == NULL)
         return;
     if (player == PLAYER)
-        return get_shortest_way_players(server, i, player->next);
-    get_shortest_way(server, i, player);
-    get_shortest_way_players(server, i, player->next);
+        return get_shortest_way_players(server, i, player->next, input);
+    get_shortest_way(server, i, player, input);
+    get_shortest_way_players(server, i, player->next, input);
 }
 
 void broadcast(server_t *server, int i, char *input)
 {
-    (void) input;
-    if (PLAYER != NULL) {
-        for (int i = 0; ZAPPY->teams_name[i] != NULL; i++)
-            get_shortest_way_players(server, i, TEAM->players);
-        dprintf(FD_CLIENT, "ok\n");
-        CLIENT->time_to_wait = 7;
+    client_t *client = CLIENT;
+
+    if (client->player != NULL) {
+        for (int j = 0; ZAPPY->teams_name[j] != NULL; j++) {
+            get_shortest_way_players(server, i, ZAPPY->teams[j]->players,
+            input);
+        }
+        send_to_all_gui(server, "pbc #%d %s\n", client->player->id,
+        &input[10]);
+        send_client(client->fd, "ok\n");
+        client->time_to_wait = 7;
     }
 }
