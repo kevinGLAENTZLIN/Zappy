@@ -48,15 +48,42 @@ void init_map(zappy_t *zappy)
     zappy->map = map;
 }
 
+/// @brief Get the total amount of the given resources on the map
+/// @param zappy Structure that contains all games information
+/// @param type Resource type
+/// @return The amount of the given resource
+static int get_nb_resource(zappy_t *zappy, char *type)
+{
+    int c = 0;
+
+    for (int y = 0; y < zappy->y; y++) {
+        for (int x = 0; x < zappy->x; x++) {
+            c += (strcmp(type, "food") == 0 ? zappy->map[y][x]->food : 0);
+            c += (strcmp(type, "linemate") == 0 ? zappy->map[y][x]->linemate
+            : 0);
+            c += (strcmp(type, "deraumere") == 0 ? zappy->map[y][x]->deraumere
+            : 0);
+            c += (strcmp(type, "mendiane") == 0 ? zappy->map[y][x]->mendiane
+            : 0);
+            c += (strcmp(type, "sibur") == 0 ? zappy->map[y][x]->sibur : 0);
+            c += (strcmp(type, "phiras") == 0 ? zappy->map[y][x]->phiras : 0);
+            c += (strcmp(type, "thystame") == 0 ? zappy->map[y][x]->thystame
+            : 0);
+        }
+    }
+    return c;
+}
+
 /// @brief Randomly spread out resource on the whole map
 /// @param zappy Structure that contains all games information
 /// @param f Number of resources that have to be spawned
 /// @param type Resource type
 static void set_resource(zappy_t *zappy, float f, char *type)
 {
-    int n = (int)f;
+    int n = (int)f - get_nb_resource(zappy, type);
 
     for (int j = 0; j < n; j++) {
+        printf("Refilling %s\n", type);
         if (strcmp(type, "food") == 0)
             zappy->map[rand() % zappy->y][rand() % zappy->x]->food += 1;
         if (strcmp(type, "linemate") == 0)
