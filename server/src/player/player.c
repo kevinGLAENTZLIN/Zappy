@@ -68,6 +68,8 @@ void kill_player(server_t *server, player_t *player)
 
     for (int i = 0; ZAPPY->teams_name[i] != NULL; i++) {
         tmp = TEAM->players;
+        if (tmp == NULL)
+            continue;
         if (player == tmp) {
             TEAM->players = player->next;
             free_player(player);
