@@ -33,11 +33,13 @@ static egg_t *init_egg(int x, int y, team_t *team, int id)
     egg_t *tmp = malloc(sizeof(egg_t));
 
     if (tmp == NULL)
-        return NULL;
+        return (egg_t *)my_perror("init_egg");
     tmp->id = id;
     tmp->x = x;
     tmp->y = y;
     tmp->team_name = strdup(team->team_name);
+    if (tmp->team_name == NULL)
+        return (egg_t *)my_perror("init_egg");
     tmp->next = NULL;
     return tmp;
 }

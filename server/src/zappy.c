@@ -34,6 +34,8 @@ static void get_names(zappy_t *zappy, int argc, char **argv, int i)
     tmp = i + 1;
     for (size = i + 1; size < argc && argv[size][0] != '-'; size++);
     zappy->teams_name = malloc(sizeof(char *) * (size - i + 1));
+    if (zappy->teams_name == NULL)
+        return perror("get_names");
     for (i += 1; i < argc && argv[i][0] != '-'; i++)
         zappy->teams_name[i - tmp] = strdup(argv[i]);
     zappy->teams_name[i - tmp] = NULL;
@@ -91,6 +93,8 @@ zappy_t *init_zappy(int argc, char **argv)
 {
     zappy_t *zappy = malloc(sizeof(zappy_t));
 
+    if (zappy == NULL)
+        return (zappy_t *)my_perror("init_zappy");
     zappy->x = get_value_by_flag("-x", argc, argv);
     zappy->y = get_value_by_flag("-y", argc, argv);
     zappy->frequence = get_value_by_flag("-f", argc, argv);

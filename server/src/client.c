@@ -14,6 +14,8 @@ static client_t *init_client(int fd)
 {
     client_t *client = malloc(sizeof(client_t));
 
+    if (client == NULL)
+        return (client_t *)my_perror("init_client");
     client->fd = fd;
     client->buffer = NULL;
     client->client_type = NULL;
@@ -31,6 +33,8 @@ static client_t *init_client(int fd)
 /// @brief Free the given Client
 void free_client(client_t *client)
 {
+    int ret = 0;
+
     if (client == NULL)
         return;
     free_commands(client);
@@ -45,9 +49,10 @@ void free_client(client_t *client)
     if (client->client_type != NULL)
         free(client->client_type);
     if (client->fd != 0)
-        close(client->fd);
+        ret = close(client->fd);
+    if (ret == -1)
+        perror("free_client");
     free(client);
-    client = NULL;
 }
 
 /// @brief Returns the pointer of the Nth Client in the Server client

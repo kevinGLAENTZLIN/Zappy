@@ -20,19 +20,36 @@ int is_number(char *str)
     return true;
 }
 
+/// @brief Write in the error output the given string and the errno message
+/// @param str Error message
+/// @return NULL
+void *my_perror(char *str)
+{
+    perror(str);
+    return NULL;
+}
+
 /// @brief Display help message
 void print_help(void)
 {
-    printf("\nUSAGE: ./zappy_server -p port -x width -y height -n name1 name");
-    printf("2 ... -c clientsNb -f freq\n\n");
-    printf("\t-p port \t\tPort Number\n");
-    printf("\t-x width\t\tWidth of the world\n");
-    printf("\t-y height\t\tHeight of the world\n");
-    printf("\t-n name1 name2...\tname of the team\n");
-    printf("\t-c clientsNB\t\tNumber of authorized clients per team\n");
-    printf("\t-f freq \t\tReciprocal of time unit for execution of actions\n");
-    printf("\n");
-    exit(0);
+    int r = 0;
+
+    r = MIN(printf("\nUSAGE: ./zappy_server -p port -x width -y height -n "),
+    r);
+    r = MIN(printf("name1 name2 ... -c clientsNb -f freq\n\n"), r);
+    r = MIN(printf("\t-p port \t\tPort Number\n"), r);
+    r = MIN(printf("\t-x width\t\tWidth of the world\n"), r);
+    r = MIN(printf("\t-y height\t\tHeight of the world\n"), r);
+    r = MIN(printf("\t-n name1 name2...\tname of the team\n"), r);
+    r = MIN(printf("\t-c clientsNB\t\tNumber of authorized clients per team\n")
+    , r);
+    r = MIN(printf("\t-f freq \t\tReciprocal of time unit for execution"), r);
+    r = MIN(printf(" of actions\n\n"), r);
+    if (r < 0) {
+        perror("print_help");
+        exit(EXIT_FAILURE);
+    }
+    exit(EXIT_SUCCESS);
 }
 
 /// @brief Argument error handling
@@ -87,7 +104,7 @@ static int error_handling(int argc, char **argv)
         if (!tmp && argv[i][0] == '-' && is_number(argv[i + 1]))
             i += 1;
     }
-    return (check_flags(argc, argv) ? 1 : 0);
+    return (check_flags(argc, argv) ? true : false);
 }
 
 /// @brief Start a server to play the Zappy game

@@ -58,6 +58,8 @@ static void incantation_response(server_t *server, int i)
     char *gui_tmp = malloc(sizeof(char) * 48);
     char *ai_tmp = malloc(sizeof(char) * 48);
 
+    if (gui_tmp == NULL || ai_tmp == NULL)
+        return perror("incantation_response");
     send_to_all_gui(server, "pic %d %d %d", player->x, player->y,
     player->level + 1);
     for (int j = 0; ZAPPY->teams_name[j] != NULL; j++)

@@ -49,6 +49,8 @@ void push_back_player(team_t *team, player_t *player, server_t *server)
         tmp->next = player;
     }
     player->team_name = strdup(team->team_name);
+    if (player->team_name == NULL)
+        return perror("push_back_player");
     player->id = get_total_players(server);
     team->nb_player += 1;
 }

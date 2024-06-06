@@ -15,8 +15,10 @@ static command_t *init_command(char *cmd)
     command_t *tmp = malloc(sizeof(command_t));
 
     if (tmp == NULL)
-        return NULL;
+        return (command_t *)my_perror("init_command");
     tmp->command = strdup(cmd);
+    if (tmp->command == NULL)
+        return (command_t *)my_perror("init_command");
     tmp->next = NULL;
     return tmp;
 }

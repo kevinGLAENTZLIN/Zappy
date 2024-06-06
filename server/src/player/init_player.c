@@ -23,6 +23,8 @@ player_t *init_player(int x, int y)
 {
     player_t *player = malloc(sizeof(player_t));
 
+    if (player == NULL)
+        return my_perror("init_player");
     srand(time(NULL));
     player->id = -1;
     player->x = x;

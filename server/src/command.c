@@ -41,6 +41,8 @@ static void set_client_ia_mode(server_t *server, int i)
     player_t *player = init_player(egg->x, egg->y);
 
     client->client_type = strdup(IA);
+    if (client->client_type == NULL)
+        return perror("set_client_ia_mode");
     client->player_id = team->nb_player;
     client->team_name = strdup(team->team_name);
     client->player = player;
@@ -54,6 +56,23 @@ static void set_client_ia_mode(server_t *server, int i)
     player->team_name);
 }
 
+/// @brief Check and connect client if it's possible
+/// @param server Structure that contain all server data
+/// @param i Index of the Client
+/// @return Return True if it connected, else False
+static bool check_ai_connection(server_t *server, client_t *client, int i)
+{
+    team_t *team = NULL;
+
+    team = get_team_by_name(server, client->cmds->command);
+    if (team->nb_player >= team->nb_max_player) {
+        send_client(client->fd, "Too many player in these team\n");
+        return false;
+    }
+    set_client_ia_mode(server, i);
+    return true;
+}
+
 /// @brief Check and connect client if necessary
 /// @param server Structure that contain all server data
 /// @param i Index of the Client
@@ -61,23 +80,19 @@ static void set_client_ia_mode(server_t *server, int i)
 static bool check_connection_command(server_t *server, int i)
 {
     client_t *client = CLIENT;
-    team_t *team = NULL;
 
     if (client->client_type != NULL)
         return false;
     if (strncmp(client->cmds->command, GUI, strlen(GUI)) == 0) {
+        if (client->client_type == NULL) {
+            perror("check_connection_command");
+            return false;
+        }
         client->client_type = strdup(GUI);
         return true;
     }
-    if (is_team_name(server, client->cmds->command)) {
-        team = get_team_by_name(server, client->cmds->command);
-        if (team->nb_player >= team->nb_max_player) {
-            send_client(client->fd, "Too many player in these team\n");
-            return false;
-        }
-        set_client_ia_mode(server, i);
-        return true;
-    }
+    if (is_team_name(server, client->cmds->command))
+        return check_ai_connection(server, client, i);
     send_client(client->fd, "Invalid Client Type\n");
     return false;
 }

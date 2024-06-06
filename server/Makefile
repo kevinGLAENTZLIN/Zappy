@@ -30,6 +30,8 @@ SRC		=	./src/gui_command/mct.c\
 			./src/player/player.c\
 			./src/team/init_team.c\
 			./src/team/team.c\
+			./src/server/my_server.c\
+			./src/server/set_server.c\
 			./src/client.c\
 			./src/command.c\
 			./src/command_util.c\
@@ -39,7 +41,6 @@ SRC		=	./src/gui_command/mct.c\
 			./src/gui_util.c\
 			./src/main.c\
 			./src/map.c\
-			./src/my_server.c\
 			./src/signal.c\
 			./src/zappy.c
 
