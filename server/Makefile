@@ -70,6 +70,7 @@ $(NAME):	$(LIB_NAME)\
 
 clean:
 	rm -f $(OBJ)
+	rm -f $(BUFFER_OBJ)
 
 fclean: 	clean
 	rm -f $(LIB_NAME)
