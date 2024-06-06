@@ -24,7 +24,7 @@ void pin(server_t *server, int i, char *input)
     char **tab = get_parameters(input);
 
     if (tab == NULL || tab[0] == NULL || tab[1] == NULL ||
-        tab[1][0] != '#' || is_number(&tab[1][1])) {
+        tab[1][0] != '#' || !is_number(&tab[1][1])) {
         free_tab(tab);
         return (void)send_client(FD_CLIENT, "sbp\n");
     }
