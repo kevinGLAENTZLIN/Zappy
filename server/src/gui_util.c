@@ -28,7 +28,7 @@ static void send_guis_text(server_t *server, char *txt)
 void send_to_all_gui(server_t *server, const char *format, ...)
 {
     va_list ap;
-    char *txt = malloc(sizeof(char) * 256);
+    char *txt = malloc(sizeof(char) * BUFFER_SIZE);
     int n = 0;
 
     va_start(ap, format);
@@ -63,7 +63,7 @@ static void dprintf_with_select(int client_fd, char *txt)
     FD_SET(client_fd, &fd);
     tmp = select(client_fd + 1, NULL, &fd, NULL, &time);
     if (tmp == 1)
-        dprintf(client_fd, txt);
+        write(client_fd, txt, strlen(txt));
     free(txt);
 }
 

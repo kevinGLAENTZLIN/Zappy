@@ -7,23 +7,6 @@
 
 #include "../include/server.h"
 
-/// @brief Check if the character C is contained in the string STR
-/// @param c Character to find
-/// @return True if found, else False
-static int is_in_str(char c, char const *str)
-{
-    int i = 0;
-
-    if (str == NULL)
-        return 0;
-    while (str[i] != '\0') {
-        if (str[i] == c)
-            return 1;
-        i++;
-    }
-    return 0;
-}
-
 /// @brief Return the number of word separated by the given delimiter in the
 /// given string
 /// @param delim List of delimiter

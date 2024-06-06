@@ -15,8 +15,7 @@ static client_t *init_client(int fd)
     client_t *client = malloc(sizeof(client_t));
 
     client->fd = fd;
-    client->buffer = malloc(sizeof(char) * BUFFER_SIZE);
-    client->buffer[0] = 0;
+    client->buffer = NULL;
     client->client_type = NULL;
     client->team_name = NULL;
     client->next = NULL;
@@ -35,7 +34,8 @@ void free_client(client_t *client)
     if (client == NULL)
         return;
     free_commands(client);
-    free(client->buffer);
+    if (client->buffer != NULL)
+        free(client->buffer);
     if (client->team_name != NULL)
         free(client->team_name);
     if (client->ai_action_message != NULL)
@@ -91,22 +91,21 @@ void add_client(server_t *server, int fd)
 void read_client(server_t *server, int i)
 {
     client_t *client = CLIENT;
-    ssize_t size;
-    char buffer[BUFFER_SIZE];
 
     if (client == NULL)
         return;
-    size = read(client->fd, buffer, BUFFER_SIZE);
-    buffer[size] = 0;
-    if (size != 0)
-        strcat(client->buffer, buffer);
-    if (size == 0)
-        return disconnect_client(server, CLIENT);
-    if (strstr(client->buffer, "\n") != NULL) {
+    client->buffer = read_to_buffer(client->fd, '\n');
+    if (client->buffer == NULL)
+        return disconnect_client(server, client);
+    if (!is_in_str('\n', client->buffer)) {
+        free(client->buffer);
+        client->buffer = NULL;
+    }
+    if (client->buffer != NULL) {
         printf("Buffer [%s]\n", client->buffer);
         push_back_command(server, i);
-        display_command_list(server, i);
-        memset(client->buffer, 0, 1024);
+        free(client->buffer);
+        client->buffer = NULL;
     }
 }
 

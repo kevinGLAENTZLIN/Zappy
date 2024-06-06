@@ -28,6 +28,8 @@
 #include <math.h>
 #include <time.h>
 
+#include "buffer.h"
+
 #define MAX(a, b)       (a > b ? a : b)
 #define MIN(a, b)       (a < b ? a : b)
 
@@ -57,7 +59,6 @@
 #define IA              "TEAM"
 
 #define MAX_NAME_LENGTH 32
-#define BUFFER_SIZE     1024
 
 #define NB_MAX_LVL      8 - 1
 #define NB_MAX_CLIENT   42
@@ -157,6 +158,10 @@ typedef struct server_s {
     client_t *clients;
     struct timeval last_tick;
 } server_t;
+
+// * buffer.c library functions :
+bool is_in_str(char c, const char *str);
+char *read_to_buffer(int fd, char delimiter);
 
 // * main.c functions :
 int is_number(char *str);
