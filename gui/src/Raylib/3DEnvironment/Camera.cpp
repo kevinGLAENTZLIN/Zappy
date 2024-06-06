@@ -8,6 +8,7 @@
 #include "Camera.hh"
 
 #include <iostream>
+#include <raylib.h>
 
 Raylib::Camera::Camera()
 {
@@ -18,6 +19,11 @@ Raylib::Camera::~Camera()
 {}
 
 extern "C" {
+    void Raylib::Camera::cameraUpdate(std::size_t flags)
+    {
+        UpdateCamera(&_camera, flags);
+    }
+
     void Raylib::Camera::begin3DMode()
     {
         BeginMode3D(_camera);
@@ -36,6 +42,6 @@ extern "C" {
         _camera.up = { 0.0f, 1.0f, 0.0f };
         _camera.fovy = 45.0f;
         _camera.projection = CAMERA_PERSPECTIVE;
-        UpdateCamera(&_camera, CAMERA_THIRD_PERSON);
+        UpdateCamera(&_camera, CAMERA_ORBITAL);
     }
 }
