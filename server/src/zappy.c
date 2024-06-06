@@ -7,6 +7,11 @@
 
 #include "../include/server.h"
 
+/// @brief Returns the numeric value associated with the sent flag
+/// @param flag Flag argument to obtain the following value
+/// @param argc Total number of arguments
+/// @param argv Argument list
+/// @return Return -42 if no value or no flag found
 static int get_value_by_flag(char *flag, int argc, char **argv)
 {
     for (int i = 0; i < argc; i++) {
@@ -16,6 +21,11 @@ static int get_value_by_flag(char *flag, int argc, char **argv)
     return -42;
 }
 
+/// @brief Set to Zappy->teams_name all names following flag -n
+/// @param zappy Structure that contains al games information
+/// @param argc Total number of arguments
+/// @param argv Arguments list
+/// @param i Index of the flag -n
 static void get_names(zappy_t *zappy, int argc, char **argv, int i)
 {
     int tmp = 0;
@@ -29,6 +39,10 @@ static void get_names(zappy_t *zappy, int argc, char **argv, int i)
     zappy->teams_name[i - tmp] = NULL;
 }
 
+/// @brief Load to Zappy->teams_name all names following flag -n
+/// @param zappy Structure that contains all games information
+/// @param argc Total number of arguments
+/// @param argv Arguments list
 static void load_names(zappy_t *zappy, int argc, char **argv)
 {
     for (int i = 0; i < argc; i++) {
@@ -40,12 +54,39 @@ static void load_names(zappy_t *zappy, int argc, char **argv)
     return;
 }
 
+/// @brief Set a certain number of egg randomly spread on the Map
+/// @param zappy Structure that contains all games information
 static void set_teams_egg(zappy_t *zappy)
 {
     for (int j = 0; zappy->teams_name[j] != NULL; j++)
         set_n_random_egg(zappy, zappy->teams[j], zappy->team_size);
 }
 
+/// @brief Check if all zappy values are correct
+/// @param zappy Structure that contains all games information
+/// @return Zappy structure if everything is okay, else returns NULL
+zappy_t *check_zappy(zappy_t *zappy)
+{
+    bool error = false;
+
+    error |= (zappy->x <= 0);
+    error |= (zappy->y <= 0);
+    error |= (zappy->port <= 0);
+    error |= (zappy->team_size <= 0);
+    error |= (zappy->frequence <= 0 || zappy->frequence > 2000);
+    error |= (my_len(NULL, (void **)zappy->teams_name) < 2);
+    if (error) {
+        RAISE("Argument error\n");
+        free_zappy(zappy);
+        return NULL;
+    }
+    return zappy;
+}
+
+/// @brief Initialize Zappy following arguments
+/// @param argc Total number of arguments
+/// @param argv Arguments list
+/// @return Zappy that contains all games information
 zappy_t *init_zappy(int argc, char **argv)
 {
     zappy_t *zappy = malloc(sizeof(zappy_t));
@@ -57,16 +98,19 @@ zappy_t *init_zappy(int argc, char **argv)
     zappy->team_size = get_value_by_flag("-c", argc, argv);
     zappy->map = NULL;
     zappy->eggs = NULL;
+    zappy->ticks = 0;
     load_names(zappy, argc, argv);
     load_zappy_teams(zappy);
     if (zappy->frequence == -42)
         zappy->frequence = 100;
     init_map(zappy);
-    set_map_ressources(zappy);
+    set_map_resources(zappy);
     set_teams_egg(zappy);
     return zappy;
 }
 
+/// @brief Free Zappy structures
+/// @param zappy Structure that contains all games information
 void free_zappy(zappy_t *zappy)
 {
     if (zappy == NULL)

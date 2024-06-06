@@ -9,16 +9,20 @@
 
 void forward(server_t *server, int i, char *input)
 {
+    client_t *client = CLIENT;
+    player_t *player = client->player;
+
     (void) input;
-    if (PLAYER != NULL) {
-        if (PLAYER->direction == up)
-            PLAYER->y = ((PLAYER->y - 1) + ZAPPY->y) % ZAPPY->y;
-        if (PLAYER->direction == right)
-            PLAYER->x = ((PLAYER->x + 1) + ZAPPY->x) % ZAPPY->x;
-        if (PLAYER->direction == down)
-            PLAYER->y = ((PLAYER->y + 1) + ZAPPY->y) % ZAPPY->y;
-        if (PLAYER->direction == left)
-            PLAYER->x = ((PLAYER->x - 1) + ZAPPY->x) % ZAPPY->x;
-        dprintf(FD_CLIENT, "ok\n");
+    if (player != NULL) {
+        if (player->direction == up)
+            player->y = ((player->y - 1) + ZAPPY->y) % ZAPPY->y;
+        if (player->direction == right)
+            player->x = ((player->x + 1) + ZAPPY->x) % ZAPPY->x;
+        if (player->direction == down)
+            player->y = ((player->y + 1) + ZAPPY->y) % ZAPPY->y;
+        if (player->direction == left)
+            player->x = ((player->x - 1) + ZAPPY->x) % ZAPPY->x;
+        send_client(client->fd, "ok\n");
+        client->time_to_wait = 7;
     }
 }

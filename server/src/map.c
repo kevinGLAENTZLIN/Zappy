@@ -7,6 +7,10 @@
 
 #include "../include/server.h"
 
+/// @brief Initialize a default tile to the given coordinate
+/// @param x Coordinate on X axis
+/// @param y Coordinate on Y axis
+/// @return A default tile  to the given coordinate
 static tile_t *init_tile(int x, int y)
 {
     tile_t *tmp = malloc(sizeof(tile_t));
@@ -25,6 +29,8 @@ static tile_t *init_tile(int x, int y)
     return tmp;
 }
 
+/// @brief Initialize a default game map
+/// @param zappy Structure that contains the map size
 void init_map(zappy_t *zappy)
 {
     tile_t ***map = malloc(sizeof(tile_t **) * (zappy->y * zappy->x));
@@ -42,9 +48,39 @@ void init_map(zappy_t *zappy)
     zappy->map = map;
 }
 
-static void set_ressource(zappy_t *zappy, float f, char *type)
+/// @brief Get the total amount of the given resources on the map
+/// @param zappy Structure that contains all games information
+/// @param type Resource type
+/// @return The amount of the given resource
+static int get_nb_resource(zappy_t *zappy, char *type)
 {
-    int n = (int)f;
+    int c = 0;
+
+    for (int y = 0; y < zappy->y; y++) {
+        for (int x = 0; x < zappy->x; x++) {
+            c += (strcmp(type, "food") == 0 ? zappy->map[y][x]->food : 0);
+            c += (strcmp(type, "linemate") == 0 ? zappy->map[y][x]->linemate
+            : 0);
+            c += (strcmp(type, "deraumere") == 0 ? zappy->map[y][x]->deraumere
+            : 0);
+            c += (strcmp(type, "mendiane") == 0 ? zappy->map[y][x]->mendiane
+            : 0);
+            c += (strcmp(type, "sibur") == 0 ? zappy->map[y][x]->sibur : 0);
+            c += (strcmp(type, "phiras") == 0 ? zappy->map[y][x]->phiras : 0);
+            c += (strcmp(type, "thystame") == 0 ? zappy->map[y][x]->thystame
+            : 0);
+        }
+    }
+    return c;
+}
+
+/// @brief Randomly spread out resource on the whole map
+/// @param zappy Structure that contains all games information
+/// @param f Number of resources that have to be spawned
+/// @param type Resource type
+static void set_resource(zappy_t *zappy, float f, char *type)
+{
+    int n = (int)f - get_nb_resource(zappy, type);
 
     for (int j = 0; j < n; j++) {
         if (strcmp(type, "food") == 0)
@@ -64,19 +100,23 @@ static void set_ressource(zappy_t *zappy, float f, char *type)
     }
 }
 
-void set_map_ressources(zappy_t *zappy)
+/// @brief Randomly generate all resources on the map
+/// @param zappy Structure that contains all games information
+void set_map_resources(zappy_t *zappy)
 {
     if (zappy->map == NULL)
         return;
-    set_ressource(zappy, zappy->x * zappy->y * 0.5, "food");
-    set_ressource(zappy, zappy->x * zappy->y * 0.3, "linemate");
-    set_ressource(zappy, zappy->x * zappy->y * 0.15, "deraumere");
-    set_ressource(zappy, zappy->x * zappy->y * 0.1, "sibur");
-    set_ressource(zappy, zappy->x * zappy->y * 0.1, "mendiane");
-    set_ressource(zappy, zappy->x * zappy->y * 0.08, "phiras");
-    set_ressource(zappy, zappy->x * zappy->y * 0.05, "thystame");
+    set_resource(zappy, zappy->x * zappy->y * 0.5, "food");
+    set_resource(zappy, zappy->x * zappy->y * 0.3, "linemate");
+    set_resource(zappy, zappy->x * zappy->y * 0.15, "deraumere");
+    set_resource(zappy, zappy->x * zappy->y * 0.1, "sibur");
+    set_resource(zappy, zappy->x * zappy->y * 0.1, "mendiane");
+    set_resource(zappy, zappy->x * zappy->y * 0.08, "phiras");
+    set_resource(zappy, zappy->x * zappy->y * 0.05, "thystame");
 }
 
+/// @brief Free the game map
+/// @param zappy Structure that contains all games information
 void free_map(zappy_t *zappy)
 {
     if (zappy == NULL || zappy->map == NULL)
@@ -91,6 +131,11 @@ void free_map(zappy_t *zappy)
     zappy->map = NULL;
 }
 
+/// @brief Return the number of player on the tile at this coordinate
+/// @param server Structure that contain all server data
+/// @param x Coordinate on X axis
+/// @param y Coordinate on Y axis
+/// @return Number of player on the tile
 int get_nb_player_on_tile(server_t *server, int x, int y)
 {
     int count = 0;
@@ -106,6 +151,12 @@ int get_nb_player_on_tile(server_t *server, int x, int y)
     return count;
 }
 
+/// @brief Return the number of player incanting on the tile at this level
+/// @param server Structure that contain all server data
+/// @param x Coordinate on X axis
+/// @param y Coordinate on Y axis
+/// @param lvl Current level of Incantor
+/// @return Number of incantor on the tile
 int get_nb_incantor(server_t *server, int x, int y, int lvl)
 {
     int count = 0;

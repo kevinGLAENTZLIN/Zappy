@@ -9,9 +9,6 @@
 
 void sgt(server_t *server, int i, char *input)
 {
-    char **tab = get_parameters(input);
-
-    (void) server;
-    (void) i;
-    free_tab(tab);
+    (void) input;
+    send_client(FD_CLIENT, "sgt %d\n", ZAPPY->frequence);
 }

@@ -7,25 +7,41 @@
 
 #include "../include/server.h"
 
+/// @brief Initialize a default Client with the given File Descriptor
+/// @param fd File Descriptor corresponding to the Client Socket
+/// @return Initialized Client
 static client_t *init_client(int fd)
 {
     client_t *client = malloc(sizeof(client_t));
 
     client->fd = fd;
-    client->buffer = malloc(sizeof(char) * BUFFER_SIZE);
-    client->buffer[0] = 0;
+    client->buffer = NULL;
     client->client_type = NULL;
+    client->team_name = NULL;
     client->next = NULL;
     client->player = NULL;
     client->player_id = -1;
+    client->cmds = NULL;
+    client->time_to_wait = 0;
+    client->gui_action_message = NULL;
+    client->ai_action_message = NULL;
     return client;
 }
 
+/// @brief Free the given Client
 void free_client(client_t *client)
 {
     if (client == NULL)
         return;
-    free(client->buffer);
+    free_commands(client);
+    if (client->buffer != NULL)
+        free(client->buffer);
+    if (client->team_name != NULL)
+        free(client->team_name);
+    if (client->ai_action_message != NULL)
+        free(client->ai_action_message);
+    if (client->gui_action_message != NULL)
+        free(client->gui_action_message);
     if (client->client_type != NULL)
         free(client->client_type);
     if (client->fd != 0)
@@ -34,6 +50,11 @@ void free_client(client_t *client)
     client = NULL;
 }
 
+/// @brief Returns the pointer of the Nth Client in the Server client
+/// linked list
+/// @param server Structure that contain all server data
+/// @param i Index of the Client
+/// @return NULL if not corresponding client or the pointer of the Client
 client_t *get_client_by_index(server_t *server, int i)
 {
     client_t *tmp = server->clients;
@@ -45,34 +66,66 @@ client_t *get_client_by_index(server_t *server, int i)
     return tmp;
 }
 
+/// @brief Add a new Client with the given File Descriptor
+/// @param server Structure that contain all server data
+/// @param fd File Descriptor corresponding to the Client Socket
 void add_client(server_t *server, int fd)
 {
     client_t *tmp = server->clients;
 
     if (tmp == NULL) {
         server->clients = init_client(fd);
-        dprintf(server->clients->fd, "WELCOME\n");
+        send_client(server->clients->fd, "WELCOME\n");
     } else {
         while (tmp->next != NULL)
             tmp = tmp->next;
         tmp->next = init_client(fd);
-        dprintf(tmp->next->fd, "WELCOME\n");
+        send_client(tmp->next->fd, "WELCOME\n");
     }
     server->nb_client += 1;
 }
 
+/// @brief Read the given Client command
+/// @param server Structure that contain all server data
+/// @param i Index of the Client
 void read_client(server_t *server, int i)
 {
-    ssize_t size;
-    char buffer[BUFFER_SIZE];
+    client_t *client = CLIENT;
 
-    size = read(FD_CLIENT, buffer, BUFFER_SIZE);
-    buffer[size] = 0;
-    if (size != 0)
-        strcat(BUFF_CLIENT, buffer);
-    if (strstr(BUFF_CLIENT, "\n") != NULL) {
-        printf("Buffer [%s]\n", BUFF_CLIENT);
-        command_handling(server, i);
-        memset(BUFF_CLIENT, 0, 1024);
+    if (client == NULL)
+        return;
+    client->buffer = read_to_buffer(client->fd, '\n');
+    if (client->buffer == NULL)
+        return disconnect_client(server, client);
+    if (!is_in_str('\n', client->buffer)) {
+        free(client->buffer);
+        client->buffer = NULL;
+    }
+    if (client->buffer != NULL) {
+        printf("Buffer [%s]\n", client->buffer);
+        push_back_command(server, i);
+        free(client->buffer);
+        client->buffer = NULL;
+    }
+}
+
+void disconnect_client(server_t *server, client_t *client)
+{
+    client_t *tmp = server->clients;
+
+    if (tmp == client) {
+        server->nb_client -= 1;
+        server->clients = client->next;
+        free_client(client);
+        return;
+    }
+    while (tmp->next != NULL) {
+        if (tmp->next == client) {
+            server->nb_client -= 1;
+            tmp->next = client->next;
+            free_client(client);
+            return;
+        }
+        tmp = tmp->next;
     }
 }

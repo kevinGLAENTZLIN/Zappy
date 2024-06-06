@@ -9,6 +9,9 @@
 
 server_t *server;
 
+
+/// @brief Set an address on a default IP to a given port
+/// @param port Port of the address
 struct sockaddr_in set_address(int port)
 {
     struct sockaddr_in address;
@@ -19,6 +22,9 @@ struct sockaddr_in set_address(int port)
     return address;
 }
 
+/// @brief Set an address and a Socket to the given port, then bind them
+/// @param server Structure that contain all server data
+/// @param port Port of the address
 static void config_control(server_t *server, int port)
 {
     int socket_opt = 1;
@@ -29,6 +35,8 @@ static void config_control(server_t *server, int port)
     bind(FD_CTRL, (struct sockaddr*)&ADDR_CTRL, sizeof(ADDR_CTRL));
 }
 
+/// @brief Initialize a default server
+/// @return Server structure with default values
 static server_t *init_server(void)
 {
     server_t *server = malloc(sizeof(server_t));
@@ -39,6 +47,8 @@ static server_t *init_server(void)
     return server;
 }
 
+/// @brief Free all clients of the given server
+/// @param server Structure that contain all server data
 static void free_clients(server_t *server)
 {
     client_t *tmp = NULL;
@@ -52,7 +62,9 @@ static void free_clients(server_t *server)
     return free_clients(server);
 }
 
-void free_myteams(server_t *server)
+/// @brief Free the given server
+/// @param server Structure that contain all server data
+void free_server(server_t *server)
 {
     close(FD_CTRL);
     free_zappy(server->zappy);
@@ -61,6 +73,9 @@ void free_myteams(server_t *server)
     free(server);
 }
 
+/// @brief Server loop that allow new client connection and add it to the
+/// server
+/// @param server Structure that contain all server data
 void add_client_loop(server_t *server)
 {
     int tmp = 0;
@@ -70,7 +85,7 @@ void add_client_loop(server_t *server)
     struct timeval time;
 
     time.tv_sec = 0;
-    time.tv_usec = 100000;
+    time.tv_usec = TIMEOUT;
     FD_ZERO(&fd);
     FD_SET(FD_CTRL, &fd);
     tmp = select(FD_CTRL + 1, &fd, NULL, NULL, &time);
@@ -82,20 +97,24 @@ void add_client_loop(server_t *server)
     }
 }
 
+/// @brief Server loop that read client already connected
+/// @param server Structure that contain all server data
 void read_client_loop(server_t *server)
 {
     int tmp = 0;
     fd_set fd;
     struct timeval time;
+    client_t *client = NULL;
 
     time.tv_sec = 0;
-    time.tv_usec = 100000;
+    time.tv_usec = TIMEOUT;
     for (int i = 0; i < server->nb_client; i++) {
-        if (CLIENT == NULL)
+        client = CLIENT;
+        if (client == NULL)
             continue;
         FD_ZERO(&fd);
-        FD_SET(FD_CLIENT, &fd);
-        tmp = select(FD_CLIENT + 1, &fd, NULL, NULL, &time);
+        FD_SET(client->fd, &fd);
+        tmp = select(client->fd + 1, &fd, NULL, NULL, &time);
         if (tmp == -1)
             return;
         if (tmp == 1)
@@ -103,22 +122,49 @@ void read_client_loop(server_t *server)
     }
 }
 
+/// @brief Server loop, handle the tick rate
+/// @param server Structure that contain all server data
+static bool server_loop(server_t *server)
+{
+    struct timeval current_time;
+    struct timeval elapsed_time;
+
+    gettimeofday(&current_time, NULL);
+    timersub(&current_time, &server->last_tick, &elapsed_time);
+    if (elapsed_time.tv_sec >= 1 ||
+        (elapsed_time.tv_sec == 0 && elapsed_time.tv_usec >= TICK)) {
+        server->zappy->ticks += 1;
+        gettimeofday(&server->last_tick, NULL);
+        check_game_condition(server);
+        check_command_vector(server);
+    }
+    if (server != NULL)
+        add_client_loop(server);
+    if (server != NULL)
+        read_client_loop(server);
+    else
+        return false;
+    return true;
+}
+
+/// @brief Initialize a server with Zappy information and start it
+/// @param zappy Structure that contains all games information
+/// @return 0 if the server was created with success, else returns 84
 int my_server(zappy_t *zappy)
 {
+    if (zappy == NULL)
+        return 84;
     server = init_server();
     if (server->control_fd == -1) {
         RAISE("No socket available\n");
-        free_myteams(server);
+        free_server(server);
         return 84;
     }
     server->zappy = zappy;
     signal(SIGINT, teams_sigint);
     config_control(server, zappy->port);
     listen(server->control_fd, NB_MAX_CLIENT);
-    while (server != NULL) {
-        add_client_loop(server);
-        if (server != NULL)
-            read_client_loop(server);
-    }
+    gettimeofday(&server->last_tick, NULL);
+    while (server_loop(server));
     return 0;
 }

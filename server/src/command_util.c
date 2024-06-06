@@ -7,20 +7,10 @@
 
 #include "../include/server.h"
 
-static int is_in_str(char c, char const *str)
-{
-    int i = 0;
-
-    if (str == NULL)
-        return 0;
-    while (str[i] != '\0') {
-        if (str[i] == c)
-            return 1;
-        i++;
-    }
-    return 0;
-}
-
+/// @brief Return the number of word separated by the given delimiter in the
+/// given string
+/// @param delim List of delimiter
+/// @return Number of words
 static int get_nbr_word(char const *str, char const *delim)
 {
     int i = 0;
@@ -37,6 +27,11 @@ static int get_nbr_word(char const *str, char const *delim)
     return count;
 }
 
+/// @brief Return the size of Ith word separated by the given delimiter in the
+/// given string
+/// @param delim List of delimiter
+/// @param i_str Word index
+/// @return Size of the words
 static int count_word_size(char const *str, int i_str, char const *delim)
 {
     int word_size = 1;
@@ -47,6 +42,11 @@ static int count_word_size(char const *str, int i_str, char const *delim)
     return word_size;
 }
 
+/// @brief Duplicate the Ith word separated by the given delimiter in the
+/// given string
+/// @param word_size Size of the words
+/// @param i_str Index of the word
+/// @return Pointer on the duplicate words
 static char *word_cpy(char const *str, int word_size, int i_str)
 {
     int i_word = 0;
@@ -60,6 +60,10 @@ static char *word_cpy(char const *str, int word_size, int i_str)
     return word;
 }
 
+/// @brief Split the given string in fuction of the delimiters
+/// @param str String to split
+/// @param delim List of delimiter
+/// @return List of words
 static char **my_str_to_word_array(char const *str, char const *delim)
 {
     int word_count = get_nbr_word(str, delim);
@@ -83,11 +87,13 @@ static char **my_str_to_word_array(char const *str, char const *delim)
     return word_array;
 }
 
+/// @brief Split the Client input
 char **get_parameters(char *input)
 {
     return my_str_to_word_array(input, " \n\r");
 }
 
+/// @brief Free the given string tab
 void free_tab(char **tab)
 {
     if (tab == NULL)
@@ -97,6 +103,11 @@ void free_tab(char **tab)
     free(tab);
 }
 
+/// @brief Return the number of element between the start of the list and the
+/// given delimiter
+/// @param delimiter Delimiter at the end of the list
+/// @param elts List of elements
+/// @return Number of elements
 int my_len(void *delimiter, void **elts)
 {
     int i = 0;

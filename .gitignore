@@ -8,6 +8,8 @@ zappy_gui
 zappy_server
 vgcore.*
 .vscode/
+*.data
+coding-style-reports.log
 
 ### C ###
 # Prerequisites
@@ -16,7 +18,6 @@ vgcore.*
 # Object files
 *.o
 *.ko
-*.obj
 *.elf
 
 # Linker output

@@ -9,9 +9,7 @@
 
 void tna(server_t *server, int i, char *input)
 {
-    char **tab = get_parameters(input);
-
-    (void) server;
-    (void) i;
-    free_tab(tab);
+    (void) input;
+    for (int j = 0; ZAPPY->teams_name[j] != NULL; j++)
+        send_client(FD_CLIENT, "tna \"%s\"\n", ZAPPY->teams_name[j]);
 }
