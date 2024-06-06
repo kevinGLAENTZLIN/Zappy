@@ -37,7 +37,6 @@ extern "C" {
     {
         if (send(socket, msg.c_str(), sizeof(char) * (msg.length() + 1), 0) == -1)
             throw Zappy::ErrorGUI(SOCKET_ERROR, "send: " + std::string(strerror(errno)));
-        std::cout << "sent: " << msg << std::endl;
     }
 
     std::string Zappy::GuiSocket::receiveFromServer(const std::size_t &socket)
@@ -52,7 +51,6 @@ extern "C" {
                 break;
             newBuff += buffer;
         }
-        std::cout << "received: " << newBuff << std::endl;
         return newBuff;
     }
 
@@ -66,11 +64,8 @@ extern "C" {
         timeoutStruct.tv_sec = 0;
         timeoutStruct.tv_usec = 100;
         ret = select(sock + 1, &_rfds, NULL, NULL, &timeoutStruct);
-        if (ret == -1)
-            throw Zappy::ErrorGUI(SOCKET_ERROR, "select: " + std::string(strerror(errno)));
-        // if (FD_ISSET(sock, &_rfds)) {
-        //     return -1;
-        // }
+        if (ret == 0)
+            return -1;
         FD_ZERO(&_rfds);
         return ret;
     }

@@ -9,6 +9,7 @@
 #pragma once
 
 #include <raylib.h>
+#include <iostream>
 
 namespace Raylib {
     class Camera {
@@ -17,6 +18,7 @@ namespace Raylib {
         ~Camera();
         void begin3DMode();
         void end3DMode();
+        void cameraUpdate(std::size_t flags);
     private:
         void setupCamera();
         Camera3D _camera;
