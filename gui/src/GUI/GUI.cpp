@@ -50,7 +50,7 @@ void Zappy::GUI::runGUI()
     _commonElements->setIp(_ip);
     initScenes();
     _commonElements->getMusic().play();
-    _commonElements->getMusic().setVolume(1.);
+    _commonElements->getMusic().setVolume(0.5);
     while (_window->myWindowShouldClose() == false) {
         _commonElements->getMusic().updateMusic();
         if (_commonElements->getConnect()) {

@@ -7,16 +7,21 @@
 
 #include "MusicEnc.hh"
 
+Raylib::MusicEnc::MusicEnc(const std::string &musicPath)
+{
+    loadMusic(musicPath);
+}
+
+Raylib::MusicEnc::~MusicEnc()
+{
+}
+
+float Raylib::MusicEnc::getVolume() const
+{
+    return _volume;
+}
+
 extern "C" {
-    Raylib::MusicEnc::MusicEnc(const std::string &musicPath)
-    {
-        loadMusic(musicPath);
-    }
-
-    Raylib::MusicEnc::~MusicEnc()
-    {
-    }
-
     void Raylib::MusicEnc::loadMusic(const std::string &musicPath)
     {
         _music = LoadMusicStream(musicPath.c_str());
@@ -29,7 +34,8 @@ extern "C" {
 
     void Raylib::MusicEnc::setVolume(float volume)
     {
-        SetMusicVolume(_music, volume);
+        _volume = volume;
+        SetMusicVolume(_music, _volume);
     }
 
     void Raylib::MusicEnc::updateMusic()

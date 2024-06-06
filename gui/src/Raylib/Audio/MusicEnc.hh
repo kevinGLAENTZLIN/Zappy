@@ -19,8 +19,10 @@ namespace Raylib {
             void setVolume(float volume);
             void updateMusic();
             Music getMusic() const;
+            float getVolume() const;
         protected:
         private:
             Music _music;
+            float _volume;
     };
 }

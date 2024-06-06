@@ -15,7 +15,7 @@ namespace Zappy {
     class Button {
         public:
             Button(const std::size_t &posX, const std::size_t &posY, const std::string &assetPath,
-                   const std::string &text, const std::string &font);
+                   const std::string &text, const std::string &font, Color color = BLACK);
             ~Button();
             bool IsButtonPressed();
             void Draw();

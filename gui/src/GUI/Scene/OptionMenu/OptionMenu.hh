@@ -13,6 +13,8 @@
 #include "../IScene.hh"
 #include "../../CommonElements/CommonElements.hh"
 #include "../../../UI/Button.hh"
+#include "../../../UI/Checkbox.hh"
+#include "../../../UI/Slider.hh"
 #include "../../../Raylib/Raylib.hh"
 
 namespace Zappy {
@@ -25,6 +27,11 @@ namespace Zappy {
     private:
         std::shared_ptr<CommonElements> _commonElements;
         Button _backBtn;
-        // TODO: put all the elements of the option menu here
+        Raylib::Texture _backBox;
+        Slider _slider;
+        Button _fullscreenBtn;
+        Checkbox _showFPS;
+        Checkbox _muteCheck;
+        Raylib::Text _title;
     };
 }

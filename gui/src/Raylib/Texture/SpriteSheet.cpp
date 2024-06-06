@@ -13,7 +13,7 @@ Raylib::SpriteSheet::SpriteSheet(const std::string &path, std::size_t nbframes,
     Texture(path, posX, posY, rotation, scale), _nbFrames(nbframes), _currentFrame(0),
     _spriteSheetSize({static_cast<float>(nbCol), static_cast<float>(nbRow)})
 {
-    _frameSize = {_texture.width / _spriteSheetSize.x, _texture.height / _spriteSheetSize.y};
+    _frameSize = {(_texture.width * static_cast<float>(scale)) / _spriteSheetSize.x, (_texture.height * static_cast<float>(scale)) / _spriteSheetSize.y};
     _frameRec.setSize(_frameSize.x, _frameSize.y);
     _position.x = GetScreenWidth() * (posX / 100) - _frameSize.x / 2.0f;
     _position.y = GetScreenHeight() * (posY / 100) - _frameSize.y / 2.0f;

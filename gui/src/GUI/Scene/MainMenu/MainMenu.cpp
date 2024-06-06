@@ -8,10 +8,10 @@
 #include "MainMenu.hh"
 
 Zappy::MainMenu::MainMenu(std::shared_ptr<CommonElements> commonElements):
-    _commonElements(commonElements), _playBtn(50, 60, "gui/assets/button.png", "PLAY", "gui/assets/DURALITH.ttf"),
-    _optionBtn(50, 73, "gui/assets/button.png", "OPTION", "gui/assets/DURALITH.ttf"),
-    _quitBtn(50, 86, "gui/assets/button.png", "QUIT", "gui/assets/DURALITH.ttf"),
-    _guiSock()
+    _commonElements(commonElements), _playBtn(50, 60, "gui/assets/Button.png", "PLAY", "gui/assets/Futura Condensed Medium.ttf"),
+    _optionBtn(50, 73, "gui/assets/Button.png", "OPTION", "gui/assets/Futura Condensed Medium.ttf"),
+    _quitBtn(50, 86, "gui/assets/Button.png", "QUIT", "gui/assets/Futura Condensed Medium.ttf"),
+    _guiSock(), _logo("gui/assets/logo.png", 50, 25, 0, 0.5)
 {
     _commonElements->setConnect(false);
 }
@@ -42,5 +42,6 @@ void Zappy::MainMenu::displayElements(void)
     _playBtn.Draw();
     _optionBtn.Draw();
     _quitBtn.Draw();
+    _logo.DrawTexture();
     // _texture.DrawTexture();
 }

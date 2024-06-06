@@ -29,6 +29,7 @@ namespace Zappy {
         Button _optionBtn;
         Button _quitBtn;
         GuiSocket _guiSock;
+        Raylib::Texture _logo;
         // Raylib::Texture _texture;
     };
 }

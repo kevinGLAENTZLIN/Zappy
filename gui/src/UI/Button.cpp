@@ -9,7 +9,7 @@
 #include "../Raylib/Raylib.hh"
 
 Zappy::Button::Button(const std::size_t &posX, const std::size_t &posY, const std::string &assetPath,
-    const std::string &text, const std::string &font):
+    const std::string &text, const std::string &font, Color color):
     _btnAction(0), _btnTexture(assetPath, 3, 1, 3, posX, posY)
 {
     double frameHeight = _btnTexture.GetTexture().height / 3;
@@ -18,7 +18,7 @@ Zappy::Button::Button(const std::size_t &posX, const std::size_t &posY, const st
     _btnBounds.setPosition(_btnTexture.getPosition().x, _btnTexture.getPosition().y);
     std::size_t textPosX = _btnTexture.getPosition().x + (_btnTexture.GetTexture().width / 2);
     std::size_t textPosY = _btnTexture.getPosition().y + (frameHeight / 2);
-    _text = std::make_unique<Raylib::Text>(text, 70, font, textPosX, textPosY, 2, BLACK, Raylib::PIXEL);
+    _text = std::make_unique<Raylib::Text>(text, 70, font, textPosX, textPosY, 2, color, Raylib::PIXEL);
 }
 
 Zappy::Button::~Button()
