@@ -7,23 +7,40 @@
 
 #include "Texture.hh"
 #include <raylib.h>
+#include "../Screen/Screen.hh"
 
-Raylib::Texture::Texture(const std::string &fileName, double posX, double posY,
-                double rotation, double scale):
+Raylib::Texture::Texture(const std::string &fileName, float posX, float posY,
+                float rotation, float scale):
     _rotation(rotation), _scale(scale)
 {
-    double posPixelX;
-    double posPixelY;
+    float posPixelX;
+    float posPixelY;
 
     createTexture(fileName);
-    posPixelX = GetScreenWidth() * (posX / 100) - _texture.width / 2.0f;
-    posPixelY = GetScreenHeight() * (posY / 100) - _texture.height / 2.0f;
-    _position = {static_cast<float>(posPixelX), static_cast<float>(posPixelY)};
+    _percentPos = {posX, posY};
+    posPixelX = Screen::myGetScreenWidth() * (posX / 100) - (_texture.width * scale) / 2.0f;
+    posPixelY = Screen::myGetScreenHeight() * (posY / 100) - (_texture.height * scale) / 2.0f;
+    _position = {posPixelX, posPixelY};
 }
 
-Texture2D Raylib::Texture::GetTexture()
+Texture2D Raylib::Texture::GetTexture() const
 {
     return _texture;
+}
+
+Vector2 Raylib::Texture::getPosition() const
+{
+    return _position;
+}
+
+std::pair<float, float> Raylib::Texture::getPercentPos() const
+{
+    return _percentPos;
+}
+
+void Raylib::Texture::setPosition(float x, float y)
+{
+    _position = {x, y};
 }
 
 extern "C" {

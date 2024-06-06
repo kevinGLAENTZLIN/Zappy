@@ -5,7 +5,6 @@
 ** OptionMenu
 */
 
-
 #pragma once
 
 #include <iostream>
@@ -13,6 +12,10 @@
 
 #include "../IScene.hh"
 #include "../../CommonElements/CommonElements.hh"
+#include "../../../UI/Button.hh"
+#include "../../../UI/Checkbox.hh"
+#include "../../../UI/Slider.hh"
+#include "../../../Raylib/Raylib.hh"
 
 namespace Zappy {
     class OptionMenu : public IScene {
@@ -23,6 +26,12 @@ namespace Zappy {
         void displayElements(void) override;
     private:
         std::shared_ptr<CommonElements> _commonElements;
-        // TODO: put all the elements of the option menu here
+        Button _backBtn;
+        Raylib::Texture _backBox;
+        Slider _slider;
+        Button _fullscreenBtn;
+        Checkbox _showFPS;
+        Checkbox _muteCheck;
+        Raylib::Text _title;
     };
 }

@@ -7,37 +7,39 @@
 
 #include "Event.hh"
 
-Vector2 myGetMousePosition()
-{
-    return GetMousePosition();
-}
+extern "C" {
+    Vector2 Raylib::Event::myGetMousePosition()
+    {
+        return GetMousePosition();
+    }
 
-bool Zappy::Event::myCheckCollisionPointRec(Vector2 point, Raylib::RectangleEnc rec)
-{
-    return CheckCollisionPointRec(point, rec.getRectangle());
-}
+    bool Raylib::Event::myCheckCollisionPointRec(Vector2 point, Raylib::RectangleEnc rec)
+    {
+        return CheckCollisionPointRec(point, rec.getRectangle());
+    }
 
-bool Zappy::Event::myIsMouseButtonDown(int button)
-{
-    return IsMouseButtonDown(button);
-}
+    bool Raylib::Event::myIsMouseButtonDown(int button)
+    {
+        return IsMouseButtonDown(button);
+    }
 
-bool Zappy::Event::myIsMouseButtonReleased(int button)
-{
-    return IsMouseButtonReleased(button);
-}
+    bool Raylib::Event::myIsMouseButtonReleased(int button)
+    {
+        return IsMouseButtonReleased(button);
+    }
 
-bool Zappy::Event::myIsKeyPressed(int key)
-{
-    return IsKeyPressed(key);
-}
+    bool Raylib::Event::myIsKeyPressed(int key)
+    {
+        return IsKeyPressed(key);
+    }
 
-bool Zappy::Event::myIsKeyReleased(int key)
-{
-    return IsKeyPressed(key);
-}
+    bool Raylib::Event::myIsKeyReleased(int key)
+    {
+        return IsKeyPressed(key);
+    }
 
-bool Zappy::Event::myIsKeyDown(int key)
-{
-    return IsKeyPressed(key);
+    bool Raylib::Event::myIsKeyDown(int key)
+    {
+        return IsKeyPressed(key);
+    }
 }
