@@ -32,8 +32,8 @@ void Zappy::Game::computeLogic()
 
     cam.cameraUpdate(CAMERA_ORBITAL);
     _commonElements->setCamera(cam);
-    _network.checkServer();
     _network.sendQueueToServer();
+    _network.checkServer();
     if (_tickTime == -1)
         return;
     _timer += GetFrameTime() / _tickTime;
@@ -57,7 +57,6 @@ void Zappy::Game::displayElements(void)
         for (auto &player : _players)
             player.draw(_mapSize);
     _commonElements->getCamera().end3DMode();
-    DrawFPS(0, 0);
 }
 
 void Zappy::Game::setMapSize(std::size_t x, std::size_t y)

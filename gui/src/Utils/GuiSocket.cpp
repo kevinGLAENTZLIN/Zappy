@@ -60,11 +60,12 @@ extern "C" {
         struct timeval timeoutStruct;
         fd_set _rfds;
 
+        FD_ZERO(&_rfds);
         FD_SET(sock, &_rfds);
         timeoutStruct.tv_sec = 0;
         timeoutStruct.tv_usec = 100;
         ret = select(sock + 1, &_rfds, NULL, NULL, &timeoutStruct);
-        if (ret == 0)
+        if (ret == 0 || FD_ISSET(sock, &_rfds) == 0)
             return -1;
         FD_ZERO(&_rfds);
         return ret;
