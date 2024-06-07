@@ -17,7 +17,8 @@ static void send_guis_text(server_t *server, char *txt, va_list ap)
     va_end(ap);
     for (int i = 0; i < server->nb_client; i++) {
         client = CLIENT;
-        if (strcmp(client->client_type, GUI) == 0)
+        if (client->client_type != NULL && 
+        strcmp(client->client_type, GUI) == 0)
             send_client(client->fd, "%s", txt);
     }
     free(txt);
@@ -79,7 +80,7 @@ static void dprintf_with_select(int client_fd, char *txt, va_list ap)
 void send_client(int fd, const char *format, ...)
 {
     va_list ap;
-    char *txt = malloc(sizeof(char) * 256);
+    char *txt = malloc(sizeof(char) * BUFFER_SIZE);
     int n = 0;
 
     if (txt == NULL)

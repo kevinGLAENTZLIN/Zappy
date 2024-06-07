@@ -11,11 +11,10 @@ launch_client()
         sleep 1
         while true; do
             echo "Forward"
-            echo "Broadcast `cat /dev/urandom | head -n 8000`"
+            # echo "Broadcast `cat /dev/urandom | head -n 8000`"
         done
     } | ncat $IP $PORT -C
 }
-
-for ((i=1; i<=10; i++)); do
+for ((i=1; i<=1000; i++)); do
     launch_client &
 done

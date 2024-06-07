@@ -89,6 +89,10 @@ static bool check_connection_command(server_t *server, int i)
             return false;
         }
         client->client_type = strdup(GUI);
+        if (client->client_type == NULL) {
+            perror("check_connection_command");
+            return false;
+        }
         return true;
     }
     if (is_team_name(server, client->cmds->command))

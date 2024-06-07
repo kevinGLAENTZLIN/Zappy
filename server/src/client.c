@@ -107,7 +107,6 @@ void read_client(server_t *server, int i)
         client->buffer = NULL;
     }
     if (client->buffer != NULL) {
-        printf("Buffer [%s]\n", client->buffer);
         push_back_command(server, i);
         free(client->buffer);
         client->buffer = NULL;
