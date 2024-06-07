@@ -35,9 +35,6 @@ void free_server(server_t *server)
         perror("free_server");
     free_zappy(server->zappy);
     free_clients(server);
-    ret = close(server->control_fd);
-    if (ret == -1)
-        perror("free_server");
     free(server);
 }
 
