@@ -60,6 +60,7 @@ extern "C" {
         struct timeval timeoutStruct;
         fd_set _rfds;
 
+        FD_ZERO(&_rfds);
         FD_SET(sock, &_rfds);
         timeoutStruct.tv_sec = 0;
         timeoutStruct.tv_usec = 100;
