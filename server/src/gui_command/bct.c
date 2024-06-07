@@ -7,6 +7,10 @@
 
 #include "../../include/server.h"
 
+/// @brief Print to the GUI client the info of the Tile
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param tile Tile of the map to analyze
 void display_tile_info(server_t *server, int i, tile_t *tile)
 {
     int fd = FD_CLIENT;
@@ -20,6 +24,10 @@ void display_tile_info(server_t *server, int i, tile_t *tile)
     send_client(fd, " %d\n", tile->thystame);
 }
 
+/// @brief Bct command of the GUI protocol
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param input Command input from the Client
 void bct(server_t *server, int i, char *input)
 {
     char **tab = get_parameters(input);

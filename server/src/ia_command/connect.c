@@ -7,6 +7,10 @@
 
 #include "../../include/server.h"
 
+/// @brief Connect command of the Client protocol
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param input Command input from the Client
 void my_connect(server_t *server, int i, char *input)
 {
     team_t *tmp = NULL;

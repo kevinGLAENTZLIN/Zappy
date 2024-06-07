@@ -92,6 +92,8 @@ void read_client_loop(server_t *server)
     }
 }
 
+/// @brief Call the function to add and read Clients
+/// @param server Structure that contain all server data
 static bool server_loop_call(server_t *server)
 {
     if (server != NULL)

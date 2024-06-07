@@ -7,6 +7,10 @@
 
 #include "../../include/server.h"
 
+/// @brief Send to all the GUI client the take command answer
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param object Type of the object take
 static void handle_take_response(server_t *server, int i, char *object)
 {
     player_t *player = PLAYER;
@@ -28,6 +32,10 @@ static void handle_take_response(server_t *server, int i, char *object)
     send_client(FD_CLIENT, "ok\n");
 }
 
+/// @brief Take the given object on the Player tile
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param object Type of the object take
 static void take_object3(server_t *server, int i, char *object, tile_t *tile)
 {
     if (strcmp(object, "thystame") == 0 && tile->thystame > 0) {
@@ -38,6 +46,10 @@ static void take_object3(server_t *server, int i, char *object, tile_t *tile)
     return (void)send_client(FD_CLIENT, "ko\n");
 }
 
+/// @brief Take the given object on the Player tile
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param object Type of the object take
 static void take_object2(server_t *server, int i, char *object, tile_t *tile)
 {
     if (strcmp(object, "sibur") == 0 && tile->sibur > 0) {
@@ -58,6 +70,10 @@ static void take_object2(server_t *server, int i, char *object, tile_t *tile)
     take_object3(server, i, object, tile);
 }
 
+/// @brief Take the given object on the Player tile
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param object Type of the object take
 static void take_object(server_t *server, int i, char *object)
 {
     tile_t *tile = PLAYER_TILE;
@@ -82,6 +98,10 @@ static void take_object(server_t *server, int i, char *object)
     take_object2(server, i, object, tile);
 }
 
+/// @brief Take command of the Client protocol
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param input Command input from the Client
 void take(server_t *server, int i, char *input)
 {
     client_t *client = CLIENT;

@@ -7,6 +7,10 @@
 
 #include "../../include/server.h"
 
+/// @brief Initialize a default team based on the given name
+/// @param team_name Name of the team
+/// @param nb_max Maximum number of client simulated connected
+/// @return The initialized team
 static team_t *init_team(char *team_name, int nb_max)
 {
     team_t *team = malloc(sizeof(team_t));
@@ -24,6 +28,8 @@ static team_t *init_team(char *team_name, int nb_max)
     return team;
 }
 
+/// @brief Load each Team based on the teams name
+/// @param zappy Structure that contains all games information
 void load_zappy_teams(zappy_t *zappy)
 {
     if (zappy == NULL)
@@ -36,6 +42,8 @@ void load_zappy_teams(zappy_t *zappy)
         zappy->teams[i] = init_team(zappy->teams_name[i], zappy->team_size);
 }
 
+/// @brief Free the given team
+/// @param team Team to free
 static void free_team(team_t *team)
 {
     if (team == NULL)
@@ -45,6 +53,8 @@ static void free_team(team_t *team)
     free(team);
 }
 
+/// @brief Free all teams from the Zappy
+/// @param zappy Structure that contains all games information
 void free_teams(zappy_t *zappy)
 {
     int len = 0;

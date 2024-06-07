@@ -114,6 +114,9 @@ void read_client(server_t *server, int i)
     }
 }
 
+/// @brief Disconnect the given Client from the given Server and free it
+/// @param server Structure that contain all server data
+/// @param client Client to disconnect
 void disconnect_client(server_t *server, client_t *client)
 {
     client_t *tmp = server->clients;

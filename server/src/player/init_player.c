@@ -7,6 +7,8 @@
 
 #include "../../include/server.h"
 
+/// @brief Load a default inventory to the given player
+/// @param player Player to set the inventory
 static void load_player_inventory(player_t *player)
 {
     player->food = 10;
@@ -19,6 +21,10 @@ static void load_player_inventory(player_t *player)
     player->thystame = 0;
 }
 
+/// @brief Initialize a default player at the given coordinate
+/// @param x Starting X coordinate of the player
+/// @param y Starting Y coordinate of the player
+/// @return NULL if any error found, else the initialized player
 player_t *init_player(int x, int y)
 {
     player_t *player = malloc(sizeof(player_t));
@@ -36,6 +42,8 @@ player_t *init_player(int x, int y)
     return player;
 }
 
+/// @brief Free the given player
+/// @param player Player to free
 void free_player(player_t *player)
 {
     if (player == NULL)
@@ -45,6 +53,8 @@ void free_player(player_t *player)
     free(player);
 }
 
+/// @brief Free all players of the given team
+/// @param team Team to free all of its players
 void free_players(team_t *team)
 {
     player_t *tmp = NULL;
