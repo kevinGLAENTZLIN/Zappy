@@ -9,12 +9,11 @@
 #include "../Game.hh"
 
 #include <sstream>
-#include <utility>
 #include <chrono>
 #include <thread>
 
 Zappy::Network::Network(std::shared_ptr<CommonElements> commonElements, Game &game):
-    _commonElements(commonElements), _game(game)
+    _commonElements(commonElements), _isConnected(false), _game(game)
 {
     initCommands();
 }
@@ -25,11 +24,13 @@ Zappy::Network::~Network()
 
 void Zappy::Network::checkServer()
 {
-    std::string temp = GuiSocket::receiveFromServer(_commonElements->getSocket());
+    std::string temp;
     std::stringstream serverInput;
     std::string command;
 
+    temp = GuiSocket::receiveFromServer(_commonElements->getSocket());
     while (temp != "") {
+        std::cout << temp << std::endl;
         serverInput << temp;
         serverInput >> command;
         if (_commands[command] != nullptr)
@@ -43,6 +44,8 @@ void Zappy::Network::sendQueueToServer()
 {
     std::string command;
 
+    if (_isConnected == false)
+        return;
     while (!_commandsQueue.empty()) {
         command = _commandsQueue.front();
         _commandsQueue.pop();
@@ -59,6 +62,7 @@ void Zappy::Network::addToQueue(const std::string &command)
 
 void Zappy::Network::initCommands()
 {
+    _commands["WELCOME"] = [this](const std::string &args) { welcome(args); };
     _commands["msz"] = [this](const std::string &args) { msz(args); };
     _commands["bct"] = [this](const std::string &args) { bct(args); };
     _commands["tna"] = [this](const std::string &args) { tna(args); };
@@ -80,6 +84,13 @@ void Zappy::Network::initCommands()
     _commands["sgt"] = [this](const std::string &args) { sgt(args); };
     _commands["seg"] = [this](const std::string &args) { seg(args); };
     _commands["smg"] = [this](const std::string &args) { smg(args); };
+}
+
+void Zappy::Network::welcome(const std::string &args)
+{
+    (void)args;
+    GuiSocket::sendToServer(_commonElements->getSocket(), "GRAPHIC\n");
+    _isConnected = true;
 }
 
 void Zappy::Network::msz(const std::string &args)

@@ -53,11 +53,6 @@ void Zappy::GUI::runGUI()
     _commonElements->getMusic().setVolume(0.5);
     while (_window->myWindowShouldClose() == false) {
         _commonElements->getMusic().updateMusic();
-        if (_commonElements->getConnect()) {
-            serverInput = GuiSocket::receiveFromServer(_commonElements->getSocket());
-            if (serverInput == "WELCOME")
-                GuiSocket::sendToServer(_commonElements->getSocket(), "GRAPHIC\n");
-        }
         _scenes[_commonElements->getCurrentScene()]->computeLogic();
         _window->myBeginDrawing();
             _window->myClearBackground();

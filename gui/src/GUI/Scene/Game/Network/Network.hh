@@ -33,6 +33,7 @@ namespace Zappy {
     private:
         void initCommands();
 
+        void welcome(const std::string &args);
         void msz(const std::string &args);
         void bct(const std::string &args);
         void tna(const std::string &args);
@@ -59,6 +60,7 @@ namespace Zappy {
         std::map<std::string, std::function<void(const std::string &)>> _commands;
         std::shared_ptr<CommonElements> _commonElements;
         std::queue<std::string> _commandsQueue;
+        bool _isConnected;
         Game &_game;
     };
 }
