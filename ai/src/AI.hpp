@@ -47,17 +47,16 @@ namespace Zappy {
             void handleBroadcast(const std::string &response);
             void parseInventory(const std::string &response);
             bool handleIncantation(int linemate, int deraumere, int sibur, int mendiane, int phiras, int thystame);
-            void handlePlayerMove(int tileIndex);
+            void handlePlayerMove(int tileIndex, std::string object);
             void takeObject(const std::string &object);
             void handleUniqueCommand(const std::string &serverResponse, const std::string &response);
 
+            bool shouldTakeObject(const std::string &object);
             void sendCommand(const std::string &command, bool isObject, const std::string &object = "");
             void moveToBroadcastPosition(int position);
             void handleTakeObjectResponse(const std::string &response);
 
             bool _isAlive;
-            bool _isIncantation;
-            bool _isBroadcast;
             int _currentLevel;
             int _nbPlayer;
             int _food;
