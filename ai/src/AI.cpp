@@ -111,9 +111,10 @@ void Zappy::AI::handleResponse(void)
     stream = std::istringstream(serverResponse);
     stream >> response;
     handleUniqueCommand(serverResponse, response);
-    _numberCmd--;
+    std::cout << "number cmd apres decrementation : " << _numberCmd << std::endl;
     if (_numberCmd < 10 && !_commandQueue.empty()) {
         command = _commandQueue.front();
+        _numberCmd--;
         _commandQueue.pop();
     }
 }
@@ -243,6 +244,7 @@ void Zappy::AI::handlePlayerMove(int tileIndex, std::string object)
     bool isObjectInterresting = false;
 
     if (tileIndex > 0) {
+        std::cout << "tile index : " << tileIndex << std::endl;
         if (tileIndex == 1) {
             sendCommand(_commands[FORWARD], false);
             sendCommand(_commands[LEFT], false);
@@ -439,4 +441,5 @@ void Zappy::AI::sendCommand(const std::string &command, bool isObject, const std
         _commandQueue.push(command);
         _numberCmd++;
     }
+    std::cout << "number cmd apres ajout : " << _numberCmd << std::endl;
 }

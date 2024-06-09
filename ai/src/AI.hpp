@@ -31,6 +31,7 @@
 #define TAKE_OBJECT 9
 #define SET_OBJECT 10
 #define LEFT 11
+#define MIN_FOOD 15
 
 namespace Zappy {
     class AI {
@@ -45,16 +46,16 @@ namespace Zappy {
             void handleResponse(void);
             void handleLook(const std::string &response);
             void handleBroadcast(const std::string &response);
-            void parseInventory(const std::string &response);
             bool handleIncantation(int linemate, int deraumere, int sibur, int mendiane, int phiras, int thystame);
             void handlePlayerMove(int tileIndex, std::string object);
-            void takeObject(const std::string &object);
             void handleUniqueCommand(const std::string &serverResponse, const std::string &response);
+            void handleTakeObjectResponse(const std::string &response);
 
+            void parseInventory(const std::string &response);
+            void takeObject(const std::string &object);
             bool shouldTakeObject(const std::string &object);
             void sendCommand(const std::string &command, bool isObject, const std::string &object = "");
             void moveToBroadcastPosition(int position);
-            void handleTakeObjectResponse(const std::string &response);
 
             bool _isAlive;
             int _currentLevel;
