@@ -7,6 +7,12 @@
 
 #include "../../include/server.h"
 
+/// @brief Send the info to Client
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param opt If display a space or not
+/// @param txt Type of object
+/// @return True in every case
 static bool send_tile_info(server_t *server, int i, bool opt, char *txt)
 {
     if (opt)
@@ -16,6 +22,11 @@ static bool send_tile_info(server_t *server, int i, bool opt, char *txt)
     return true;
 }
 
+/// @brief Get and send tile info of the client
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param tile Tile to check
+/// @param opt If display a comma or not
 static void get_tile_info(server_t *server, int i, tile_t *tile, bool opt)
 {
     bool tmp = false;
@@ -40,6 +51,8 @@ static void get_tile_info(server_t *server, int i, tile_t *tile, bool opt)
         send_client(FD_CLIENT, ", ");
 }
 
+/// @brief Return n power 2
+/// @return if n equal 0 then returns 0, else n^2
 static int n_square(int n)
 {
     int ret = pow(n, 2);
@@ -49,6 +62,9 @@ static int n_square(int n)
     return ret;
 }
 
+/// @brief Send the tile info to each Client
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
 static void display_look_level(server_t *server, int i, int x, int y)
 {
     player_t *player = PLAYER;
@@ -73,6 +89,9 @@ static void display_look_level(server_t *server, int i, int x, int y)
     }
 }
 
+/// @brief Get the tile origin at the player level
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
 static void get_look_origin_level(server_t *server, int i, int x, int y)
 {
     player_t *player = PLAYER;
@@ -96,6 +115,9 @@ static void get_look_origin_level(server_t *server, int i, int x, int y)
     display_look_level(server, i, x, y);
 }
 
+/// @brief Send the look information to the Client
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
 static void display_look(server_t *server, int i)
 {
     client_t *client = CLIENT;
@@ -113,6 +135,10 @@ static void display_look(server_t *server, int i)
     client->time_to_wait = 7;
 }
 
+/// @brief Look command of the Client protocol
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param input Command input from the Client
 void look(server_t *server, int i, char *input)
 {
     (void) input;

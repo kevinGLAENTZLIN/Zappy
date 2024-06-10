@@ -7,6 +7,9 @@
 
 #include "../../include/server.h"
 
+/// @brief Send the inventory of the Client
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
 static void send_inventory(server_t *server, int i)
 {
     client_t *client = CLIENT;
@@ -23,6 +26,10 @@ static void send_inventory(server_t *server, int i)
     client->time_to_wait = 1;
 }
 
+/// @brief Inventory command of the Client protocol
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param input Command input from the Client
 void inventory(server_t *server, int i, char *input)
 {
     (void) input;

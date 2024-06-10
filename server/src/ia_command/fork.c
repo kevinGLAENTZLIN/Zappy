@@ -7,6 +7,10 @@
 
 #include "../../include/server.h"
 
+/// @brief Fork command of the Client protocol
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param input Command input from the Client
 void my_fork(server_t *server, int i, char *input)
 {
     client_t *client = CLIENT;
@@ -21,6 +25,8 @@ void my_fork(server_t *server, int i, char *input)
         team->nb_max_player += 1;
         send_to_all_gui(server, "pfk #%d\n", client->player->id);
         tmp = malloc(sizeof(char) * 64);
+        if (tmp == NULL)
+            return perror("my_fork");
         sprintf(tmp, "enw #%d #%d %d %d\n", egg->id, client->player->id,
         egg->x, egg->y);
         client->gui_action_message = tmp;

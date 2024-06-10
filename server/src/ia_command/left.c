@@ -7,6 +7,10 @@
 
 #include "../../include/server.h"
 
+/// @brief Left command of the Client protocol
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param input Command input from the Client
 void my_left(server_t *server, int i, char *input)
 {
     client_t *client = CLIENT;

@@ -7,6 +7,10 @@
 
 #include "../../include/server.h"
 
+/// @brief Send the message to the GUI and the concerned Client
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param player Player ejected
 static void send_eject(server_t *server, int i, player_t *player)
 {
     client_t *client = CLIENT;
@@ -21,6 +25,8 @@ static void send_eject(server_t *server, int i, player_t *player)
     send_client(tmp->fd, "eject: %d\n", (((2 * (a - b) + 4) + 16) % 8) + 1);
 }
 
+/// @brief Destroy the given egg
+/// @param server Structure that contains all games information
 static void destroy_egg(server_t *server, egg_t *egg)
 {
     team_t *tmp = get_team_by_name(server, egg->team_name);
@@ -31,6 +37,8 @@ static void destroy_egg(server_t *server, egg_t *egg)
     hatch_egg(server, egg);
 }
 
+/// @brief Destroy any eggs on the same tile of the given player
+/// @param server Structure that contains all games information
 static void egg_destruction(server_t *server, player_t *player)
 {
     egg_t *tmp = ZAPPY->eggs;
@@ -48,6 +56,10 @@ static void egg_destruction(server_t *server, player_t *player)
     }
 }
 
+/// @brief Eject all player on the same tile
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param tmp List of player
 static void eject_players(server_t *server, int i, player_t *tmp)
 {
     player_t *player = PLAYER;
@@ -69,6 +81,10 @@ static void eject_players(server_t *server, int i, player_t *tmp)
     eject_players(server, i, tmp->next);
 }
 
+/// @brief Eject command of the Client protocol
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param input Command input from the Client
 void eject(server_t *server, int i, char *input)
 {
     client_t *client = CLIENT;
