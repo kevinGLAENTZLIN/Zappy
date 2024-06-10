@@ -30,7 +30,6 @@ void Zappy::Network::checkServer()
 
     temp = GuiSocket::receiveFromServer(_commonElements->getSocket());
     while (temp != "") {
-        std::cout << temp << std::endl;
         serverInput << temp;
         serverInput >> command;
         if (_commands[command] != nullptr)
@@ -100,7 +99,6 @@ void Zappy::Network::msz(const std::string &args)
     std::size_t x;
     std::size_t y;
 
-    std::cout << args << std::endl;
     ss >> temp >> x >> y;
     _game.setMapSize(x, y);
 }
@@ -113,7 +111,6 @@ void Zappy::Network::bct(const std::string &args)
     std::size_t y;
     std::vector<std::size_t> resources(7);
 
-    std::cout << args << std::endl;
     ss >> temp >> x >> y >> resources[FOOD] >> resources[LINEMATE] >>
         resources[DERAUMERE] >> resources[SIBUR] >> resources[MENDIANE] >>
         resources[PHIRAS] >> resources[THYSTAME];
@@ -136,7 +133,6 @@ void Zappy::Network::pnw(const std::string &args)
     std::size_t level;
     std::string team;
 
-    std::cout << args << std::endl;
     ss >> temp >> id >> x >> y >> facingDirection >> level >> team;
     _game.addPlayer(std::stoi(&id[1]), x, y, static_cast<orientation>(facingDirection),
                     level, team);
@@ -151,7 +147,6 @@ void Zappy::Network::ppo(const std::string &args)
     std::size_t y;
     std::size_t facingDirection;
 
-    std::cout << args << std::endl;
     ss >> temp >> id >> x >> y >> facingDirection;
     _game.updatePlayerPosition(std::stoi(&id[1]), x, y,
         static_cast<orientation>(facingDirection));
@@ -164,7 +159,6 @@ void Zappy::Network::plv(const std::string &args)
     std::string id;
     std::size_t level;
 
-    std::cout << args << std::endl;
     ss >> temp >> id >> level;
     _game.updatePlayerLevel(std::stoi(&id[1]), level);
 }
@@ -176,7 +170,6 @@ void Zappy::Network::pin(const std::string &args)
     std::string id;
     std::vector<std::size_t> resources(7);
 
-    std::cout << args << std::endl;
     ss >> temp >> id >> resources[FOOD] >> resources[LINEMATE] >>
         resources[DERAUMERE] >> resources[SIBUR] >> resources[MENDIANE] >>
         resources[PHIRAS] >> resources[THYSTAME];
@@ -189,7 +182,6 @@ void Zappy::Network::pex(const std::string &args)
     std::string temp;
     std::string id;
 
-    std::cout << args << std::endl;
     ss >> temp >> id;
     addToQueue("ppo " + id + "\n");
 }
@@ -232,7 +224,6 @@ void Zappy::Network::pdi(const std::string &args)
     std::string temp;
     std::string id;
 
-    std::cout << args << std::endl;
     ss >> temp >> id;
     _game.playerDeath(std::stoi(&id[1]));
 }
@@ -259,7 +250,6 @@ void Zappy::Network::sgt(const std::string &args)
     std::string temp;
     std::size_t tickTime;
 
-    std::cout << args << std::endl;
     ss >> temp >> tickTime;
     _game.setTickTime(tickTime);
 }
@@ -270,7 +260,6 @@ void Zappy::Network::sst(const std::string &args)
     std::string temp;
     std::size_t tickTime;
 
-    std::cout << args << std::endl;
     ss >> temp >> tickTime;
     _game.setTickTime(tickTime);
 }

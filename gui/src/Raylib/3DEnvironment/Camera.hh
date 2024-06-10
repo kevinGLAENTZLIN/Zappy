@@ -16,6 +16,9 @@ namespace Raylib {
     public:
         Camera();
         ~Camera();
+
+        Camera3D getCamera();
+
         void begin3DMode();
         void end3DMode();
         void cameraUpdate(std::size_t flags);

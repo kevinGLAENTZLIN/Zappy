@@ -37,6 +37,7 @@ namespace Raylib {
         void TextDraw();
         double getTextWidth();
         double getTextHeight();
+
     private:
         std::string _text;
         std::size_t _textSize;

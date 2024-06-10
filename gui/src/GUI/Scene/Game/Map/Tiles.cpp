@@ -12,7 +12,12 @@ Zappy::Tiles::Tiles(int x, int y, Vector2 mapSize,
                     std::vector<std::shared_ptr<Raylib::Model3D>> models):
     _index({static_cast<float>(x), static_cast<float>(y)}),
     _mapSize(mapSize), _models(models)
-{}
+{
+    _bounds = (BoundingBox){(Vector3){_index.x - _mapSize.x / 2, 0,
+                                      _index.y - _mapSize.y / 2},
+                            (Vector3){_index.x - _mapSize.x / 2 + 1.f, 0,
+                                      _index.y - _mapSize.y / 2 + 1.f}};
+}
 
 Zappy::Tiles::~Tiles()
 {
@@ -20,7 +25,23 @@ Zappy::Tiles::~Tiles()
 
 void Zappy::Tiles::setResources(std::vector<std::size_t> resourcesQuantity)
 {
+    _resourcesQuantity.clear();
     _resourcesQuantity = resourcesQuantity;
+}
+
+Vector2 Zappy::Tiles::getIndex() const
+{
+    return _index;
+}
+
+std::vector<std::size_t> Zappy::Tiles::getResources() const
+{
+    return _resourcesQuantity;
+}
+
+bool Zappy::Tiles::Hits(Ray mouseRay)
+{
+    return GetRayCollisionBox(mouseRay, _bounds).hit;
 }
 
 void Zappy::Tiles::Draw()

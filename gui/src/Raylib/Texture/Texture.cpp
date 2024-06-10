@@ -23,6 +23,11 @@ Raylib::Texture::Texture(const std::string &fileName, float posX, float posY,
     _position = {posPixelX, posPixelY};
 }
 
+Raylib::Texture::~Texture()
+{
+    destroyTexture();
+}
+
 Texture2D Raylib::Texture::GetTexture() const
 {
     return _texture;
@@ -43,12 +48,12 @@ void Raylib::Texture::setPosition(float x, float y)
     _position = {x, y};
 }
 
-extern "C" {
-    Raylib::Texture::~Texture()
-    {
-        UnloadTexture(_texture);
-    }
+void Raylib::Texture::setScale(double scale)
+{
+    _scale = scale;
+}
 
+extern "C" {
     void Raylib::Texture::DrawTexture()
     {
         DrawTextureEx(_texture, _position, _rotation, _scale, WHITE);

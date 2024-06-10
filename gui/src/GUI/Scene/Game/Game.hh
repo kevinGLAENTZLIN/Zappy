@@ -12,14 +12,14 @@
 #include <memory>
 #include <vector>
 
-#include "Network/Network.hh"
-#include "../IScene.hh"
-#include "../../CommonElements/CommonElements.hh"
-#include "../../../Utils/GuiSocket.hh"
-
 #include "Map/Tiles.hh"
 #include "Player/Player.hh"
 #include "Elements.hh"
+#include "Network/Network.hh"
+#include "../IScene.hh"
+#include "../../../UI/PopUp.hh"
+#include "../../CommonElements/CommonElements.hh"
+#include "../../../Utils/GuiSocket.hh"
 
 namespace Zappy {
     class Game : public IScene {
@@ -45,6 +45,7 @@ namespace Zappy {
         void updatePlayerInventory(std::size_t id, std::vector<std::size_t> resources);
         void playerDeath(std::size_t id);
     private:
+        void userInteractions();
         void loadModels();
 
         void createMap();
@@ -59,5 +60,6 @@ namespace Zappy {
         bool _mapSizeQuery;
         double _tickTime;
         Network _network;
+        PopUp _popUp;
     };
 }
