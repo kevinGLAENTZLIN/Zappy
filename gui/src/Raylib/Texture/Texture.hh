@@ -22,6 +22,7 @@ namespace Raylib {
         std::pair<float, float> getPercentPos() const;
         Vector2 getPosition() const;
         void setPosition(float x, float y);
+        void setScale(double scale);
         void DrawTexture();
     protected:
         void createTexture(const std::string &path);
