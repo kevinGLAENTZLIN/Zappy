@@ -165,8 +165,11 @@ char *read_to_buffer(int fd, char delimiter);
 
 // * main.c functions :
 int is_number(char *str);
+void *my_perror(char *str);
 
 // * my_server.c functions :
+void config_control(server_t *server, int port);
+server_t *init_server(void);
 int my_server(zappy_t *zappy);
 void free_server(server_t *server);
 struct sockaddr_in set_address(int port);

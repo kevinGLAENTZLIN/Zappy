@@ -7,6 +7,9 @@
 
 #include "../../include/server.h"
 
+/// @brief Elevate all player on the given coordinates
+/// @param server Structure that contains all games information
+/// @param lvl Level before incantation
 static void elevate_player_on_tile(server_t *server, int x, int y, int lvl)
 {
     player_t *tmp = NULL;
@@ -20,6 +23,8 @@ static void elevate_player_on_tile(server_t *server, int x, int y, int lvl)
     }
 }
 
+/// @brief Remove given resources on the given Tile
+/// @param resrc List of resources
 static void remove_resources(char *resrc, tile_t *tile)
 {
     for (int j = 0; resrc[j] != 0; j++) {
@@ -38,6 +43,9 @@ static void remove_resources(char *resrc, tile_t *tile)
     }
 }
 
+/// @brief Send to the GUI the id of all players incantating
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
 static void incantation_player_checking(server_t *server, int i,
     player_t *player)
 {
@@ -51,6 +59,9 @@ static void incantation_player_checking(server_t *server, int i,
     incantation_player_checking(server, i, player->next);
 }
 
+/// @brief Send the response of the incantation to the concerned player
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
 static void incantation_response(server_t *server, int i)
 {
     client_t *client = CLIENT;
@@ -58,6 +69,8 @@ static void incantation_response(server_t *server, int i)
     char *gui_tmp = malloc(sizeof(char) * 48);
     char *ai_tmp = malloc(sizeof(char) * 48);
 
+    if (gui_tmp == NULL || ai_tmp == NULL)
+        return perror("incantation_response");
     send_to_all_gui(server, "pic %d %d %d", player->x, player->y,
     player->level + 1);
     for (int j = 0; ZAPPY->teams_name[j] != NULL; j++)
@@ -72,6 +85,10 @@ static void incantation_response(server_t *server, int i)
     client->time_to_wait = 300;
 }
 
+/// @brief Check if the incantation is possible or not at the given level
+/// @param server Structure that contains all server data
+/// @param i Index of the client
+/// @param lvl Level of incantation
 static void check_incantation3(server_t *server, int i, int lvl)
 {
     tile_t *tile = PLAYER_TILE;
@@ -92,6 +109,10 @@ static void check_incantation3(server_t *server, int i, int lvl)
     return (void)send_client(FD_CLIENT, "ko\n");
 }
 
+/// @brief Check if the incantation is possible or not at the given level
+/// @param server Structure that contains all server data
+/// @param i Index of the client
+/// @param lvl Level of incantation
 static void check_incantation2(server_t *server, int i, int lvl)
 {
     tile_t *tile = PLAYER_TILE;
@@ -110,6 +131,10 @@ static void check_incantation2(server_t *server, int i, int lvl)
     check_incantation3(server, i, lvl);
 }
 
+/// @brief Check if the incantation is possible or not at the given level
+/// @param server Structure that contains all server data
+/// @param i Index of the client
+/// @param lvl Level of incantation
 static void check_incantation1(server_t *server, int i, int lvl)
 {
     tile_t *tile = PLAYER_TILE;
@@ -132,6 +157,10 @@ static void check_incantation1(server_t *server, int i, int lvl)
     check_incantation2(server, i, lvl);
 }
 
+/// @brief Incantation command of the Client protocol
+/// @param server Structure that contains all server data
+/// @param i Index of the client
+/// @param input Input of the Client
 void incantation(server_t *server, int i, char *input)
 {
     player_t *player = PLAYER;

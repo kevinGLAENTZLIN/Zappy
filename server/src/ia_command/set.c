@@ -7,6 +7,10 @@
 
 #include "../../include/server.h"
 
+/// @brief Send to all the GUI client the set command answer
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param object Type of the object take
 static void handle_set_response(server_t *server, int i, char *object)
 {
     player_t *player = PLAYER;
@@ -28,6 +32,10 @@ static void handle_set_response(server_t *server, int i, char *object)
     send_client(FD_CLIENT, "ok\n");
 }
 
+/// @brief Set the given object on the Player tile
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param object Type of the object take
 static void set_object3(server_t *server, int i, char *object, tile_t *tile)
 {
     if (strcmp(object, "thystame") == 0 && PLAYER->thystame > 0) {
@@ -38,6 +46,10 @@ static void set_object3(server_t *server, int i, char *object, tile_t *tile)
     return (void)send_client(FD_CLIENT, "ko\n");
 }
 
+/// @brief Set the given object on the Player tile
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param object Type of the object take
 static void set_object2(server_t *server, int i, char *object, tile_t *tile)
 {
     if (strcmp(object, "sibur") == 0 && PLAYER->sibur > 0) {
@@ -58,6 +70,10 @@ static void set_object2(server_t *server, int i, char *object, tile_t *tile)
     set_object3(server, i, object, tile);
 }
 
+/// @brief Set the given object on the Player tile
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param object Type of the object take
 static void set_object(server_t *server, int i, char *object)
 {
     tile_t *tile = PLAYER_TILE;
@@ -82,6 +98,10 @@ static void set_object(server_t *server, int i, char *object)
     set_object2(server, i, object, tile);
 }
 
+/// @brief Set command of the Client protocol
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+/// @param input Command input from the Client
 void set(server_t *server, int i, char *input)
 {
     client_t *client = CLIENT;

@@ -52,6 +52,8 @@ static char *word_cpy(char const *str, int word_size, int i_str)
     int i_word = 0;
     char *word = malloc(sizeof(char) * word_size + 2);
 
+    if (word == NULL)
+        return (char *)my_perror("word_cpy");
     while (i_word < word_size) {
         word[i_word] = str[i_str];
         i_str++;
@@ -66,25 +68,26 @@ static char *word_cpy(char const *str, int word_size, int i_str)
 /// @return List of words
 static char **my_str_to_word_array(char const *str, char const *delim)
 {
-    int word_count = get_nbr_word(str, delim);
-    char **word_array = malloc(sizeof(char *) * (word_count + 1));
+    char **array = malloc(sizeof(char *) * (get_nbr_word(str, delim) + 1));
     int word_size = 0;
     int i_str = 0;
     int i_array = 0;
 
+    if (array == NULL)
+        return (char **)my_perror("my_str_to_word_array");
     while (str[i_str] != '\0') {
         if (is_in_str(str[i_str], delim) == 0) {
             word_size = count_word_size(str, i_str, delim);
-            word_array[i_array] = word_cpy(str, word_size, i_str);
-            word_array[i_array][word_size] = '\0';
-            word_array[i_array][word_size + 1] = '\0';
+            array[i_array] = word_cpy(str, word_size, i_str);
+            array[i_array][word_size] = '\0';
+            array[i_array][word_size + 1] = '\0';
             i_str += word_size;
             i_array++;
         } else
             i_str++;
     }
-    word_array[word_count] = NULL;
-    return word_array;
+    array[get_nbr_word(str, delim)] = NULL;
+    return array;
 }
 
 /// @brief Split the Client input

@@ -16,7 +16,7 @@ static tile_t *init_tile(int x, int y)
     tile_t *tmp = malloc(sizeof(tile_t));
 
     if (tmp == NULL)
-        return NULL;
+        return (tile_t *)my_perror("init_tile");
     tmp->x = x;
     tmp->y = y;
     tmp->deraumere = 0;
@@ -36,11 +36,18 @@ void init_map(zappy_t *zappy)
     tile_t ***map = malloc(sizeof(tile_t **) * (zappy->y * zappy->x));
 
     if (map == NULL) {
+        perror("init_map");
         zappy->map = NULL;
         return;
     }
     for (int y = 0; y < zappy->y; y++) {
         map[y] = malloc(sizeof(tile_t *) * zappy->x);
+        if (map[y] == NULL) {
+            free(map);
+            perror("init_map");
+            zappy->map = NULL;
+            return;
+        }
         for (int x = 0; x < zappy->x; x++) {
             map[y][x] = init_tile(x, y);
         }
