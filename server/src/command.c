@@ -84,10 +84,6 @@ static bool check_connection_command(server_t *server, int i)
     if (client->client_type != NULL)
         return false;
     if (strncmp(client->cmds->command, GUI, strlen(GUI)) == 0) {
-        if (client->client_type == NULL) {
-            perror("check_connection_command");
-            return false;
-        }
         client->client_type = strdup(GUI);
         if (client->client_type == NULL) {
             perror("check_connection_command");
