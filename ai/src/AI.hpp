@@ -31,7 +31,9 @@
 #define TAKE_OBJECT 9
 #define SET_OBJECT 10
 #define LEFT 11
-#define MIN_FOOD 15
+#define MIN_FOOD 40
+#define INCANTATION_FOOD MIN_FOOD + 30
+#define MAX_FOOD 90
 
 namespace Zappy {
     class AI {
@@ -55,9 +57,18 @@ namespace Zappy {
             void takeObject(const std::string &object);
             bool shouldTakeObject(const std::string &object);
             void sendCommand(const std::string &command, bool isObject, const std::string &object = "");
-            void moveToBroadcastPosition(int position);
+            void moveToBroadcastPosition(int position, int level);
+
+            void phaseFood(void);
+            void phaseStone(void);
+            void phaseBroadcast(void);
+
+            bool canIncantation(int linemate, int deraumere, int sibur, int mendiane, int phiras, int thystame);
 
             bool _isAlive;
+            bool _inventoryReceived;
+            bool _isBroadcasting;
+            bool _needToBeFat;
             int _currentLevel;
             int _nbPlayer;
             int _food;
