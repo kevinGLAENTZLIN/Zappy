@@ -30,14 +30,15 @@ void Zappy::Game::computeLogic()
     Raylib::Camera cam = _commonElements->getCamera();
     std::size_t _tickTemp;
 
-    cam.cameraUpdate(CAMERA_ORBITAL);
-    _commonElements->setCamera(cam);
+    // cam.cameraUpdate(CAMERA_ORBITAL);
+    // _commonElements->setCamera(cam);
     _network.sendQueueToServer();
     _network.checkServer();
     if (_tickTime == -1)
         return;
     _timer += GetFrameTime() / _tickTime;
     _tickTemp = static_cast<std::size_t>(_timer);
+    userInteractions();
     if (_timerSizeT == _tickTemp)
         return;
     _timerSizeT = _tickTemp;
@@ -57,6 +58,8 @@ void Zappy::Game::displayElements(void)
         for (auto &player : _players)
             player.draw(_mapSize);
     _commonElements->getCamera().end3DMode();
+    _popUp.Draw();
+    DrawFPS(10, 10);
 }
 
 void Zappy::Game::setMapSize(std::size_t x, std::size_t y)
@@ -120,6 +123,26 @@ void Zappy::Game::playerDeath(std::size_t id)
         if (_players[i].getId() == id) {
             _players.erase(_players.begin() + i);
             return;
+        }
+    }
+}
+
+void Zappy::Game::userInteractions()
+{
+    Ray ray;
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (_popUp.getStatus() == true && _popUp.Hits(GetMousePosition()) == true)
+            return;
+        if (_popUp.getStatus() == true && _popUp.Hits(GetMousePosition()) == false) {
+            _popUp.setStatus(false);
+            return;
+        }
+        ray = GetMouseRay(GetMousePosition(), _commonElements->getCamera().getCamera());
+        for (std::size_t i = 0; i < _mapSize.x * _mapSize.y; i++) {
+            if (_tiles[i].Hits(ray)) {
+                _popUp.setInfo(_tiles[i]);
+                return;
+            }
         }
     }
 }
