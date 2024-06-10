@@ -23,6 +23,7 @@ namespace Zappy {
         ~MainMenu() override;
         void computeLogic() override;
         void displayElements(void) override;
+        void checkConnection();
     private:
         std::shared_ptr<CommonElements> _commonElements;
         Button _playBtn;
@@ -30,6 +31,10 @@ namespace Zappy {
         Button _quitBtn;
         GuiSocket _guiSock;
         Raylib::Texture _logo;
-        // Raylib::Texture _texture;
+        bool _popUp;
+        Raylib::Texture _popUpBack;
+        Raylib::Text _popUpText;
+        Raylib::Text _closePopUpText;
+        void displayPopUp();
     };
 }
