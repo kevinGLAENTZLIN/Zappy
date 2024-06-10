@@ -18,6 +18,11 @@ Raylib::Camera::Camera()
 Raylib::Camera::~Camera()
 {}
 
+Camera3D Raylib::Camera::getCamera()
+{
+    return _camera;
+}
+
 extern "C" {
     void Raylib::Camera::cameraUpdate(std::size_t flags)
     {
