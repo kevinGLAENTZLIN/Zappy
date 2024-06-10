@@ -10,7 +10,7 @@
 Zappy::Slider::Slider(const std::string &title, float posX, float posY, float value):
     _size(1.5), _barTexture("gui/assets/slider-bar.png", posX, posY, 0, 0.3),
     _title(title, 80, "gui/assets/Futura Condensed Medium.ttf", _barTexture.getPercentPos().first, _barTexture.getPercentPos().second - 6, 2, WHITE, Raylib::PERCENT),
-    _cursorTexture("gui/assets/cursor.png", posX, posY, 0, 0.25), _sliderValue(value)
+    _cursorTexture("gui/assets/cursor.png", posX, posY, 0, 0.25), _cursorAction(false), _sliderValue(value)
 {
     _cursorRec.setSize(_cursorTexture.GetTexture().width * 0.25, _cursorTexture.GetTexture().height * 0.25);
     _cursorRec.setPosition(_cursorTexture.getPosition().x, _cursorTexture.getPosition().y);
@@ -26,7 +26,7 @@ void Zappy::Slider::computeLogic()
     Vector2 mousePos = Raylib::Event::myGetMousePosition();
 
     if (Raylib::Event::myCheckCollisionPointRec(mousePos, _cursorRec) == true || _cursorAction == true) {
-            _cursorAction = true;
+        _cursorAction = true;
         if (Raylib::Event::myIsMouseButtonDown(MOUSE_BUTTON_LEFT) == true && CheckCollisionPointRec({mousePos.x, static_cast<float>(_barRec.getPosition().second)}, _barRec.getRectangle()) &&
             !CheckCollisionPointRec({mousePos.x, static_cast<float>(_barRec.getPosition().second) - 10}, _barRec.getRectangle())) {
             _cursorTexture.setPosition(mousePos.x - (_cursorTexture.GetTexture().width * 0.25) / 2,
