@@ -121,5 +121,6 @@ int main(int argc, char **argv)
         RAISE("Argument error\n");
         return 84;
     }
+    srand(time(NULL));
     return my_server(check_zappy(init_zappy(argc, argv)));
 }

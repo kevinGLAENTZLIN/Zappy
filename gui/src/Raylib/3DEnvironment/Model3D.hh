@@ -20,6 +20,10 @@ namespace Raylib {
                 double posX = 0, double posY = 0, double posZ = 0, double roll = 0,
                 double pitch = 0, double yaw = 0, double scale = 1);
         ~Model3D();
+
+        void setPosition(double x, double y, double z);
+        void setRotation(double roll, double pitch, double yaw);
+
         void ModelDraw();
     private:
         void createModel(const std::string &fileName);

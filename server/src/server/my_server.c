@@ -162,7 +162,6 @@ int my_server(zappy_t *zappy)
         free_server(server);
         return 84;
     }
-    srand(time(NULL));
     server->zappy = zappy;
     ret = signal(SIGINT, teams_sigint);
     if (ret == SIG_ERR)

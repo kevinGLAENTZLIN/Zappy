@@ -13,6 +13,8 @@
 
 #include "../IScene.hh"
 #include "../../CommonElements/CommonElements.hh"
+#include "../../../UI/Button.hh"
+#include "../../../Utils/GuiSocket.hh"
 
 namespace Zappy {
     class MainMenu : public IScene {
@@ -23,6 +25,11 @@ namespace Zappy {
         void displayElements(void) override;
     private:
         std::shared_ptr<CommonElements> _commonElements;
-        // TODO: put all the elements of the main menu here
+        Button _playBtn;
+        Button _optionBtn;
+        Button _quitBtn;
+        GuiSocket _guiSock;
+        Raylib::Texture _logo;
+        // Raylib::Texture _texture;
     };
 }

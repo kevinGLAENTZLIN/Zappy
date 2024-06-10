@@ -25,7 +25,7 @@ Font Raylib::FontEnc::getFont()
 extern "C" {
     void Raylib::FontEnc::CreateFont(std::string fontName)
     {
-        _font = LoadFont(fontName.c_str());
+        _font = LoadFontEx(fontName.c_str(), 500, 0, 0);
     }
 
     void Raylib::FontEnc::DestroyFont()

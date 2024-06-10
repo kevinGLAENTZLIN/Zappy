@@ -9,7 +9,7 @@
 #include <iostream>
 #include "../Shapes/RectangleEnc.hh"
 
-namespace Zappy {
+namespace Raylib {
     class Event {
         public:
             static Vector2 myGetMousePosition();

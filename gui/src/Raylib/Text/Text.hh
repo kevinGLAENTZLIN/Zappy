@@ -22,15 +22,17 @@ namespace Raylib {
         CENTER,
     };
 
+    enum TextFormat {
+        PIXEL,
+        PERCENT,
+    };
+
     class Text {
     public:
         // INFO: the position in the constructor are specified in % of the screen
-        Text(const std::string &text, const std::size_t &textSize, const FontEnc &font,
-             const double &posX, const double &posY, const double &spacing,
-             const Color &color, const std::size_t &textAlignment = CENTER);
         Text(const std::string &text, const std::size_t &textSize, const std::string &font,
              const double &posX, const double &posY, const double &spacing,
-             const Color &color, const std::size_t &textAlignment = CENTER);
+             const Color &color, const TextFormat &textFormat, const TextAlignment &textAlign = CENTER);
         ~Text();
         void TextDraw();
         double getTextWidth();
