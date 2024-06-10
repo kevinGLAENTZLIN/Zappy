@@ -272,5 +272,14 @@ void Zappy::Network::seg(const std::string &args)
 
 void Zappy::Network::smg(const std::string &args)
 {
-    std::cout << "smg " << args << std::endl;
+    std::stringstream ss(args);
+    std::string temp;
+    std::string command;
+    std::string message;
+
+    ss >> temp >> command;
+    if (command == "ppo") {
+        ss >> message;
+        addToQueue("ppo " + message + "\n");
+    }
 }
