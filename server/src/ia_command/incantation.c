@@ -46,7 +46,6 @@ static void remove_resources(char *resrc, tile_t *tile)
 /// @brief Send to the GUI the id of all players incantating
 /// @param server Structure that contains all games information
 /// @param i Index of the Client
-/// @param player 
 static void incantation_player_checking(server_t *server, int i,
     player_t *player)
 {

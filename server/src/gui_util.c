@@ -17,7 +17,7 @@ static void send_guis_text(server_t *server, char *txt, va_list ap)
     va_end(ap);
     for (int i = 0; i < server->nb_client; i++) {
         client = CLIENT;
-        if (client->client_type != NULL && 
+        if (client->client_type != NULL &&
         strcmp(client->client_type, GUI) == 0)
             send_client(client->fd, "%s", txt);
     }

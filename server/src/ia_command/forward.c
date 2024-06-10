@@ -27,8 +27,8 @@ void forward(server_t *server, int i, char *input)
         if (player->direction == left)
             player->x = ((player->x - 1) + ZAPPY->x) % ZAPPY->x;
         send_client(client->fd, "ok\n");
-        send_to_all_gui(server, "smg ppo #%d %d %d %d\n", player->id, player->x,
-        player->y, player->direction + 1);
+        send_to_all_gui(server, "smg ppo #%d %d %d %d\n", player->id, player->x
+        , player->y, player->direction + 1);
         client->time_to_wait = 7;
     }
 }

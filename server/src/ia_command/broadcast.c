@@ -42,7 +42,6 @@ static int get_client_tile(int direction, player_t *player)
 /// @brief Broadcast to the given player
 /// @param server Structure that contains all games information
 /// @param i Index of the Client
-/// @param player 
 /// @param input Command input from the Client
 static void get_shortest_way(server_t *server, int i, player_t *player,
     char *input)

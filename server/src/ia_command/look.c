@@ -12,7 +12,7 @@
 /// @param i Index of the Client
 /// @param opt If display a space or not
 /// @param txt Type of object
-/// @return 
+/// @return True in every case
 static bool send_tile_info(server_t *server, int i, bool opt, char *txt)
 {
     if (opt)
@@ -115,7 +115,7 @@ static void get_look_origin_level(server_t *server, int i, int x, int y)
     display_look_level(server, i, x, y);
 }
 
-/// @brief Send the look information to the Client 
+/// @brief Send the look information to the Client
 /// @param server Structure that contains all games information
 /// @param i Index of the Client
 static void display_look(server_t *server, int i)
