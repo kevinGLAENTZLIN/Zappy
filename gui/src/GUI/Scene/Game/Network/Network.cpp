@@ -189,17 +189,38 @@ void Zappy::Network::pex(const std::string &args)
 
 void Zappy::Network::pbc(const std::string &args)
 {
-    std::cout << "pbc " << args << std::endl;
+    std::stringstream ss(args);
+    std::string temp;
+    std::string id;
+    std::string message;
+
+    ss >> temp >> id >> message;
+    _game.playerBroadcast(std::stoi(&id[1]), message);
 }
 
 void Zappy::Network::pic(const std::string &args)
 {
-    std::cout << "pic " << args << std::endl;
+    std::stringstream ss(args);
+    std::string temp;
+    std::string id;
+
+    ss >> temp;
+    while (!ss.eof()) {
+        ss >> id;
+        _game.updateIncantationStatus(std::stoi(&id[1]), true);
+    }
 }
 
 void Zappy::Network::pie(const std::string &args)
 {
-    std::cout << "pie " << args << std::endl;
+    std::stringstream ss(args);
+    std::string temp;
+    std::size_t x;
+    std::size_t y;
+    std::string status;
+
+    ss >> temp >> x >> y >> status;
+    _game.updateIncantationStatus(x, y, false);
 }
 
 void Zappy::Network::pfk(const std::string &args)
