@@ -8,6 +8,7 @@
 #include "Network.hh"
 #include "../Game.hh"
 
+#include <raylib.h>
 #include <sstream>
 #include <chrono>
 #include <thread>
@@ -208,14 +209,30 @@ void Zappy::Network::pfk(const std::string &args)
 
 void Zappy::Network::pdr(const std::string &args)
 {
-    // TODO: update player inventory and tile content
-    std::cout << "pdr " << args << std::endl;
+    std::stringstream ss(args);
+    std::string temp;
+    std::string id;
+    Vector2 playerPosition;
+
+    ss >> temp >> id;
+    playerPosition = _game.getPlayerPosition(std::stoi(&id[1]));
+    addToQueue("pin " + id + "\n");
+    addToQueue("bct " + std::to_string(playerPosition.x) + " " +
+               std::to_string(playerPosition.y) + "\n");
 }
 
 void Zappy::Network::pgt(const std::string &args)
 {
-    // TODO: update player inventory and tile content
-    std::cout << "pgt " << args << std::endl;
+    std::stringstream ss(args);
+    std::string temp;
+    std::string id;
+    Vector2 playerPosition;
+
+    ss >> temp >> id;
+    playerPosition = _game.getPlayerPosition(std::stoi(&id[1]));
+    addToQueue("pin " + id + "\n");
+    addToQueue("bct " + std::to_string(playerPosition.x) + " " +
+               std::to_string(playerPosition.y) + "\n");
 }
 
 void Zappy::Network::pdi(const std::string &args)
