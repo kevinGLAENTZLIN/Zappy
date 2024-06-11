@@ -33,17 +33,21 @@ namespace Zappy {
         void setMapSize(std::size_t x, std::size_t y);
         void setTickTime(std::size_t nbTicksPerSecond);
 
+        Vector2 getPlayerPosition(std::size_t id);
+
         void updateTile(std::size_t x, std::size_t y,
                         std::vector<std::size_t> resources);
-
         void addPlayer(std::size_t id, std::size_t x, std::size_t y,
                        std::size_t playerOrientation, std::size_t level,
                        std::string teamName);
+        void updateIncantationStatus(std::size_t id, bool status);
+        void updateIncantationStatus(std::size_t x, std::size_t y, bool status);
         void updatePlayerPosition(std::size_t id, std::size_t x, std::size_t y,
                                   std::size_t playerOrientation);
         void updatePlayerLevel(std::size_t id, std::size_t level);
         void updatePlayerInventory(std::size_t id, std::vector<std::size_t> resources);
         void playerDeath(std::size_t id);
+        void playerBroadcast(std::size_t id, const std::string &message);
     private:
         void userInteractions();
         void loadModels();

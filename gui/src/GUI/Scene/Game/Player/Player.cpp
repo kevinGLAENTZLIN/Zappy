@@ -66,6 +66,11 @@ void Zappy::Player::setLevel(std::size_t level)
     _level = level;
 }
 
+void Zappy::Player::setIncantationStatus(bool status)
+{
+    _incantation = status;
+}
+
 void Zappy::Player::broadcast(const std::string &message)
 {
     std::cout << message << std::endl;

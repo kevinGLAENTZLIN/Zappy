@@ -8,6 +8,7 @@
 #include "Network.hh"
 #include "../Game.hh"
 
+#include <raylib.h>
 #include <sstream>
 #include <chrono>
 #include <thread>
@@ -188,17 +189,38 @@ void Zappy::Network::pex(const std::string &args)
 
 void Zappy::Network::pbc(const std::string &args)
 {
-    std::cout << "pbc " << args << std::endl;
+    std::stringstream ss(args);
+    std::string temp;
+    std::string id;
+    std::string message;
+
+    ss >> temp >> id >> message;
+    _game.playerBroadcast(std::stoi(&id[1]), message);
 }
 
 void Zappy::Network::pic(const std::string &args)
 {
-    std::cout << "pic " << args << std::endl;
+    std::stringstream ss(args);
+    std::string temp;
+    std::string id;
+
+    ss >> temp;
+    while (!ss.eof()) {
+        ss >> id;
+        _game.updateIncantationStatus(std::stoi(&id[1]), true);
+    }
 }
 
 void Zappy::Network::pie(const std::string &args)
 {
-    std::cout << "pie " << args << std::endl;
+    std::stringstream ss(args);
+    std::string temp;
+    std::size_t x;
+    std::size_t y;
+    std::string status;
+
+    ss >> temp >> x >> y >> status;
+    _game.updateIncantationStatus(x, y, false);
 }
 
 void Zappy::Network::pfk(const std::string &args)
@@ -208,14 +230,30 @@ void Zappy::Network::pfk(const std::string &args)
 
 void Zappy::Network::pdr(const std::string &args)
 {
-    // TODO: update player inventory and tile content
-    std::cout << "pdr " << args << std::endl;
+    std::stringstream ss(args);
+    std::string temp;
+    std::string id;
+    Vector2 playerPosition;
+
+    ss >> temp >> id;
+    playerPosition = _game.getPlayerPosition(std::stoi(&id[1]));
+    addToQueue("pin " + id + "\n");
+    addToQueue("bct " + std::to_string(playerPosition.x) + " " +
+               std::to_string(playerPosition.y) + "\n");
 }
 
 void Zappy::Network::pgt(const std::string &args)
 {
-    // TODO: update player inventory and tile content
-    std::cout << "pgt " << args << std::endl;
+    std::stringstream ss(args);
+    std::string temp;
+    std::string id;
+    Vector2 playerPosition;
+
+    ss >> temp >> id;
+    playerPosition = _game.getPlayerPosition(std::stoi(&id[1]));
+    addToQueue("pin " + id + "\n");
+    addToQueue("bct " + std::to_string(playerPosition.x) + " " +
+               std::to_string(playerPosition.y) + "\n");
 }
 
 void Zappy::Network::pdi(const std::string &args)
@@ -272,5 +310,14 @@ void Zappy::Network::seg(const std::string &args)
 
 void Zappy::Network::smg(const std::string &args)
 {
-    std::cout << "smg " << args << std::endl;
+    std::stringstream ss(args);
+    std::string temp;
+    std::string command;
+    std::string message;
+
+    ss >> temp >> command;
+    if (command == "ppo") {
+        ss >> message;
+        addToQueue("ppo " + message + "\n");
+    }
 }

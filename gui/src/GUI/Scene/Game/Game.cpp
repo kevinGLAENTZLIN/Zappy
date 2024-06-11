@@ -73,12 +73,41 @@ void Zappy::Game::setTickTime(std::size_t nbTicksPerSecond)
     _tickTime = 1.0 / nbTicksPerSecond;
 }
 
+Vector2 Zappy::Game::getPlayerPosition(std::size_t id)
+{
+    for (auto &player : _players) {
+        if (player.getId() == id)
+            return player.getPosition();
+    }
+    return {-1, -1};
+}
+
 void Zappy::Game::addPlayer(std::size_t id, std::size_t x, std::size_t y,
                            std::size_t playerOrientation, std::size_t level,
                            std::string teamName)
 {
     _players.emplace_back(id, x, y, static_cast<orientation>(playerOrientation),
                           level, teamName, _models[PLAYER]);
+}
+
+void Zappy::Game::updateIncantationStatus(std::size_t id, bool status)
+{
+    for (auto &player : _players) {
+        if (player.getId() == id) {
+            player.setIncantationStatus(status);
+            return;
+        }
+    }
+}
+
+void Zappy::Game::updateIncantationStatus(std::size_t x, std::size_t y, bool status)
+{
+    for (auto &player : _players) {
+        if (player.getPosition().x == x && player.getPosition().y == y) {
+            player.setIncantationStatus(status);
+            _network.addToQueue("plv #" + std::to_string(player.getId()) + "\n");
+        }
+    }
 }
 
 void Zappy::Game::updateTile(std::size_t x, std::size_t y,
@@ -122,6 +151,16 @@ void Zappy::Game::playerDeath(std::size_t id)
     for (std::size_t i = 0; i < _players.size(); i++) {
         if (_players[i].getId() == id) {
             _players.erase(_players.begin() + i);
+            return;
+        }
+    }
+}
+
+void Zappy::Game::playerBroadcast(std::size_t id, const std::string &message)
+{
+    for (auto &player : _players) {
+        if (player.getId() == id) {
+            player.broadcast(message);
             return;
         }
     }
