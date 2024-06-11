@@ -73,6 +73,15 @@ void Zappy::Game::setTickTime(std::size_t nbTicksPerSecond)
     _tickTime = 1.0 / nbTicksPerSecond;
 }
 
+Vector2 Zappy::Game::getPlayerPosition(std::size_t id)
+{
+    for (auto &player : _players) {
+        if (player.getId() == id)
+            return player.getPosition();
+    }
+    return {-1, -1};
+}
+
 void Zappy::Game::addPlayer(std::size_t id, std::size_t x, std::size_t y,
                            std::size_t playerOrientation, std::size_t level,
                            std::string teamName)

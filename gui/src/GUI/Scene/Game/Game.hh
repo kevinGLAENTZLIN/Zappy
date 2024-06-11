@@ -33,6 +33,8 @@ namespace Zappy {
         void setMapSize(std::size_t x, std::size_t y);
         void setTickTime(std::size_t nbTicksPerSecond);
 
+        Vector2 getPlayerPosition(std::size_t id);
+
         void updateTile(std::size_t x, std::size_t y,
                         std::vector<std::size_t> resources);
 
