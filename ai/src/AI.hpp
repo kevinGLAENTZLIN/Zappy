@@ -50,7 +50,7 @@ namespace Zappy {
             void handleBroadcast(const std::string &response);
             bool handleIncantation(int linemate, int deraumere, int sibur, int mendiane, int phiras, int thystame);
             void handlePlayerMove(int tileIndex, std::string object);
-            void handleUniqueCommand(const std::string &serverResponse, const std::string &response);
+            bool handleUniqueCommand(const std::string &serverResponse, const std::string &response);
             void handleTakeObjectResponse(const std::string &response);
 
             void parseInventory(const std::string &response);
@@ -59,16 +59,21 @@ namespace Zappy {
             void sendCommand(const std::string &command, bool isObject, const std::string &object = "");
             void moveToBroadcastPosition(int position, int level);
 
+            void setPhase(bool canIncantation);
+            void handlePhase(bool canIncantation);
             void phaseFood(void);
             void phaseStone(void);
             void phaseBroadcast(void);
 
             bool canIncantation(int linemate, int deraumere, int sibur, int mendiane, int phiras, int thystame);
+            void playerLife(void);
 
             bool _isAlive;
             bool _inventoryReceived;
             bool _isBroadcasting;
+            bool _moveToBroadcast;
             bool _needToBeFat;
+            bool _canBroadcast;
             int _currentLevel;
             int _nbPlayer;
             int _food;
