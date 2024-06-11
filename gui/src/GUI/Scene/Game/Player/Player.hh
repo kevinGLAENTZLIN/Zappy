@@ -33,6 +33,7 @@ namespace Zappy {
         void setPosition(std::size_t x, std::size_t y, orientation orientation);
         void setInventory(std::vector<std::size_t> inventory);
         void setLevel(std::size_t level);
+        void setIncantationStatus(bool status);
 
         void broadcast(const std::string &message);
         void draw(const Vector2 &mapSize);
