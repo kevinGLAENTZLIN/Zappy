@@ -106,8 +106,9 @@ bool Zappy::AI::handleUniqueCommand(const std::string &serverResponse, const std
     }
     if (serverResponse == levelUpResponse)
         _currentLevel++;
-    if (response == "message")
+    if (response == "message") {
         handleBroadcast(serverResponse);
+    }
     return false;
 }
 
@@ -122,6 +123,7 @@ void Zappy::AI::handleResponse(void)
     stream = std::istringstream(serverResponse);
     stream >> response;
     handleUniqueCommand(serverResponse, response);
+    //    return;
     std::cout << "number cmd apres decrementation : " << _numberCmd << std::endl;
     if (!_commandQueue.empty()) {
         _numberCmd--;
@@ -153,6 +155,7 @@ void Zappy::AI::moveToBroadcastPosition(int position, int level)
         return;
     _moveToBroadcast = true;
     switch(position) {
+        _moveToBroadcast = true;
         case 0:
             sendCommand(_commands[LOOK], false);
             sendCommand(_commands[INVENTORY], false);
@@ -619,6 +622,7 @@ void Zappy::AI::phaseBroadcast(void)
     sendCommand(_commands[BROADCAST], true, std::to_string(_currentLevel));
     sendCommand(_commands[LOOK], false);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    _isBroadcasting = true;
 }
 
 /* Send command --------------------------------------------------------------------------------------------------------------------------- */
