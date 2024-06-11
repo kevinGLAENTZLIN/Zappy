@@ -83,8 +83,9 @@ void Zappy::AI::initConnection(void)
 void Zappy::AI::run(void)
 {
     bool firstRun = true;
+
     while (_isAlive) {
-        if (_clientSocket->selectSocket() == -1)
+        if ((_clientSocket->selectSocket() == -1))
             handleResponse();
         if (_inventoryReceived) {
             sendCommand(_commands[INVENTORY], false);
@@ -122,11 +123,12 @@ void Zappy::AI::handleResponse(void)
     _fd >> serverResponse;
     stream = std::istringstream(serverResponse);
     stream >> response;
-    handleUniqueCommand(serverResponse, response);
-    //    return;
-    std::cout << "number cmd apres decrementation : " << _numberCmd << std::endl;
+    if (handleUniqueCommand(serverResponse, response))
+        return;
     if (!_commandQueue.empty()) {
         _numberCmd--;
+        std::cout << "number cmd apres decrementation : " << _numberCmd << std::endl;
+        std::cout << "command : " << _commandQueue.front() << std::endl;
         command = _commandQueue.front();
         _commandQueue.pop();
          if (Utils::isInventory(serverResponse) && serverResponse
@@ -135,6 +137,7 @@ void Zappy::AI::handleResponse(void)
         else if (command == "Look\n" && serverResponse
         != "ko\n" && serverResponse != "ok\n")
             handleLook(serverResponse);
+        std::cout << "need to be fat -> " << _needToBeFat << std::endl;
     } else {
         if (Utils::isInventory(serverResponse) && serverResponse
         != "ok\n" && serverResponse != "ko\n")
@@ -155,10 +158,8 @@ void Zappy::AI::moveToBroadcastPosition(int position, int level)
         return;
     _moveToBroadcast = true;
     switch(position) {
-        _moveToBroadcast = true;
         case 0:
-            sendCommand(_commands[LOOK], false);
-            sendCommand(_commands[INVENTORY], false);
+            std::cout << "case 0\n";
             break;
         case 1:
             sendCommand(_commands[FORWARD], false);
@@ -255,8 +256,6 @@ void Zappy::AI::handleLook(const std::string &response)
                 isObjectTaken = true;
             }
             while (tileStream >> object) {
-                if (object == "player")
-                    _nbPlayer++;
                 if (object != "player" && object != "egg" && shouldTakeObject(object)) {
                     takeObject(object);
                     isObjectTaken = true;
@@ -408,12 +407,6 @@ void Zappy::AI::takeObject(const std::string &object)
         sendCommand(_commands[TAKE_OBJECT], true, object);
 }
 
-// void Zappy::AI::handleTakeObjectResponse(const std::string &response)
-// {
-//     if (response == "ok\n")
-//         sendCommand(_commands[INVENTORY], false);
-// }
-
 /* Incantation method --------------------------------------------------------------------------------------------------------------------- */
 
 bool Zappy::AI::handleIncantation(int linemate, int deraumere, int sibur, int mendiane, int phiras, int thystame)
@@ -552,6 +545,7 @@ void Zappy::AI::parseInventory(const std::string &response)
         if (stringFind == "thystame")
             stream >> thystame;
     }
+    std::cout << "current level -> " << _currentLevel << std::endl;
     _inventoryReceived = true;
     handleIncantation(linemate, deraumere, sibur, mendiane, phiras, thystame);
     setPhase(canIncantation(linemate, deraumere, sibur, mendiane, phiras, thystame));
@@ -560,7 +554,7 @@ void Zappy::AI::parseInventory(const std::string &response)
 
 void Zappy::AI::setPhase(bool canIncantation)
 {
-    if ((canIncantation && _food < INCANTATION_FOOD && !_canBroadcast)
+    if ((canIncantation && _food < MIN_FOOD && !_canBroadcast)
     || (_food < MIN_FOOD && _canBroadcast)) {
         _canBroadcast = false;
         _isBroadcasting = false;
@@ -572,10 +566,6 @@ void Zappy::AI::setPhase(bool canIncantation)
         _canBroadcast = true;
     if (_food > INCANTATION_FOOD && _currentLevel >= 2 && _currentLevel <= 7)
         _isBroadcasting = true;
-    if (_food < INCANTATION_FOOD && _isBroadcasting) {
-        _needToBeFat = true;
-        _isBroadcasting = false;
-    }
     if (_food < MIN_FOOD || _currentLevel == 8) {
         _needToBeFat = true;
     }
@@ -621,7 +611,7 @@ void Zappy::AI::phaseBroadcast(void)
 {
     sendCommand(_commands[BROADCAST], true, std::to_string(_currentLevel));
     sendCommand(_commands[LOOK], false);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(400));
     _isBroadcasting = true;
 }
 
