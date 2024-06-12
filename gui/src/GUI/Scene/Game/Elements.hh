@@ -27,4 +27,10 @@ namespace Zappy {
         SOUTH = 3,
         WEST = 4
     };
+
+    enum playerStatus {
+        WANDERING,
+        LAYING,
+        INCANTATING,
+    };
 }
