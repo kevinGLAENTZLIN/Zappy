@@ -84,9 +84,16 @@ void Zappy::AI::run(void)
 {
     bool firstRun = true;
 
+    _lastResponseTime = std::chrono::steady_clock::now();
     while (_isAlive) {
-        if ((_clientSocket->selectSocket() == -1))
+        if (_clientSocket->selectSocket() == -1)
             handleResponse();
+        auto now = std::chrono::steady_clock::now();
+        if (std::chrono::duration_cast<std::chrono::seconds>(now - _lastResponseTime).count() >= 5) {
+            std::cout << "5 seconds have passed" << std::endl;
+            sendCommand(_commands[INVENTORY], false);
+            _lastResponseTime = now;
+        }
         if (_inventoryReceived) {
             sendCommand(_commands[INVENTORY], false);
             _inventoryReceived = false;
@@ -113,6 +120,7 @@ bool Zappy::AI::handleUniqueCommand(const std::string &serverResponse, const std
     }
     if (response == "message") {
         handleBroadcast(serverResponse);
+        return true;
     }
     return false;
 }
@@ -125,6 +133,7 @@ void Zappy::AI::handleResponse(void)
     std::istringstream stream;
 
     _fd >> serverResponse;
+    _lastResponseTime = std::chrono::steady_clock::now();
     stream = std::istringstream(serverResponse);
     stream >> response;
     if (handleUniqueCommand(serverResponse, response))
@@ -135,24 +144,13 @@ void Zappy::AI::handleResponse(void)
         std::cout << "command : " << _commandQueue.front() << std::endl;
         command = _commandQueue.front();
         _commandQueue.pop();
-         if (Utils::isInventory(serverResponse) && serverResponse
-         != "ok\n" && serverResponse != "ko\n")
-            parseInventory(serverResponse);
-        else if (command == "Look\n" && serverResponse
-        != "ko\n" && serverResponse != "ok\n")
-            handleLook(serverResponse);
-        std::cout << "need to be fat -> " << _needToBeFat << std::endl;
-        std::cout << "ici sa fait plus rien if" << std::endl;
-        std::cout << "inventory received -> " << _inventoryReceived << std::endl;
-    } else {
-        if (Utils::isInventory(serverResponse) && serverResponse
-        != "ok\n" && serverResponse != "ko\n")
-            parseInventory(serverResponse);
-        else if (command == "Look\n" && serverResponse
-        != "ko\n" && serverResponse != "ok\n")
-            handleLook(serverResponse);
     }
+    if (Utils::isInventory(serverResponse) && serverResponse != "ok\n" && serverResponse != "ko\n")
+        parseInventory(serverResponse);
+    else if (command == "Look\n" && serverResponse != "ko\n" && serverResponse != "ok\n")
+        handleLook(serverResponse);
 }
+
 
 /* Broadcast method ----------------------------------------------------------------------------------------------------------------------- */
 

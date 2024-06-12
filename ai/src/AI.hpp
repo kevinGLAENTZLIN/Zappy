@@ -88,5 +88,6 @@ namespace Zappy {
             std::unique_ptr<Zappy::Socket> _clientSocket;
             std::vector<std::string> _commands;
             std::queue<std::string> _commandQueue;
+            std::chrono::time_point<std::chrono::steady_clock> _lastResponseTime;
     };
 }
