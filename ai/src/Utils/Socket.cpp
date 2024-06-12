@@ -47,8 +47,10 @@ extern "C" {
 
         FD_ZERO(&_rfds);
         FD_SET(_socket, &_rfds);
-        timeoutStruct.tv_sec = 1;
-        timeoutStruct.tv_usec = 0;
+        // timeoutStruct.tv_sec = 1;
+        // timeoutStruct.tv_usec = 0;
+        timeoutStruct.tv_sec = 5 / 1000;
+        timeoutStruct.tv_usec = (5 % 1000) * 1000;
         ret = select(_socket + 1, &_rfds, NULL, NULL, &timeoutStruct);
         if (ret == -1)
             throw Zappy::ErrorAI(SocketError, "select: " + std::string(strerror(errno)));

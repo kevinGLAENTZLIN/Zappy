@@ -31,6 +31,9 @@
 #define TAKE_OBJECT 9
 #define SET_OBJECT 10
 #define LEFT 11
+#define MIN_FOOD 40
+#define INCANTATION_FOOD MIN_FOOD + 30
+#define MAX_FOOD 90
 
 namespace Zappy {
     class AI {
@@ -45,19 +48,31 @@ namespace Zappy {
             void handleResponse(void);
             void handleLook(const std::string &response);
             void handleBroadcast(const std::string &response);
-            void parseInventory(const std::string &response);
             bool handleIncantation(int linemate, int deraumere, int sibur, int mendiane, int phiras, int thystame);
             void handlePlayerMove(int tileIndex);
-            void takeObject(const std::string &object);
-            void handleUniqueCommand(const std::string &serverResponse, const std::string &response);
+            bool handleUniqueCommand(const std::string &serverResponse, const std::string &response);
 
+            void parseInventory(const std::string &response);
+            void takeObject(const std::string &object);
+            bool shouldTakeObject(const std::string &object);
             void sendCommand(const std::string &command, bool isObject, const std::string &object = "");
-            void moveToBroadcastPosition(int position);
-            void handleTakeObjectResponse(const std::string &response);
+            void moveToBroadcastPosition(int position, int level);
+
+            void setPhase(bool canIncantation);
+            void handlePhase(bool canIncantation);
+            void phaseFood(void);
+            void phaseStone(void);
+            void phaseBroadcast(void);
+
+            bool canIncantation(int linemate, int deraumere, int sibur, int mendiane, int phiras, int thystame);
+            void playerLife(void);
 
             bool _isAlive;
-            bool _isIncantation;
-            bool _isBroadcast;
+            bool _inventoryReceived;
+            bool _isBroadcasting;
+            bool _moveToBroadcast;
+            bool _needToBeFat;
+            bool _canBroadcast;
             int _currentLevel;
             int _nbPlayer;
             int _food;
@@ -72,5 +87,6 @@ namespace Zappy {
             std::unique_ptr<Zappy::Socket> _clientSocket;
             std::vector<std::string> _commands;
             std::queue<std::string> _commandQueue;
+            std::chrono::time_point<std::chrono::steady_clock> _lastResponseTime;
     };
 }
