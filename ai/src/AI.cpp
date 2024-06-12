@@ -120,6 +120,7 @@ bool Zappy::AI::handleUniqueCommand(const std::string &serverResponse, const std
         _moveToBroadcast = false;
         _canBroadcast = false;
         _isBroadcasting = false;
+        return true;
     }
     if (response == "message") {
         handleBroadcast(serverResponse);
@@ -247,16 +248,14 @@ void Zappy::AI::handleLook(const std::string &response)
             tileStream = std::istringstream(tile);
             // std::cout << "tile -> " << tile << std::endl;
             // std::cout << "tileIndex -> " << tileIndex << std::endl;
-            tileStream >> object;
-            std::cout << "isObjectTaken -> " << object << std::endl;
-            if (object != "player" && object != " ") {
+            if (tileStream >> object && object != "player") {
                 handlePlayerMove(tileIndex);
                 std::cout << "object taken if -> " << object << std::endl;
                 isObjectTaken = true;
             }
             while (tileStream >> object) {
                 std::cout << "object while -> " << object << std::endl;
-                if (object != "player" && object != "egg" && object != " " && shouldTakeObject(object)) {
+                if (object != "player" && object != "egg"&& shouldTakeObject(object)) {
                     takeObject(object);
                     isObjectTaken = true;
                 }
