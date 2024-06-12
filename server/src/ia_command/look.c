@@ -123,14 +123,14 @@ static void display_look(server_t *server, int i)
     client_t *client = CLIENT;
     int tmp = client->player->level + 2;
 
-    send_client(client->fd, "[");
+    send_client(client->fd, "[ ");
     for (int j = 0; j < tmp; j++) {
         client->player->level = j;
         get_look_origin_level(server, i, client->player->x, client->player->y);
         if (j + 1 != tmp)
             send_client(client->fd, ", ");
     }
-    send_client(client->fd, "]\n");
+    send_client(client->fd, " ]\n");
     client->player->level = tmp - 2;
     client->time_to_wait = 7;
 }

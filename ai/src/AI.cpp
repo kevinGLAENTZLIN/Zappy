@@ -60,24 +60,29 @@ void Zappy::AI::initConnection(void)
 
     _clientSocket->connectSocket(_port, _ip);
     _fd = _clientSocket->getSocket();
-    while (true) {
+
+    while (nbInstructions < 3) {
         if (_clientSocket->selectSocket() == -1) {
             _fd >> response;
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            if (nbInstructions == 0 && response == "WELCOME\n")
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+
+            if (nbInstructions == 0 && response == "WELCOME\n") {
                 _fd << (_teamName + "\n");
-            if (nbInstructions == 1)
+                nbInstructions++;
+            }
+            else if (nbInstructions == 1) {
                 _clientNumber = std::stoi(response);
-            if (nbInstructions == 2) {
+                nbInstructions++;
+            }
+            else if (nbInstructions == 2) {
                 std::istringstream stream(response);
                 stream >> _sizeWorldX >> _sizeWorldY;
+                nbInstructions++;
             }
         }
-        nbInstructions++;
-        if (nbInstructions == 3)
-            break;
     }
 }
+
 
 /* Run method ----------------------------------------------------------------------------------------------------------------------------- */
 
@@ -139,7 +144,7 @@ void Zappy::AI::handleResponse(void)
         return;
     if (!_commandQueue.empty()) {
         _numberCmd--;
-        std::cout << "number cmd apres decrementation : " << _numberCmd << std::endl;
+        // std::cout << "number cmd apres decrementation : " << _numberCmd << std::endl;
         command = _commandQueue.front();
         _commandQueue.pop();
     }
@@ -240,12 +245,18 @@ void Zappy::AI::handleLook(const std::string &response)
     if (!_isBroadcasting && !_moveToBroadcast) {
         while (!isObjectTaken && std::getline(stream, tile, ',')) {
             tileStream = std::istringstream(tile);
-            if (tileStream >> object && object != "player") {
+            // std::cout << "tile -> " << tile << std::endl;
+            // std::cout << "tileIndex -> " << tileIndex << std::endl;
+            tileStream >> object;
+            std::cout << "isObjectTaken -> " << object << std::endl;
+            if (object != "player" && object != " ") {
                 handlePlayerMove(tileIndex);
+                std::cout << "object taken if -> " << object << std::endl;
                 isObjectTaken = true;
             }
             while (tileStream >> object) {
-                if (object != "player" && object != "egg" && shouldTakeObject(object)) {
+                std::cout << "object while -> " << object << std::endl;
+                if (object != "player" && object != "egg" && object != " " && shouldTakeObject(object)) {
                     takeObject(object);
                     isObjectTaken = true;
                 }
@@ -253,6 +264,7 @@ void Zappy::AI::handleLook(const std::string &response)
             tileStream.clear();
             tileIndex++;
         }
+        std::cout << "tileIndex -> " << tileIndex << std::endl;
     }
     if (_isBroadcasting) {
         while (!isObjectTaken && std::getline(stream, tile, ',')) {
@@ -520,7 +532,7 @@ void Zappy::AI::parseInventory(const std::string &response)
         if (stringFind == "thystame")
             stream >> thystame;
     }
-    std::cout << "current level -> " << _currentLevel << std::endl;
+    // std::cout << "current level -> " << _currentLevel << std::endl;
     _inventoryReceived = true;
     handleIncantation(linemate, deraumere, sibur, mendiane, phiras, thystame);
     setPhase(canIncantation(linemate, deraumere, sibur, mendiane, phiras, thystame));
@@ -550,38 +562,38 @@ void Zappy::AI::setPhase(bool canIncantation)
     if (canIncantation && _food >= INCANTATION_FOOD
     && !_canBroadcast && _currentLevel >= 2 && _currentLevel < 8) {
         _canBroadcast = true;
-        std::cout << "\033[1;32m" << "bro phase can start" << "\033[0m\n" << std::endl;  // Green
+        // std::cout << "\033[1;32m" << "bro phase can start" << "\033[0m\n" << std::endl;  // Green
     }
     if (_food > INCANTATION_FOOD && _currentLevel >= 2 && _currentLevel <= 7) {
         _isBroadcasting = true;
-        std::cout << "\033[1;33m" << "Broadcast phase start" << "\033[0m\n" << std::endl;  // Yellow
+        // std::cout << "\033[1;33m" << "Broadcast phase start" << "\033[0m\n" << std::endl;  // Yellow
     }
     if (_food < MIN_FOOD || _currentLevel == 8) {
-        std::cout << "\033[1;34m" << "Food phase start" << "\033[0m\n" << std::endl;     // Blue
+        // std::cout << "\033[1;34m" << "Food phase start" << "\033[0m\n" << std::endl;     // Blue
         _needToBeFat = true;
     }
     if (_food >= MAX_FOOD) {
         _needToBeFat = false;
-        std::cout << "\033[1;34m" << "Food phase OVER" << "\033[0m\n" << std::endl;     // Blue
+        // std::cout << "\033[1;34m" << "Food phase OVER" << "\033[0m\n" << std::endl;     // Blue
     }
 }
 
 void Zappy::AI::handlePhase(bool canIncantation)
 {
     if (_isBroadcasting) {
-        std::cout << "\033[1;33m" << "Broadcasting phase" << "\033[0m\n" << std::endl;  // Yellow
+        // std::cout << "\033[1;33m" << "Broadcasting phase" << "\033[0m\n" << std::endl;  // Yellow
         phaseBroadcast();
     }
     if (_food > MIN_FOOD && !_needToBeFat && !_isBroadcasting) {
-        std::cout << "\033[1;35m" << "Stone phase" << "\033[0m\n" << std::endl;         // Magenta
+        // std::cout << "\033[1;35m" << "Stone phase" << "\033[0m\n" << std::endl;         // Magenta
         phaseStone();
     }
     if (!canIncantation) {
-        std::cout << "\033[1;32m" << "Can't Incant" << "\033[0m\n" << std::endl;        // Green
+        // std::cout << "\033[1;32m" << "Can't Incant" << "\033[0m\n" << std::endl;        // Green
         _needToBeFat = true;
     }
     if (_needToBeFat && !_isBroadcasting) {
-        std::cout << "\033[1;31m" << "Food phase" << "\033[0m\n" << std::endl;          // Red
+        // std::cout << "\033[1;31m" << "Food phase" << "\033[0m\n" << std::endl;          // Red
         phaseFood();
     }
     if (_canBroadcast)
@@ -622,5 +634,5 @@ void Zappy::AI::sendCommand(const std::string &command, bool isObject, const std
         _commandQueue.push(command);
         _numberCmd++;
     }
-    std::cout << "number cmd apres ajout : " << _numberCmd << std::endl;
+    // std::cout << "number cmd apres ajout : " << _numberCmd << std::endl;
 }
