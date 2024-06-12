@@ -63,6 +63,7 @@ void Zappy::AI::initConnection(void)
     while (true) {
         if (_clientSocket->selectSocket() == -1) {
             _fd >> response;
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
             if (nbInstructions == 0 && response == "WELCOME\n")
                 _fd << (_teamName + "\n");
             if (nbInstructions == 1)
@@ -82,15 +83,12 @@ void Zappy::AI::initConnection(void)
 
 void Zappy::AI::run(void)
 {
-    bool firstRun = true;
-
     _lastResponseTime = std::chrono::steady_clock::now();
     while (_isAlive) {
         if (_clientSocket->selectSocket() == -1)
             handleResponse();
         auto now = std::chrono::steady_clock::now();
-        if (std::chrono::duration_cast<std::chrono::seconds>(now - _lastResponseTime).count() >= 5) {
-            std::cout << "5 seconds have passed" << std::endl;
+        if (std::chrono::duration_cast<std::chrono::seconds>(now - _lastResponseTime).count() >= 2) {
             sendCommand(_commands[INVENTORY], false);
             _lastResponseTime = now;
         }
@@ -133,15 +131,15 @@ void Zappy::AI::handleResponse(void)
     std::istringstream stream;
 
     _fd >> serverResponse;
-    _lastResponseTime = std::chrono::steady_clock::now();
     stream = std::istringstream(serverResponse);
     stream >> response;
+    if (response != "message")
+        _lastResponseTime = std::chrono::steady_clock::now();
     if (handleUniqueCommand(serverResponse, response))
         return;
     if (!_commandQueue.empty()) {
         _numberCmd--;
         std::cout << "number cmd apres decrementation : " << _numberCmd << std::endl;
-        std::cout << "command : " << _commandQueue.front() << std::endl;
         command = _commandQueue.front();
         _commandQueue.pop();
     }
@@ -166,60 +164,46 @@ void Zappy::AI::moveToBroadcastPosition(int position, int level)
     _needToBeFat = false;
     switch(position) {
         case 0:
-            std::this_thread::sleep_for(std::chrono::milliseconds(700));
-            std::cout << "case 0\n";
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
             break;
         case 1:
             sendCommand(_commands[FORWARD], false);
-            std::cout << "case 1 dans move broadcast\n";
             break;
         case 2:
             sendCommand(_commands[FORWARD], false);
             sendCommand(_commands[LEFT], false);
             sendCommand(_commands[FORWARD], false);
-            std::cout << "case 2 dans move broadcast\n";
             break;
         case 3:
             sendCommand(_commands[LEFT], false);
             sendCommand(_commands[FORWARD], false);
-            std::cout << "case 3 dans move broadcast\n";
             break;
         case 4:
             sendCommand(_commands[LEFT], false);
             sendCommand(_commands[FORWARD], false);
             sendCommand(_commands[LEFT], false);
             sendCommand(_commands[FORWARD], false);
-            std::cout << "case 4 dans move broadcast\n";
-
             break;
         case 5:
             sendCommand(_commands[LEFT], false);
             sendCommand(_commands[LEFT], false);
             sendCommand(_commands[FORWARD], false);
-            std::cout << "case 5 dans move broadcast\n";
-
             break;
         case 6:
             sendCommand(_commands[RIGHT], false);
             sendCommand(_commands[FORWARD], false);
             sendCommand(_commands[RIGHT], false);
             sendCommand(_commands[FORWARD], false);
-            std::cout << "case 6 dans move broadcast\n";
-
             break;
         case 7:
             sendCommand(_commands[RIGHT], false);
             sendCommand(_commands[FORWARD], false);
-            std::cout << "case 7 dans move broadcast\n";
-
             break;
         case 8:
             sendCommand(_commands[RIGHT], false);
             sendCommand(_commands[FORWARD], false);
             sendCommand(_commands[LEFT], false);
             sendCommand(_commands[FORWARD], false);
-            std::cout << "case 8 dans move broadcast\n";
-
             break;
         default:
             std::cerr << "error : " << position << std::endl;
@@ -237,8 +221,6 @@ void Zappy::AI::handleBroadcast(const std::string &response)
     stream >> position;
     stream >> position;
     stream >> level;
-    std::cout << "position : " << position << std::endl;
-    std::cout << "level : " << level << std::endl;
     positionInt = std::stoi(position);
     moveToBroadcastPosition(positionInt, level);
 }
@@ -255,12 +237,11 @@ void Zappy::AI::handleLook(const std::string &response)
     int tileIndex = 0;
 
     _nbPlayer = 0;
-    std::cout << "move to broadcast -> " << _moveToBroadcast << std::endl;
     if (!_isBroadcasting && !_moveToBroadcast) {
         while (!isObjectTaken && std::getline(stream, tile, ',')) {
             tileStream = std::istringstream(tile);
             if (tileStream >> object && object != "player") {
-                handlePlayerMove(tileIndex, object);
+                handlePlayerMove(tileIndex);
                 isObjectTaken = true;
             }
             while (tileStream >> object) {
@@ -284,7 +265,6 @@ void Zappy::AI::handleLook(const std::string &response)
             tileIndex++;
         }
     }
-    std::cout << "Is object taken -> " << isObjectTaken << std::endl;
     if (!isObjectTaken && !_isBroadcasting && !_moveToBroadcast)
         playerLife();
 }
@@ -324,22 +304,22 @@ bool Zappy::AI::shouldTakeObject(const std::string &object)
     if (_food > MIN_FOOD && _currentLevel == 3 && (object == "linemate" || object == "phiras"
     || object == "sibur" || object == "thystame"))
         return true;
-    if (_currentLevel == 4 && (object == "food" || object == "linemate" || object == "deraumere"
+    if (_currentLevel == 4 && (object == "linemate" || object == "deraumere"
     || object == "sibur" || object == "phiras" || object == "thystame"))
         return true;
-    if (_currentLevel == 5 && (object == "food" || object == "linemate" || object == "deraumere"
+    if (_currentLevel == 5 && (object == "linemate" || object == "deraumere"
     || object == "sibur" || object == "mendiane" || object == "thystame"))
         return true;
-    if (_currentLevel == 6 && (object == "food" || object == "linemate" || object == "deraumere"
+    if (_currentLevel == 6 && (object == "linemate" || object == "deraumere"
     || object == "sibur" || object == "phiras" || object == "thystame"))
         return true;
-    if (_currentLevel == 7 && (object == "food" || object == "linemate" || object == "deraumere" || object == "sibur"
+    if (_currentLevel == 7 && (object == "linemate" || object == "deraumere" || object == "sibur"
     || object == "mendiane" || object == "phiras" || object == "thystame"))
         return true;
     return false;
 }
 
-void Zappy::AI::handlePlayerMove(int tileIndex, std::string object)
+void Zappy::AI::handlePlayerMove(int tileIndex)
 {
     bool isObjectInterresting = false;
 
