@@ -47,14 +47,14 @@ void free_commands(client_t *client)
 /// the command is not pushed
 /// @param server Structure that contain all server data
 /// @param i Index of the Client
-void push_back_command(server_t *server, int i)
+void push_back_command(server_t *server, int i, char *line)
 {
     client_t *client = CLIENT;
     command_t *cmd = client->cmds;
     int count = 1;
 
     if (cmd == NULL)
-        client->cmds = init_command(client->buffer);
+        client->cmds = init_command(line);
     else {
         while (cmd->next != NULL) {
             cmd = cmd->next;
@@ -62,7 +62,7 @@ void push_back_command(server_t *server, int i)
         }
         if (count >= 10)
             return;
-        cmd->next = init_command(client->buffer);
+        cmd->next = init_command(line);
     }
 }
 

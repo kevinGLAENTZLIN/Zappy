@@ -39,7 +39,7 @@ void free_client(client_t *client)
         return;
     free_commands(client);
     if (client->buffer != NULL)
-        free(client->buffer);
+        free_tab(client->buffer);
     if (client->team_name != NULL)
         free(client->team_name);
     if (client->ai_action_message != NULL)
@@ -102,15 +102,12 @@ void read_client(server_t *server, int i)
     client->buffer = read_to_buffer(client->fd, '\n');
     if (client->buffer == NULL)
         return disconnect_client(server, client);
-    if (!is_in_str('\n', client->buffer)) {
-        free(client->buffer);
-        client->buffer = NULL;
-    }
-    if (client->buffer != NULL) {
-        push_back_command(server, i);
-        free(client->buffer);
-        client->buffer = NULL;
-    }
+    if (client->buffer[0] != NULL &&
+        strcmp(client->buffer[0], BUFFER_ERR) != 0)
+        for (int j = 0; client->buffer[j] != NULL; j++)
+            push_back_command(server, i, client->buffer[j]);
+    free_tab(client->buffer);
+    client->buffer = NULL;
 }
 
 /// @brief Disconnect the given Client from the given Server and free it

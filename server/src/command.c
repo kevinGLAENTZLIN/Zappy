@@ -47,8 +47,8 @@ static void set_client_ia_mode(server_t *server, int i)
     client->team_name = strdup(team->team_name);
     client->player = player;
     push_back_player(team, player, server);
-    send_client(client->fd, "%d\n", team->nb_max_player - team->nb_player);
-    send_client(client->fd, "%d %d\n", player->x, player->y);
+    send_client(client->fd, "%d\n%d %d\n", team->nb_player, player->x,
+    player->y);
     send_to_all_gui(server, "ebo #%d\n", egg->id);
     hatch_egg(server, egg);
     send_to_all_gui(server, "pnw #%d %d %d %d %d \"%s\"\n", player->id,

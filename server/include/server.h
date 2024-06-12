@@ -125,7 +125,7 @@ typedef struct command_s {
 
 typedef struct client_s {
     int fd;
-    char *buffer;
+    char **buffer;
     struct client_s *next;
     char *team_name;
     int player_id;
@@ -161,7 +161,8 @@ typedef struct server_s {
 
 // * buffer.c library functions :
 bool is_in_str(char c, const char *str);
-char *read_to_buffer(int fd, char delimiter);
+char **my_str_to_word_array(char const *str, char const *delim);
+char **read_to_buffer(int fd, char delimiter);
 
 // * main.c functions :
 int is_number(char *str);
@@ -190,7 +191,7 @@ client_t *get_client_by_index(server_t *server, int i);
 void disconnect_client(server_t *server, client_t *client);
 
 // * command_vector.c functions:
-void push_back_command(server_t *server, int i);
+void push_back_command(server_t *server, int i, char *line);
 void display_command_list(server_t *server, int i);
 void free_commands(client_t *client);
 void check_command_vector(server_t *server);
