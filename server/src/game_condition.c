@@ -40,7 +40,6 @@ static void check_dead(server_t *server, player_t *player)
         send_to_all_gui(server, "pdi #%d\n", player->id);
         send_client(client->fd, "dead\n");
         disconnect_client(server, get_client_by_player(server, player));
-        kill_player(server, player);
     }
     check_dead(server, next);
 }
