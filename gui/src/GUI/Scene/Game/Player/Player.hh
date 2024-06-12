@@ -33,7 +33,7 @@ namespace Zappy {
         void setPosition(std::size_t x, std::size_t y, orientation orientation);
         void setInventory(std::vector<std::size_t> inventory);
         void setLevel(std::size_t level);
-        void setIncantationStatus(bool status);
+        void setIncantationStatus(playerStatus status);
 
         void broadcast(const std::string &message);
         void draw(const Vector2 &mapSize);
@@ -45,6 +45,6 @@ namespace Zappy {
         std::string _team;
         std::vector<std::size_t> _inventory;
         std::shared_ptr<Raylib::Model3D> _model;
-        bool _incantation;
+        playerStatus _status;
     };
 }

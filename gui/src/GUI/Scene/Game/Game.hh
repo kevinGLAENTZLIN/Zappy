@@ -14,6 +14,7 @@
 
 #include "Map/Tiles.hh"
 #include "Player/Player.hh"
+#include "Player/Egg.hh"
 #include "Elements.hh"
 #include "Network/Network.hh"
 #include "../IScene.hh"
@@ -37,11 +38,14 @@ namespace Zappy {
 
         void updateTile(std::size_t x, std::size_t y,
                         std::vector<std::size_t> resources);
+        void addEgg(std::size_t id, std::size_t x, std::size_t y);
+        void addEgg(std::size_t id, std::size_t playerID);
+        void removeEgg(std::size_t id);
         void addPlayer(std::size_t id, std::size_t x, std::size_t y,
                        std::size_t playerOrientation, std::size_t level,
                        std::string teamName);
-        void updateIncantationStatus(std::size_t id, bool status);
-        void updateIncantationStatus(std::size_t x, std::size_t y, bool status);
+        void updateStatus(std::size_t id, playerStatus status);
+        void updateStatus(std::size_t x, std::size_t y, playerStatus status);
         void updatePlayerPosition(std::size_t id, std::size_t x, std::size_t y,
                                   std::size_t playerOrientation);
         void updatePlayerLevel(std::size_t id, std::size_t level);
@@ -58,6 +62,7 @@ namespace Zappy {
         std::vector<std::shared_ptr<Raylib::Model3D>> _models;
         std::vector<Tiles> _tiles;
         std::vector<Player> _players;
+        std::vector<Egg> _eggs;
         std::size_t _timerSizeT;
         double _timer;
         Vector2 _mapSize;
