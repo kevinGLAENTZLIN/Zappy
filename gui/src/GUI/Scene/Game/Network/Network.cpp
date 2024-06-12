@@ -207,7 +207,7 @@ void Zappy::Network::pic(const std::string &args)
     ss >> temp;
     while (!ss.eof()) {
         ss >> id;
-        _game.updateIncantationStatus(std::stoi(&id[1]), true);
+        _game.updateStatus(std::stoi(&id[1]), INCANTATING);
     }
 }
 
@@ -220,7 +220,7 @@ void Zappy::Network::pie(const std::string &args)
     std::string status;
 
     ss >> temp >> x >> y >> status;
-    _game.updateIncantationStatus(x, y, false);
+    _game.updateStatus(x, y, WANDERING);
 }
 
 void Zappy::Network::pfk(const std::string &args)
@@ -266,20 +266,36 @@ void Zappy::Network::pdi(const std::string &args)
     _game.playerDeath(std::stoi(&id[1]));
 }
 
-// TODO: understand how eggs works
 void Zappy::Network::enw(const std::string &args)
 {
-    std::cout << "enw " << args << std::endl;
+    std::stringstream ss(args);
+    std::string temp;
+    std::string eggId;
+    std::string playerId;
+
+    ss >> temp >> eggId >> playerId;
+    _game.addEgg(std::stoi(&eggId[1]), std::stoi(&playerId[1]));
+    _game.updateStatus(std::stoi(&playerId[1]), WANDERING);
 }
 
 void Zappy::Network::ebo(const std::string &args)
 {
-    std::cout << "ebo " << args << std::endl;
+    std::stringstream ss(args);
+    std::string temp;
+    std::string id;
+
+    ss >> temp >> id;
+    _game.removeEgg(std::stoi(&id[1]));
 }
 
 void Zappy::Network::edi(const std::string &args)
 {
-    std::cout << "edi " << args << std::endl;
+    std::stringstream ss(args);
+    std::string temp;
+    std::string id;
+
+    ss >> temp >> id;
+    _game.removeEgg(std::stoi(&id[1]));
 }
 
 void Zappy::Network::sgt(const std::string &args)

@@ -13,7 +13,7 @@ Zappy::Player::Player(std::size_t id, std::size_t posX, std::size_t posY,
                       std::string team, std::shared_ptr<Raylib::Model3D> models):
     _id(id), _position({static_cast<float>(posX), static_cast<float>(posY)}),
     _orientation(facingDirection), _level(level), _team(team), _model(models),
-    _incantation(false)
+    _status(WANDERING)
 {}
 
 Zappy::Player::~Player()
@@ -66,9 +66,9 @@ void Zappy::Player::setLevel(std::size_t level)
     _level = level;
 }
 
-void Zappy::Player::setIncantationStatus(bool status)
+void Zappy::Player::setIncantationStatus(playerStatus status)
 {
-    _incantation = status;
+    _status = status;
 }
 
 void Zappy::Player::broadcast(const std::string &message)

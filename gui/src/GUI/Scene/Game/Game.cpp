@@ -6,6 +6,7 @@
 */
 
 #include "Game.hh"
+#include "Elements.hh"
 #include "Map/Tiles.hh"
 #include "Player/Player.hh"
 #include <raylib.h>
@@ -57,6 +58,8 @@ void Zappy::Game::displayElements(void)
                 tile.Draw();
         for (auto &player : _players)
             player.draw(_mapSize);
+        for (auto &egg : _eggs)
+            egg.Draw(_mapSize);
     _commonElements->getCamera().end3DMode();
     _popUp.Draw();
     DrawFPS(10, 10);
@@ -90,7 +93,7 @@ void Zappy::Game::addPlayer(std::size_t id, std::size_t x, std::size_t y,
                           level, teamName, _models[PLAYER]);
 }
 
-void Zappy::Game::updateIncantationStatus(std::size_t id, bool status)
+void Zappy::Game::updateStatus(std::size_t id, playerStatus status)
 {
     for (auto &player : _players) {
         if (player.getId() == id) {
@@ -100,7 +103,7 @@ void Zappy::Game::updateIncantationStatus(std::size_t id, bool status)
     }
 }
 
-void Zappy::Game::updateIncantationStatus(std::size_t x, std::size_t y, bool status)
+void Zappy::Game::updateStatus(std::size_t x, std::size_t y, playerStatus status)
 {
     for (auto &player : _players) {
         if (player.getPosition().x == x && player.getPosition().y == y) {
@@ -114,6 +117,32 @@ void Zappy::Game::updateTile(std::size_t x, std::size_t y,
                              std::vector<std::size_t> resources)
 {
     _tiles[y * _mapSize.x + x].setResources(resources);
+}
+
+void Zappy::Game::addEgg(std::size_t id, std::size_t x, std::size_t y)
+{
+    _eggs.emplace_back(id, x, y, _models[EGG]);
+}
+
+void Zappy::Game::addEgg(std::size_t id, std::size_t playerID)
+{
+    for (auto &player : _players) {
+        if (player.getId() == playerID) {
+            _eggs.emplace_back(id, player.getPosition().x, player.getPosition().y,
+                               _models[EGG]);
+            return;
+        }
+    }
+}
+
+void Zappy::Game::removeEgg(std::size_t id)
+{
+    for (std::size_t i = 0; i < _eggs.size(); i++) {
+        if (_eggs[i].getId() == id) {
+            _eggs.erase(_eggs.begin() + i);
+            return;
+        }
+    }
 }
 
 void Zappy::Game::updatePlayerPosition(std::size_t id, std::size_t x, std::size_t y,
@@ -211,7 +240,8 @@ void Zappy::Game::loadModels()
     _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/player.obj",
                          "gui/assets/3Delements/food.png", 0, 0, 0, 0, 0, 0, 1));
     // EGG
-    _models.emplace_back(nullptr);
+    _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/egg.obj",
+                         "gui/assets/3Delements/food.png", 0, 0, 0, 0, 0, 0, 1));
 }
 
 void Zappy::Game::createMap()
