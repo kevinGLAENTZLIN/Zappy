@@ -20,19 +20,6 @@ bool is_in_str(char c, const char *str)
     return false;
 }
 
-/// @brief Check if the character C is contained in the string STR
-/// @param c Character to find
-/// @return Index of the first C found, else -1
-static int get_index_in_str(const char *str, int c)
-{
-    if (str == NULL)
-        return -1;
-    for (int i = 0; str[i] != 0; i++)
-        if (str[i] == c)
-            return i;
-    return -1;
-}
-
 /// @brief Return the number of word separated by the given delimiter in the
 /// given string
 /// @param delim List of delimiter
@@ -90,6 +77,15 @@ static char *word_cpy(char const *str, int word_size, int i_str)
     return word;
 }
 
+/// @brief Write in the error output the given string and the errno message
+/// @param str Error message
+/// @return NULL
+static void *my_perror(char *str)
+{
+    perror(str);
+    return NULL;
+}
+
 /// @brief Split the given string in fuction of the delimiters
 /// @param str String to split
 /// @param delim List of delimiter
@@ -101,10 +97,8 @@ char **my_str_to_word_array(char const *str, char const *delim)
     int i_str = 0;
     int i_array = 0;
 
-    if (array == NULL) {
-        perror("my_str_to_word_array");
-        return NULL;
-    }
+    if (array == NULL)
+        return my_perror("my_str_to_word_array");
     while (str[i_str] != '\0') {
         if (is_in_str(str[i_str], delim) == 0) {
             word_size = count_word_size(str, i_str, delim);
