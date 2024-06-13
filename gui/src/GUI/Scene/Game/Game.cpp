@@ -13,7 +13,7 @@
 
 Zappy::Game::Game(std::shared_ptr<CommonElements> commonElements):
     _commonElements(commonElements), _timerSizeT(-1), _timer(0), _mapSizeQuery(false),
-    _tickTime(-1), _network(commonElements, *this), _pauseMenu(commonElements)
+    _tickTime(-1), _network(commonElements, *this), _pauseMenu(_commonElements)
 {
     loadModels();
     _mapSize = {0, 0};
@@ -33,14 +33,17 @@ void Zappy::Game::computeLogic()
 
     // cam.cameraUpdate(CAMERA_ORBITAL);
     // _commonElements->setCamera(cam);
-    if (_pauseMenu.isVisible())
-        _pauseMenu.computeLogic();
-    if (Raylib::Event::myIsKeyDown(KEY_ESCAPE))
-        _pauseMenu.changeVisibility();
-    if (_pauseMenu.isVisible())
-        return;
+    if (_pauseMenu.isVisible() == true)
+        return _pauseMenu.computeLogic();
     _network.sendQueueToServer();
     _network.checkServer();
+    if (_popUp.getStatus() == true) {
+        if (_selectedObjectType == PLAYERTYPE)
+            _popUp.setInfo(_players[_selectedObject]);
+        if (_selectedObjectType == TILETYPE)
+            _popUp.setInfo(_tiles[_selectedObject], findPlayersFromCoordinates(_tiles[_selectedObject].getIndex()),
+                           findEggsFromCoordinates(_tiles[_selectedObject].getIndex()));
+    }
     if (_tickTime == -1)
         return;
     _timer += GetFrameTime() / _tickTime;
@@ -51,9 +54,10 @@ void Zappy::Game::computeLogic()
     _timerSizeT = _tickTemp;
     if (_timerSizeT % 20 == 0)
         _network.addToQueue("mct\n");
-    if (_timerSizeT % 126 == 0)
+    if (_timerSizeT % 126 == 0) {
         for (auto &player : _players)
-            _network.addToQueue("pin " + std::to_string(player.getId()) + "\n");
+            _network.addToQueue("pin #" + std::to_string(player.getId()) + "\n");
+    }
 }
 
 void Zappy::Game::displayElements(void)
@@ -67,8 +71,9 @@ void Zappy::Game::displayElements(void)
         for (auto &egg : _eggs)
             egg.Draw(_mapSize);
     _commonElements->getCamera().end3DMode();
-    _popUp.Draw();
-    if (_pauseMenu.isVisible())
+    if (_popUp.getStatus() == true && _pauseMenu.isVisible() == false)
+        _popUp.Draw();
+    if (_pauseMenu.isVisible() == true)
         _pauseMenu.Draw();
     DrawFPS(10, 10);
 }
@@ -187,6 +192,8 @@ void Zappy::Game::playerDeath(std::size_t id)
 {
     for (std::size_t i = 0; i < _players.size(); i++) {
         if (_players[i].getId() == id) {
+            if (_selectedObject == i && _selectedObjectType == PLAYERTYPE)
+                _popUp.setStatus(false);
             _players.erase(_players.begin() + i);
             return;
         }
@@ -203,9 +210,35 @@ void Zappy::Game::playerBroadcast(std::size_t id, const std::string &message)
     }
 }
 
+std::size_t Zappy::Game::findPlayersFromCoordinates(Vector2 coordinates)
+{
+    std::size_t playersOnTile = 0;
+
+    for (auto &player : _players) {
+        if (player.getPosition().x == coordinates.x &&
+            player.getPosition().y == coordinates.y)
+            playersOnTile++;
+    }
+    return playersOnTile;
+}
+
+std::size_t Zappy::Game::findEggsFromCoordinates(Vector2 coordinates)
+{
+    std::size_t eggsOnTile = 0;
+
+    for (auto &egg : _eggs) {
+        if (egg.getPosition().x == coordinates.x &&
+            egg.getPosition().y == coordinates.y)
+            eggsOnTile++;
+    }
+    return eggsOnTile;
+}
+
 void Zappy::Game::userInteractions()
 {
     Ray ray;
+    if (IsKeyPressed(KEY_ESCAPE))
+        return _pauseMenu.changeVisibility();
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         if (_popUp.getStatus() == true && _popUp.Hits(GetMousePosition()) == true)
             return;
@@ -214,12 +247,21 @@ void Zappy::Game::userInteractions()
             return;
         }
         ray = GetMouseRay(GetMousePosition(), _commonElements->getCamera().getCamera());
-        for (std::size_t i = 0; i < _mapSize.x * _mapSize.y; i++) {
-            if (_tiles[i].Hits(ray)) {
-                _popUp.setInfo(_tiles[i]);
+        for (std::size_t i = 0; i < _players.size(); i++) {
+            if (_players[i].hit(ray, _mapSize) == true) {
+                _selectedObject = i;
+                _selectedObjectType = PLAYERTYPE;
+                _popUp.setStatus(true);
                 return;
             }
         }
+        for (std::size_t i = 0; i < _mapSize.x * _mapSize.y; i++)
+            if (_tiles[i].Hits(ray)) {
+                _selectedObject = i;
+                _selectedObjectType = TILETYPE;
+                _popUp.setStatus(true);
+                return;
+            }
     }
 }
 
@@ -245,8 +287,8 @@ void Zappy::Game::loadModels()
     // THYSTAME
     _models.emplace_back(nullptr);
     // PLAYER
-    _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/player.obj",
-                         "gui/assets/3Delements/food.png", 0, 0, 0, 0, 0, 0, 1));
+    _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/toothless3D.obj",
+                         "gui/assets/3Delements/food.png", 0, 0, 0, 0, 0, 0, 0.005));
     // EGG
     _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/egg.obj",
                          "gui/assets/3Delements/food.png", 0, 0, 0, 0, 0, 0, 1));
