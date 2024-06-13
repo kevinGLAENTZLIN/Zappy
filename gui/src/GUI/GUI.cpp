@@ -44,7 +44,7 @@ void Zappy::GUI::runGUI()
 {
     std::string serverInput;
 
-    _window = std::make_unique<Raylib::Window>(KEY_ESCAPE, "Zappy");
+    _window = std::make_unique<Raylib::Window>(KEY_BACKSPACE, "Zappy");
     _commonElements = std::make_shared<CommonElements>();
     _commonElements->setPort(_port);
     _commonElements->setIp(_ip);
@@ -52,6 +52,7 @@ void Zappy::GUI::runGUI()
     _commonElements->getMusic().play();
     _commonElements->getMusic().setVolume(0.5);
     while (_window->myWindowShouldClose() == false) {
+        _commonElements->drawFPS();
         _commonElements->getMusic().updateMusic();
         _scenes[_commonElements->getCurrentScene()]->computeLogic();
         _window->myBeginDrawing();

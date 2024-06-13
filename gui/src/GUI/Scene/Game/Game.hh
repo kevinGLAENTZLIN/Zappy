@@ -19,6 +19,7 @@
 #include "Network/Network.hh"
 #include "../IScene.hh"
 #include "../../../UI/PopUp.hh"
+#include "./PauseMenu/PauseMenu.hh"
 #include "../../CommonElements/CommonElements.hh"
 #include "../../../Utils/GuiSocket.hh"
 
@@ -70,5 +71,6 @@ namespace Zappy {
         double _tickTime;
         Network _network;
         PopUp _popUp;
+        PauseMenu _pauseMenu;
     };
 }

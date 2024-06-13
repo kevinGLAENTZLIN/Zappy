@@ -9,7 +9,7 @@
 #include <map>
 
 Zappy::CommonElements::CommonElements():
-    _currentScene(0), _camera(), _socket(0), _soundVolume(0.5), _music("gui/assets/audio/menu.mp3"), _mute(false)
+    _currentScene(0), _oldScene(0), _camera(), _socket(0), _soundVolume(0.5), _music("gui/assets/audio/menu.mp3"), _mute(false), _showFPS(false)
 {
 }
 
@@ -20,6 +20,11 @@ Zappy::CommonElements::~CommonElements()
 void Zappy::CommonElements::setCurrentScene(const std::size_t &scene)
 {
     _currentScene = scene;
+}
+
+void Zappy::CommonElements::setOldScene(const std::size_t &scene)
+{
+    _oldScene = scene;
 }
 
 void Zappy::CommonElements::setCamera(const Raylib::Camera &camera)
@@ -62,9 +67,25 @@ void Zappy::CommonElements::setMute()
     _mute = !_mute;
 }
 
+void Zappy::CommonElements::setShowFPS(const bool &value)
+{
+    _showFPS = value;
+}
+
+void Zappy::CommonElements::drawFPS()
+{
+    if (_showFPS)
+        DrawFPS(5, 5);
+}
+
 std::size_t Zappy::CommonElements::getCurrentScene() const
 {
     return _currentScene;
+}
+
+std::size_t Zappy::CommonElements::getOldScene() const
+{
+    return _oldScene;
 }
 
 Raylib::Camera Zappy::CommonElements::getCamera() const
@@ -110,4 +131,9 @@ Raylib::MusicEnc Zappy::CommonElements::getMusic() const
 bool Zappy::CommonElements::getMute() const
 {
     return _mute;
+}
+
+bool Zappy::CommonElements::getShowFPS() const
+{
+    return _showFPS;
 }
