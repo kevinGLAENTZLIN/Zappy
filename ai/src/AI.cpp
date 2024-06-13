@@ -64,8 +64,6 @@ void Zappy::AI::initConnection(void)
     while (nbInstructions < 3) {
         if (_clientSocket->selectSocket() == -1) {
             _fd >> response;
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-
             if (nbInstructions == 0 && response == "WELCOME\n") {
                 _fd << (_teamName + "\n");
                 nbInstructions++;
@@ -120,9 +118,11 @@ bool Zappy::AI::handleUniqueCommand(const std::string &serverResponse, const std
         _moveToBroadcast = false;
         _canBroadcast = false;
         _isBroadcasting = false;
+        _inventoryReceived = true;
+        _needToBeFat = false;
         return true;
     }
-    if (response == "message") {
+    if (response == "message" && !_moveToBroadcast) {
         handleBroadcast(serverResponse);
         return true;
     }
@@ -145,7 +145,6 @@ void Zappy::AI::handleResponse(void)
         return;
     if (!_commandQueue.empty()) {
         _numberCmd--;
-        // std::cout << "number cmd apres decrementation : " << _numberCmd << std::endl;
         command = _commandQueue.front();
         _commandQueue.pop();
     }
@@ -153,6 +152,17 @@ void Zappy::AI::handleResponse(void)
         parseInventory(serverResponse);
     else if (command == "Look\n" && serverResponse != "ko\n" && serverResponse != "ok\n")
         handleLook(serverResponse);
+    // else if (command == "Fork\n") {
+    //     if (response == "ok") {
+    //         if (Utils::process() == 0) {
+    //             AI ai;
+    //             ai.initAI(_port, _teamName, _ip);
+    //             ai.initConnection();
+    //             ai.run();
+    //             std::exit(0);
+    //         }
+    //     }
+    // }
 }
 
 
@@ -246,15 +256,11 @@ void Zappy::AI::handleLook(const std::string &response)
     if (!_isBroadcasting && !_moveToBroadcast) {
         while (!isObjectTaken && std::getline(stream, tile, ',')) {
             tileStream = std::istringstream(tile);
-            // std::cout << "tile -> " << tile << std::endl;
-            // std::cout << "tileIndex -> " << tileIndex << std::endl;
             if (tileStream >> object && object != "player") {
                 handlePlayerMove(tileIndex);
-                std::cout << "object taken if -> " << object << std::endl;
                 isObjectTaken = true;
             }
             while (tileStream >> object) {
-                std::cout << "object while -> " << object << std::endl;
                 if (object != "player" && object != "egg"&& shouldTakeObject(object)) {
                     takeObject(object);
                     isObjectTaken = true;
@@ -263,7 +269,6 @@ void Zappy::AI::handleLook(const std::string &response)
             tileStream.clear();
             tileIndex++;
         }
-        std::cout << "tileIndex -> " << tileIndex << std::endl;
     }
     if (_isBroadcasting) {
         while (!isObjectTaken && std::getline(stream, tile, ',')) {
@@ -417,14 +422,14 @@ bool Zappy::AI::handleIncantation(int linemate, int deraumere, int sibur, int me
         return true;
     }
     std::cout << "\033[44m nb player -> " << _nbPlayer << "\033[0m\n";
-    if (_currentLevel == 2 && linemate >= 1 && deraumere >= 1 && sibur >= 1 && _nbPlayer == 2) {
+    if (_currentLevel == 2 && linemate >= 1 && deraumere >= 1 && sibur >= 1 && _nbPlayer >= 2) {
         sendCommand(_commands[SET_OBJECT], true, "linemate");
         sendCommand(_commands[SET_OBJECT], true, "deraumere");
         sendCommand(_commands[SET_OBJECT], true, "sibur");
         sendCommand(_commands[INCANTATION], false);
         return true;
     }
-    if (_currentLevel == 3 && linemate >= 2 && phiras >= 1 && sibur >= 1 && _nbPlayer == 2) {
+    if (_currentLevel == 3 && linemate >= 2 && phiras >= 1 && sibur >= 1 && _nbPlayer >= 2) {
         sendCommand(_commands[SET_OBJECT], true, "linemate");
         sendCommand(_commands[SET_OBJECT], true, "linemate");
         sendCommand(_commands[SET_OBJECT], true, "phiras");
@@ -432,7 +437,7 @@ bool Zappy::AI::handleIncantation(int linemate, int deraumere, int sibur, int me
         sendCommand(_commands[INCANTATION], false);
         return true;
     }
-    if (_currentLevel == 4 && linemate >= 1 && deraumere >= 1 && sibur >= 2 && phiras >= 1 && _nbPlayer == 4) {
+    if (_currentLevel == 4 && linemate >= 1 && deraumere >= 1 && sibur >= 2 && phiras >= 1 && _nbPlayer >= 4) {
         sendCommand(_commands[SET_OBJECT], true, "linemate");
         sendCommand(_commands[SET_OBJECT], true, "deraumere");
         sendCommand(_commands[SET_OBJECT], true, "sibur");
@@ -441,7 +446,7 @@ bool Zappy::AI::handleIncantation(int linemate, int deraumere, int sibur, int me
         sendCommand(_commands[INCANTATION], false);
         return true;
     }
-    if (_currentLevel == 5 && linemate >= 1 && deraumere >= 2 && sibur >= 1 && mendiane >= 3 && _nbPlayer == 4) {
+    if (_currentLevel == 5 && linemate >= 1 && deraumere >= 2 && sibur >= 1 && mendiane >= 3 && _nbPlayer >= 4) {
         sendCommand(_commands[SET_OBJECT], true, "linemate");
         sendCommand(_commands[SET_OBJECT], true, "deraumere");
         sendCommand(_commands[SET_OBJECT], true, "deraumere");
@@ -452,7 +457,7 @@ bool Zappy::AI::handleIncantation(int linemate, int deraumere, int sibur, int me
         sendCommand(_commands[INCANTATION], false);
         return true;
     }
-    if (_currentLevel == 6 && linemate >= 1 && deraumere >= 2 && sibur >= 3 && phiras >= 1 && _nbPlayer == 6) {
+    if (_currentLevel == 6 && linemate >= 1 && deraumere >= 2 && sibur >= 3 && phiras >= 1 && _nbPlayer >= 6) {
         sendCommand(_commands[SET_OBJECT], true, "linemate");
         sendCommand(_commands[SET_OBJECT], true, "deraumere");
         sendCommand(_commands[SET_OBJECT], true, "deraumere");
@@ -463,7 +468,7 @@ bool Zappy::AI::handleIncantation(int linemate, int deraumere, int sibur, int me
         sendCommand(_commands[INCANTATION], false);
         return true;
     }
-    if (_currentLevel == 7 && linemate >= 2 && deraumere >= 2 && sibur >= 2 && mendiane >= 2 && phiras >= 2 && thystame >= 1 && _nbPlayer == 6) {
+    if (_currentLevel == 7 && linemate >= 2 && deraumere >= 2 && sibur >= 2 && mendiane >= 2 && phiras >= 2 && thystame >= 1 && _nbPlayer >= 6) {
         sendCommand(_commands[SET_OBJECT], true, "linemate");
         sendCommand(_commands[SET_OBJECT], true, "linemate");
         sendCommand(_commands[SET_OBJECT], true, "deraumere");
@@ -531,7 +536,7 @@ void Zappy::AI::parseInventory(const std::string &response)
         if (stringFind == "thystame")
             stream >> thystame;
     }
-    // std::cout << "current level -> " << _currentLevel << std::endl;
+    std::cout << "current level -> " << _currentLevel << std::endl;
     _inventoryReceived = true;
     handleIncantation(linemate, deraumere, sibur, mendiane, phiras, thystame);
     setPhase(canIncantation(linemate, deraumere, sibur, mendiane, phiras, thystame));
@@ -561,38 +566,30 @@ void Zappy::AI::setPhase(bool canIncantation)
     if (canIncantation && _food >= INCANTATION_FOOD
     && !_canBroadcast && _currentLevel >= 2 && _currentLevel < 8) {
         _canBroadcast = true;
-        // std::cout << "\033[1;32m" << "bro phase can start" << "\033[0m\n" << std::endl;  // Green
     }
     if (_food > INCANTATION_FOOD && _currentLevel >= 2 && _currentLevel <= 7) {
         _isBroadcasting = true;
-        // std::cout << "\033[1;33m" << "Broadcast phase start" << "\033[0m\n" << std::endl;  // Yellow
     }
     if (_food < MIN_FOOD || _currentLevel == 8) {
-        // std::cout << "\033[1;34m" << "Food phase start" << "\033[0m\n" << std::endl;     // Blue
         _needToBeFat = true;
     }
     if (_food >= MAX_FOOD) {
         _needToBeFat = false;
-        // std::cout << "\033[1;34m" << "Food phase OVER" << "\033[0m\n" << std::endl;     // Blue
     }
 }
 
 void Zappy::AI::handlePhase(bool canIncantation)
 {
     if (_isBroadcasting) {
-        // std::cout << "\033[1;33m" << "Broadcasting phase" << "\033[0m\n" << std::endl;  // Yellow
         phaseBroadcast();
     }
     if (_food > MIN_FOOD && !_needToBeFat && !_isBroadcasting) {
-        // std::cout << "\033[1;35m" << "Stone phase" << "\033[0m\n" << std::endl;         // Magenta
         phaseStone();
     }
     if (!canIncantation) {
-        // std::cout << "\033[1;32m" << "Can't Incant" << "\033[0m\n" << std::endl;        // Green
         _needToBeFat = true;
     }
     if (_needToBeFat && !_isBroadcasting) {
-        // std::cout << "\033[1;31m" << "Food phase" << "\033[0m\n" << std::endl;          // Red
         phaseFood();
     }
     if (_canBroadcast)
@@ -613,6 +610,9 @@ void Zappy::AI::phaseBroadcast(void)
 {
     sendCommand(_commands[BROADCAST], true, std::to_string(_currentLevel));
     sendCommand(_commands[LOOK], false);
+    if (std::rand() % 20 == 0) {
+        sendCommand(_commands[FORK], false);
+    }
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     _isBroadcasting = true;
 }
@@ -633,5 +633,4 @@ void Zappy::AI::sendCommand(const std::string &command, bool isObject, const std
         _commandQueue.push(command);
         _numberCmd++;
     }
-    // std::cout << "number cmd apres ajout : " << _numberCmd << std::endl;
 }
