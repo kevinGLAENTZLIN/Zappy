@@ -14,7 +14,10 @@ Zappy::Player::Player(std::size_t id, std::size_t posX, std::size_t posY,
     _id(id), _position({static_cast<float>(posX), static_cast<float>(posY)}),
     _orientation(facingDirection), _level(level), _team(team), _model(models),
     _status(WANDERING)
-{}
+{
+    _model->setPosition(0, 0, 0);
+    _box = _model->getModelBoundingBox();
+}
 
 Zappy::Player::~Player()
 {
@@ -82,4 +85,16 @@ void Zappy::Player::draw(const Vector2 &mapSize)
                         _position.y - mapSize.y / 2 + 0.5);
     _model->setRotation(0, 90 * static_cast<int>(_orientation), 0);
     _model->ModelDraw();
+}
+
+bool Zappy::Player::hit(Ray mouseRay, const Vector2 &mapSize)
+{
+    BoundingBox box = _box;
+
+    box.min.x += _position.x - mapSize.x / 2 + 0.5;
+    box.min.z += _position.y - mapSize.y / 2 + 0.5;
+    box.max.x += _position.x - mapSize.x / 2 + 0.5;
+    box.max.z += _position.y - mapSize.y / 2 + 0.5;
+    DrawBoundingBox(box, WHITE);
+    return GetRayCollisionBox(mouseRay, box).hit;
 }

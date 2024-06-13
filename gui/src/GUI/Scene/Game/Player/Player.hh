@@ -9,6 +9,7 @@
 #pragma once
 
 #include <iostream>
+#include <raylib.h>
 #include <vector>
 #include <memory>
 
@@ -37,6 +38,7 @@ namespace Zappy {
 
         void broadcast(const std::string &message);
         void draw(const Vector2 &mapSize);
+        bool hit(Ray mouseRay, const Vector2 &mapSize);
     private:
         std::size_t _id;
         Vector2 _position;
@@ -46,5 +48,6 @@ namespace Zappy {
         std::vector<std::size_t> _inventory;
         std::shared_ptr<Raylib::Model3D> _model;
         playerStatus _status;
+        BoundingBox _box;
     };
 }
