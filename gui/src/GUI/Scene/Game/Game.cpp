@@ -13,7 +13,7 @@
 
 Zappy::Game::Game(std::shared_ptr<CommonElements> commonElements):
     _commonElements(commonElements), _timerSizeT(-1), _timer(0), _mapSizeQuery(false),
-    _tickTime(-1), _network(commonElements, *this)
+    _tickTime(-1), _network(commonElements, *this), _pauseMenu(commonElements)
 {
     loadModels();
     _mapSize = {0, 0};
@@ -33,6 +33,12 @@ void Zappy::Game::computeLogic()
 
     // cam.cameraUpdate(CAMERA_ORBITAL);
     // _commonElements->setCamera(cam);
+    if (_pauseMenu.isVisible())
+        _pauseMenu.computeLogic();
+    if (Raylib::Event::myIsKeyDown(KEY_ESCAPE))
+        _pauseMenu.changeVisibility();
+    if (_pauseMenu.isVisible())
+        return;
     _network.sendQueueToServer();
     _network.checkServer();
     if (_tickTime == -1)
@@ -62,6 +68,8 @@ void Zappy::Game::displayElements(void)
             egg.Draw(_mapSize);
     _commonElements->getCamera().end3DMode();
     _popUp.Draw();
+    if (_pauseMenu.isVisible())
+        _pauseMenu.Draw();
     DrawFPS(10, 10);
 }
 

@@ -21,7 +21,7 @@ void Zappy::OptionMenu::computeLogic()
 {
     _backBtn.Event();
     if (_backBtn.IsButtonPressed())
-        _commonElements->setCurrentScene(0);
+        _commonElements->setCurrentScene(_commonElements->getOldScene());
     _slider.computeLogic();
     if (_slider.isCursorPressed() && _commonElements->getMute() == false)
         _commonElements->getMusic().setVolume(_slider.getValue());
@@ -30,7 +30,9 @@ void Zappy::OptionMenu::computeLogic()
             ToggleFullscreen();
     _showFPS.Event();
     if (_showFPS.isChecked())
-        DrawFPS(5, 5);
+        _commonElements->setShowFPS(true);
+    else
+        _commonElements->setShowFPS(false);
     _muteCheck.Event();
     if (_muteCheck.isChecked()) {
         _commonElements->setMute();

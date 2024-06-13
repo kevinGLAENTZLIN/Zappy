@@ -19,6 +19,7 @@ namespace Zappy {
         ~CommonElements();
 
         void setCurrentScene(const std::size_t &scene);
+        void setOldScene(const std::size_t &scene);
         void setCamera(const Raylib::Camera &camera);
         void setSocket(const std::size_t &socket);
         void setMusicVolume(const double &volume);
@@ -27,8 +28,11 @@ namespace Zappy {
         void setIp(const std::string &ip);
         void setConnect(const bool &connected);
         void setMute();
+        void setShowFPS(const bool &value);
+        void drawFPS();
 
         std::size_t getCurrentScene() const;
+        std::size_t getOldScene() const;
         Raylib::Camera getCamera() const;
         std::size_t getSocket() const;
         double getMusicVolume() const;
@@ -38,8 +42,10 @@ namespace Zappy {
         bool getConnect() const;
         bool getMute() const;
         Raylib::MusicEnc getMusic() const;
+        bool getShowFPS() const;
     private:
         std::size_t _currentScene;
+        std::size_t _oldScene;
         Raylib::Camera _camera;
         std::size_t _socket;
         double _soundVolume;
@@ -48,5 +54,6 @@ namespace Zappy {
         std::string _ip;
         bool _connected;
         bool _mute;
+        bool _showFPS;
     };
 }

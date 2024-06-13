@@ -32,11 +32,15 @@ void Zappy::MainMenu::computeLogic()
     if (_playBtn.IsButtonPressed()) {
         if (_commonElements->getConnect() != true) {
             checkConnection();
+        } else {
+            _commonElements->setCurrentScene(2);
         }
     }
     _optionBtn.Event();
-    if (_optionBtn.IsButtonPressed())
+    if (_optionBtn.IsButtonPressed()) {
         _commonElements->setCurrentScene(1);
+        _commonElements->setOldScene(0);
+    }
     _quitBtn.Event();
     if (_quitBtn.IsButtonPressed())
         exit(0);
