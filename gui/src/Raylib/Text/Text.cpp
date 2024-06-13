@@ -32,6 +32,11 @@ Raylib::Text::Text(const std::string &text, const std::size_t &textSize,
 Raylib::Text::~Text()
 {}
 
+void Raylib::Text::setText(const std::string &text)
+{
+    _text = text;
+}
+
 extern "C" {
     void Raylib::Text::TextDraw()
     {
