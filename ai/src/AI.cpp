@@ -95,7 +95,7 @@ void Zappy::AI::run(void)
             sendCommand(_commands[INVENTORY], false);
             _lastResponseTime = now;
         }
-        if (_inventoryReceived) {
+        if (_inventoryReceived && !_moveToBroadcast) {
             sendCommand(_commands[INVENTORY], false);
             _inventoryReceived = false;
         }
@@ -122,7 +122,7 @@ bool Zappy::AI::handleUniqueCommand(const std::string &serverResponse, const std
         _needToBeFat = false;
         return true;
     }
-    if (response == "message" && !_moveToBroadcast) {
+    if (response == "message") {
         handleBroadcast(serverResponse);
         return true;
     }
@@ -180,7 +180,6 @@ void Zappy::AI::moveToBroadcastPosition(int position, int level)
     _needToBeFat = false;
     switch(position) {
         case 0:
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
             break;
         case 1:
             sendCommand(_commands[FORWARD], false);
