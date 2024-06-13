@@ -44,7 +44,7 @@ void Zappy::GUI::runGUI()
 {
     std::string serverInput;
 
-    _window = std::make_unique<Raylib::Window>(KEY_BACKSPACE, "Zappy");
+    _window = std::make_unique<Raylib::Window>(KEY_NULL, "Zappy");
     _commonElements = std::make_shared<CommonElements>();
     _commonElements->setPort(_port);
     _commonElements->setIp(_ip);
