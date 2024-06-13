@@ -6,15 +6,18 @@
 */
 
 #include "Model3D.hh"
+#include <raylib.h>
+#include <raymath.h>
 
 Raylib::Model3D::Model3D(const std::string &fileName, const std::string &texture,
                          double posX, double posY, double posZ, double roll,
                          double pitch, double yaw, double scale):
-    _texture(texture), _scale(scale)
+    _texture(texture)
 {
     _position = {static_cast<float>(posX), static_cast<float>(posY), static_cast<float>(posZ)};
     _rotation = {static_cast<float>(roll), static_cast<float>(pitch), static_cast<float>(yaw)};
     createModel(fileName);
+    scaleModel(scale);
 }
 
 Raylib::Model3D::~Model3D()
@@ -35,20 +38,30 @@ void Raylib::Model3D::setRotation(double roll, double pitch, double yaw)
 }
 
 extern "C" {
-    void Raylib::Model3D::ModelDraw()
+    BoundingBox Raylib::Model3D::getModelBoundingBox() const
     {
-        DrawModel(_model, _position, _scale, WHITE);
+        return GetModelBoundingBox(_model);
+    }
+
+    void Raylib::Model3D::ModelDraw() const
+    {
+        DrawModel(_model, _position, 1.0f, WHITE);
     }
 
     void Raylib::Model3D::createModel(const std::string &fileName)
     {
         _model = LoadModel(fileName.c_str());
         _model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = _texture.GetTexture();
-        _boundingBox = GetModelBoundingBox(_model);
     }
 
     void Raylib::Model3D::destroyModel()
     {
         UnloadModel(_model);
+    }
+
+    void Raylib::Model3D::scaleModel(double scale)
+    {
+        Matrix scaleMatrix = MatrixScale(scale, scale, scale);
+        _model.transform = MatrixMultiply(_model.transform, scaleMatrix);
     }
 }

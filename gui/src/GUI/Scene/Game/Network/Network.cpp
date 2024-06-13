@@ -137,6 +137,7 @@ void Zappy::Network::pnw(const std::string &args)
     ss >> temp >> id >> x >> y >> facingDirection >> level >> team;
     _game.addPlayer(std::stoi(&id[1]), x, y, static_cast<orientation>(facingDirection),
                     level, team);
+    addToQueue("pin " + id + "\n");
 }
 
 void Zappy::Network::ppo(const std::string &args)
@@ -171,7 +172,7 @@ void Zappy::Network::pin(const std::string &args)
     std::string id;
     std::vector<std::size_t> resources(7);
 
-    ss >> temp >> id >> resources[FOOD] >> resources[LINEMATE] >>
+    ss >> temp >> id >> temp >> temp >> resources[FOOD] >> resources[LINEMATE] >>
         resources[DERAUMERE] >> resources[SIBUR] >> resources[MENDIANE] >>
         resources[PHIRAS] >> resources[THYSTAME];
     _game.updatePlayerInventory(std::stoi(&id[1]), resources);

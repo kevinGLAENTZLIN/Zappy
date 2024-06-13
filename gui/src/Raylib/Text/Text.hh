@@ -34,10 +34,13 @@ namespace Raylib {
              const double &posX, const double &posY, const double &spacing,
              const Color &color, const TextFormat &textFormat, const TextAlignment &textAlign = CENTER);
         ~Text();
+
+        void setText(const std::string &text);
+
         void TextDraw();
+
         double getTextWidth();
         double getTextHeight();
-
     private:
         std::string _text;
         std::size_t _textSize;

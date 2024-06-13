@@ -54,6 +54,8 @@ namespace Zappy {
         void playerDeath(std::size_t id);
         void playerBroadcast(std::size_t id, const std::string &message);
     private:
+        std::size_t findPlayersFromCoordinates(Vector2 coordinates);
+        std::size_t findEggsFromCoordinates(Vector2 coordinates);
         void userInteractions();
         void loadModels();
 
@@ -72,5 +74,7 @@ namespace Zappy {
         Network _network;
         PopUp _popUp;
         PauseMenu _pauseMenu;
+        std::size_t _selectedObject;
+        PopUpType _selectedObjectType;
     };
 }

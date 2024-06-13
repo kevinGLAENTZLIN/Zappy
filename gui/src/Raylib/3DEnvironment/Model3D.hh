@@ -24,16 +24,17 @@ namespace Raylib {
         void setPosition(double x, double y, double z);
         void setRotation(double roll, double pitch, double yaw);
 
-        void ModelDraw();
+        BoundingBox getModelBoundingBox() const;
+
+        void ModelDraw() const;
     private:
         void createModel(const std::string &fileName);
         void destroyModel();
+        void scaleModel(double scale);
         Model _model;
         Texture _texture;
-        double _scale;
 
         Vector3 _position;
         Vector3 _rotation;
-        BoundingBox _boundingBox;
     };
 }

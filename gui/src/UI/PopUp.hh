@@ -14,13 +14,35 @@
 #include <mutex>
 
 namespace Zappy {
+
+    enum PopUpType {
+        PLAYERTYPE,
+        TILETYPE,
+    };
+
+    enum TILEINFO {
+        TITLE = 0,
+        RESOURCES = 1,
+        PLAYERSONTILE = 9,
+        EGGSONTILE = 10,
+    };
+
+    enum PLAYERINFO {
+        PLAYERID,
+        PLAYERINFO,
+        PLAYERLEVEL,
+        PLAYERTEAM,
+        PLAYERPOSITION,
+        PLAYERINVENTORY,
+    };
+
     class PopUp {
     public:
         PopUp();
         ~PopUp();
 
         void setInfo(const Player &player);
-        void setInfo(const Tiles &tile);
+        void setInfo(const Tiles &tile, std::size_t playersOnTile, std::size_t eggsOnTile);
         void setStatus(bool status);
 
         bool getStatus() const;
@@ -28,17 +50,12 @@ namespace Zappy {
         void Draw();
         bool Hits(Vector2 mousePos);
     private:
-        void addInfoMultithread(const std::string &text, const std::size_t &textSize,
-                           const double &posX, const double &posY,
-                           const double &spacing, const Color &color,
-                           const Raylib::TextFormat &textFormat,
-                           const Raylib::TextAlignment &textAlign = Raylib::CENTER);
-
         std::mutex _mutex;
         Vector2 _position;
         Vector2 _size;
         Raylib::Texture _texture;
         std::vector<std::unique_ptr<Raylib::Text>> _info;
         bool _isOpen;
+        PopUpType _type;
     };
 }
