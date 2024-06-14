@@ -307,9 +307,24 @@ void Zappy::AI::playerLife(void)
 
 bool Zappy::AI::shouldTakeObject(const std::string &object)
 {
+    int linemateQtt[7] =  {9,8,7,5,4,3,2};
+    int deraumereQtt[7] = {8,8,7,7,6,4,2};
+    int siburQtt[7] =     {10,10,9,8,6,5,2};
+    int mendianeQtt[7] =  {5,5,5,5,5,2,2};
+    int phirasQtt[7] =    {6,6,6,4,3,3,2};
+    int thystameQtt[7] =  {1,1,1,1,1,1,1};
+
     if (object == "food" && _needToBeFat)
         return true;
     if (_food > MAX_FOOD && object == "food")
+        return false;
+    if ((object == "linemate" && _linemate >= linemateQtt[_currentLevel - 1]) ||
+        (object == "deraumere" && _deraumere >= deraumereQtt[_currentLevel - 1]) ||
+        (object == "sibur" && _sibur >= siburQtt[_currentLevel - 1]) ||
+        (object == "mendiane" && _mendiane >= mendianeQtt[_currentLevel - 1]) ||
+        (object == "phiras" && _phiras >= phirasQtt[_currentLevel - 1]) ||
+        (object == "thystame" && _thystame >= thystameQtt[_currentLevel - 1])
+    )
         return false;
     if (_food > MIN_FOOD && _currentLevel == 1 && (object == "linemate" || object == "thystame"))
         return true;
@@ -512,34 +527,28 @@ void Zappy::AI::parseInventory(const std::string &response)
 {
     std::istringstream stream(response);
     std::string stringFind;
-    int linemate = 0;
-    int deraumere = 0;
-    int sibur = 0;
-    int mendiane = 0;
-    int phiras = 0;
-    int thystame = 0;
 
     while (stream >> stringFind) {
         if (stringFind == "food")
             stream >> _food;
         if (stringFind == "linemate")
-            stream >> linemate;
+            stream >> _linemate;
         if (stringFind == "deraumere")
-            stream >> deraumere;
+            stream >> _deraumere;
         if (stringFind == "sibur")
-            stream >> sibur;
+            stream >> _sibur;
         if (stringFind == "mendiane")
-            stream >> mendiane;
+            stream >> _mendiane;
         if (stringFind == "phiras")
-            stream >> phiras;
+            stream >> _phiras;
         if (stringFind == "thystame")
-            stream >> thystame;
+            stream >> _thystame;
     }
     std::cout << "current level -> " << _currentLevel << std::endl;
     _inventoryReceived = true;
-    handleIncantation(linemate, deraumere, sibur, mendiane, phiras, thystame);
-    setPhase(canIncantation(linemate, deraumere, sibur, mendiane, phiras, thystame));
-    handlePhase(canIncantation(linemate, deraumere, sibur, mendiane, phiras, thystame));
+    handleIncantation(_linemate, _deraumere, _sibur, _mendiane, _phiras, _thystame);
+    setPhase(canIncantation(_linemate, _deraumere, _sibur, _mendiane, _phiras, _thystame));
+    handlePhase(canIncantation(_linemate, _deraumere, _sibur, _mendiane, _phiras, _thystame));
 }
 
 void Zappy::AI::setPhase(bool canIncantation)
