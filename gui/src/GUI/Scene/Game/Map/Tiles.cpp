@@ -80,5 +80,4 @@ void Zappy::Tiles::Draw()
             _models[i]->ModelDraw();
         }
     }
-    DrawGrid(10, 1);
 }
