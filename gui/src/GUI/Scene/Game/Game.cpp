@@ -52,7 +52,7 @@ void Zappy::Game::computeLogic()
     if (_timerSizeT == _tickTemp)
         return;
     _timerSizeT = _tickTemp;
-    if (_timerSizeT % 20 == 0)
+    if (_timerSizeT % 40 == 0)
         _network.addToQueue("mct\n");
     if (_timerSizeT % 126 == 0) {
         for (auto &player : _players)
@@ -71,11 +71,12 @@ void Zappy::Game::displayElements(void)
         for (auto &egg : _eggs)
             egg.Draw(_mapSize);
     _commonElements->getCamera().end3DMode();
+    for (auto &team : _teams)
+        team.Draw();
     if (_popUp.getStatus() == true && _pauseMenu.isVisible() == false)
         _popUp.Draw();
     if (_pauseMenu.isVisible() == true)
         _pauseMenu.Draw();
-    DrawFPS(10, 10);
 }
 
 void Zappy::Game::setMapSize(std::size_t x, std::size_t y)
@@ -104,6 +105,11 @@ void Zappy::Game::addPlayer(std::size_t id, std::size_t x, std::size_t y,
 {
     _players.emplace_back(id, x, y, static_cast<orientation>(playerOrientation),
                           level, teamName, _models[PLAYER]);
+    for (auto &team : _teams)
+        if (team.getTeamName() == teamName) {
+            team.Update();
+            return;
+        }
 }
 
 void Zappy::Game::updateStatus(std::size_t id, playerStatus status)
@@ -170,11 +176,20 @@ void Zappy::Game::updatePlayerPosition(std::size_t id, std::size_t x, std::size_
 
 void Zappy::Game::updatePlayerLevel(std::size_t id, std::size_t level)
 {
+    std::string teamName = "";
+
     for (auto &player : _players) {
-        if (player.getId() == id) {
+        if (player.getId() == id && player.getLevel() != level) {
             player.setLevel(level);
-            return;
+            teamName = player.getTeam();
+            break;
         }
+    }
+    if (teamName == "")
+        return;
+    for (auto &team : _teams) {
+        if (team.getTeamName() == teamName)
+            team.Update(level);
     }
 }
 
@@ -208,6 +223,11 @@ void Zappy::Game::playerBroadcast(std::size_t id, const std::string &message)
             return;
         }
     }
+}
+
+void Zappy::Game::addTeam(std::string teamName)
+{
+    _teams.emplace_back(teamName, _teams.size() + 1);
 }
 
 std::size_t Zappy::Game::findPlayersFromCoordinates(Vector2 coordinates)

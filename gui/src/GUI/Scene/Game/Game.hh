@@ -17,6 +17,7 @@
 #include "Player/Egg.hh"
 #include "Elements.hh"
 #include "Network/Network.hh"
+#include "Teams/Teams.hh"
 #include "../IScene.hh"
 #include "../../../UI/PopUp.hh"
 #include "./PauseMenu/PauseMenu.hh"
@@ -53,6 +54,7 @@ namespace Zappy {
         void updatePlayerInventory(std::size_t id, std::vector<std::size_t> resources);
         void playerDeath(std::size_t id);
         void playerBroadcast(std::size_t id, const std::string &message);
+        void addTeam(std::string teamName);
     private:
         std::size_t findPlayersFromCoordinates(Vector2 coordinates);
         std::size_t findEggsFromCoordinates(Vector2 coordinates);
@@ -66,6 +68,7 @@ namespace Zappy {
         std::vector<Tiles> _tiles;
         std::vector<Player> _players;
         std::vector<Egg> _eggs;
+        std::vector<Teams> _teams;
         std::size_t _timerSizeT;
         double _timer;
         Vector2 _mapSize;
