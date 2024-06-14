@@ -16,19 +16,19 @@ static void handle_set_response(server_t *server, int i, char *object)
     player_t *player = PLAYER;
 
     if (strcmp(object, "food") == 0)
-        send_to_all_gui(server, "pdr #%d %d", player->id, 0);
+        send_to_all_gui(server, "pdr #%d %d\n", player->id, 0);
     if (strcmp(object, "linemate") == 0)
-        send_to_all_gui(server, "pdr #%d %d", player->id, 1);
+        send_to_all_gui(server, "pdr #%d %d\n", player->id, 1);
     if (strcmp(object, "deraumere") == 0)
-        send_to_all_gui(server, "pdr #%d %d", player->id, 2);
+        send_to_all_gui(server, "pdr #%d %d\n", player->id, 2);
     if (strcmp(object, "sibur") == 0)
-        send_to_all_gui(server, "pdr #%d %d", player->id, 3);
+        send_to_all_gui(server, "pdr #%d %d\n", player->id, 3);
     if (strcmp(object, "mendiane") == 0)
-        send_to_all_gui(server, "pdr #%d %d", player->id, 4);
+        send_to_all_gui(server, "pdr #%d %d\n", player->id, 4);
     if (strcmp(object, "phiras") == 0)
-        send_to_all_gui(server, "pdr #%d %d", player->id, 5);
+        send_to_all_gui(server, "pdr #%d %d\n", player->id, 5);
     if (strcmp(object, "thystame") == 0)
-        send_to_all_gui(server, "pdr #%d %d", player->id, 6);
+        send_to_all_gui(server, "pdr #%d %d\n", player->id, 6);
     send_client(FD_CLIENT, "ok\n");
 }
 

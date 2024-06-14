@@ -7,26 +7,66 @@
 
 #include "../../include/server.h"
 
+/// @brief Return the direction to go on the X axis and the distance between
+/// bx and rx
+/// @param bx Coordinates on the X axis of the Broadcaster
+/// @param rx Coordinates on the X axis of the Receiver
+/// @param max_x Size of the map on the X axis
+/// @return Smallest distance between the Broadcaster and Receiver on X axis
+static int get_x_direction(int bx, int rx, int max_x)
+{
+    if (MAX(bx, rx) - MIN(bx, rx) > max_x / 2) {
+        if (bx < max_x / 2)
+            return -(max_x - rx + bx);
+        else
+            return (max_x - bx + rx);
+    } else
+        if (bx < max_x / 2)
+            return (rx - bx);
+        else
+            return -(bx - rx);
+}
+
+/// @brief Return the direction to go on the Y axis and the distance between
+/// by and ry
+/// @param by Coordinates on the Y axis of the Broadcaster
+/// @param ry Coordinates on the Y axis of the Receiver
+/// @param max_x Size of the map on the Y axis
+/// @return Smallest distance between the Broadcaster and Receiver on Y axis
+static int get_y_direction(int by, int ry, int max_y)
+{
+    if (MAX(by, ry) - MIN(by, ry) > max_y / 2) {
+        if (by < max_y / 2)
+            return -(max_y - ry + by);
+        else
+            return (max_y - by + ry);
+    } else
+        if (by < max_y / 2)
+            return (ry - by);
+        else
+            return -(by - ry);
+}
+
 /// @brief Get the direction of the path
 /// @param angle Angle of the path
 /// @return Tile position of the path
 static int get_way_direction(double angle)
 {
-    if (angle <= -67.5 && angle >= -112.5)
+    if (angle < -45. && angle > -135.)
         return 0;
-    if (angle < -22.5 && angle > 67.5)
+    if (angle == -45.)
         return 1;
-    if (angle <= 22.5 && angle >= -22.5)
+    if (angle < 45. && angle > -45.)
         return 2;
-    if (angle < 67.5 && angle > 22.5)
+    if (angle == 45.)
         return 3;
-    if (angle <= 112.5 && angle >= 67.5)
+    if (angle < 135 && angle > 45)
         return 4;
-    if (angle < 157.5 && angle > 112.5)
+    if (angle == 135.)
         return 5;
-    if (angle <= -157.5 || angle >= 157.5)
+    if (angle < -135 || angle > 135)
         return 6;
-    if (angle < -112.5 && angle > -157.5)
+    if (angle == -135.)
         return 7;
     return -42;
 }
@@ -36,7 +76,7 @@ static int get_way_direction(double angle)
 /// @param direction Direction of the broadcast
 static int get_client_tile(int direction, player_t *player)
 {
-    return (2 * player->direction - direction + 4) % 8;
+    return ((2 * player->direction - direction + 4) % 8) + 1;
 }
 
 /// @brief Broadcast to the given player
@@ -48,8 +88,8 @@ static void get_shortest_way(server_t *server, int i, player_t *player,
 {
     player_t *player2 = PLAYER;
     client_t *tmp = get_client_by_player(server, player);
-    int x = player2->x - player->x;
-    int y = player2->y - player->y;
+    int x = get_x_direction(player2->x, player->x, ZAPPY->x);
+    int y = get_y_direction(player2->y, player->y, ZAPPY->y);
     double angle = atan2(y, x) * 180 / M_PI;
     int tile = get_client_tile(get_way_direction(angle), player);
 
@@ -66,10 +106,17 @@ static void get_shortest_way(server_t *server, int i, player_t *player,
 static void get_shortest_way_players(server_t *server, int i, player_t *player,
     char *input)
 {
+    player_t *player2 = PLAYER;
+
     if (player == NULL)
         return;
-    if (player == PLAYER)
+    if (player == player2)
         return get_shortest_way_players(server, i, player->next, input);
+    if (player->x == player2->x && player->y == player2->y) {
+        send_client(get_client_by_player(server, player)->fd,
+        "message %d, %s\n", 0, &input[10]);
+        return get_shortest_way_players(server, i, player->next, input);
+    }
     get_shortest_way(server, i, player, input);
     get_shortest_way_players(server, i, player->next, input);
 }
