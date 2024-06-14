@@ -17,6 +17,7 @@
 int main(int ac, char *av[])
 {
     SetTraceLogLevel(LOG_ERROR);
+    SetConfigFlags(FLAG_MSAA_4X_HINT);
     std::vector<std::string> args(av, av + ac);
     try {
         Zappy::GUI gui(args);
