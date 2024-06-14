@@ -42,7 +42,7 @@ extern "C" {
     void Raylib::Camera::setupCamera()
     {
         // INFO: those variable are not defintive and will be changed
-        _camera.position = { 0.0f, 10.0f, 10.0f };
+        _camera.position = { 0.0f, 42.0f, 42.0f };
         _camera.target = { 0.0f, 0.0f, 0.0f };
         _camera.up = { 0.0f, 1.0f, 0.0f };
         _camera.fovy = 45.0f;
