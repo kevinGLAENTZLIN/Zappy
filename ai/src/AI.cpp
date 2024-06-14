@@ -81,7 +81,6 @@ void Zappy::AI::initConnection(void)
     }
 }
 
-
 /* Run method ----------------------------------------------------------------------------------------------------------------------------- */
 
 void Zappy::AI::run(void)
@@ -148,23 +147,25 @@ void Zappy::AI::handleResponse(void)
         command = _commandQueue.front();
         _commandQueue.pop();
     }
+    if (std::rand() % 100 == 0) {
+        sendCommand(_commands[FORK], false);
+    }
     if (Utils::isInventory(serverResponse) && serverResponse != "ok\n" && serverResponse != "ko\n")
         parseInventory(serverResponse);
     else if (command == "Look\n" && serverResponse != "ko\n" && serverResponse != "ok\n")
         handleLook(serverResponse);
-    // else if (command == "Fork\n") {
-    //     if (response == "ok") {
-    //         if (Utils::process() == 0) {
-    //             AI ai;
-    //             ai.initAI(_port, _teamName, _ip);
-    //             ai.initConnection();
-    //             ai.run();
-    //             std::exit(0);
-    //         }
-    //     }
-    // }
+    else if (command == "Fork\n") {
+        if (response == "ok") {
+            if (Utils::process() == 0) {
+                AI ai;
+                ai.initAI(_port, _teamName, _ip);
+                ai.initConnection();
+                ai.run();
+                std::exit(0);
+            }
+        }
+    }
 }
-
 
 /* Broadcast method ----------------------------------------------------------------------------------------------------------------------- */
 
@@ -566,7 +567,7 @@ void Zappy::AI::setPhase(bool canIncantation)
         _needToBeFat = true;
         phaseFood();
     }
-    if (_moveToBroadcast && _food < MIN_FOOD) {
+    if (_moveToBroadcast && _food <= 50) {
         _needToBeFat = true;
         _moveToBroadcast = false;
         phaseFood();
@@ -618,9 +619,6 @@ void Zappy::AI::phaseBroadcast(void)
 {
     sendCommand(_commands[BROADCAST], true, std::to_string(_currentLevel));
     sendCommand(_commands[LOOK], false);
-    if (std::rand() % 20 == 0) {
-        sendCommand(_commands[FORK], false);
-    }
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     _isBroadcasting = true;
 }
