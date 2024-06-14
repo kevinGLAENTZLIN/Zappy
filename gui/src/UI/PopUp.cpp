@@ -10,7 +10,7 @@
 #include <raylib.h>
 
 Zappy::PopUp::PopUp():
-    _texture("gui/assets/infoPopUpRight.png"), _info(15), _isOpen(false)
+    _texture("gui/assets/infoPopUpRight.png"), _info(15), _isOpen(false), _type(TILETYPE)
 {
     Texture2D texture = _texture.GetTexture();
     double scale = (Raylib::Screen::myGetScreenHeight() * 0.9) / texture.height;
