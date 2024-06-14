@@ -143,6 +143,7 @@ static int my_server2(server_t *server)
         perror("my_server");
         return 84;
     }
+    printf("\033[1;31m[INFO]\033[0m: Server started\n");
     while (server_loop(server));
     return 0;
 }

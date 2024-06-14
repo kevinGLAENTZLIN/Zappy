@@ -82,6 +82,14 @@ namespace Zappy {
             int _clientNumber;
             int _sizeWorldX;
             int _sizeWorldY;
+
+            int _linemate = 0;
+            int _deraumere = 0;
+            int _sibur = 0;
+            int _mendiane = 0;
+            int _phiras = 0;
+            int _thystame = 0;
+
             std::string _port;
             std::string _ip;
             std::string _teamName;

@@ -117,7 +117,6 @@ void disconnect_client(server_t *server, client_t *client)
 {
     client_t *tmp = server->clients;
 
-    kill_player(server, client->player);
     if (tmp == client) {
         server->nb_client -= 1;
         server->clients = client->next;

@@ -59,6 +59,34 @@ static void incantation_player_checking(server_t *server, int i,
     incantation_player_checking(server, i, player->next);
 }
 
+/// @brief Send to the Client the id of all players incantating
+/// @param server Structure that contains all games information
+/// @param i Index of the Client
+static void incantation_player_sending(server_t *server, int i,
+    player_t *player)
+{
+    player_t *player2 = PLAYER;
+    client_t *tmp = NULL;
+    char *ai_tmp = NULL;
+
+    if (player == NULL)
+        return;
+    if (player->x == player2->x && player->y == player2->y && player->level ==
+        player2->level) {
+        tmp = get_client_by_player(server, player);
+        ai_tmp = malloc(sizeof(char) * 48);
+        if (ai_tmp == NULL)
+            return perror("incantation_player_sending");
+        if (tmp != NULL) {
+            send_client(tmp->fd, "Elevation underway\n");
+            sprintf(ai_tmp, "Current level: %d\n", player->level + 2);
+            tmp->ai_action_message = ai_tmp;
+            tmp->time_to_wait = 300;
+        }
+    }
+    incantation_player_sending(server, i, player->next);
+}
+
 /// @brief Send the response of the incantation to the concerned player
 /// @param server Structure that contains all games information
 /// @param i Index of the Client
@@ -67,22 +95,19 @@ static void incantation_response(server_t *server, int i)
     client_t *client = CLIENT;
     player_t *player = client->player;
     char *gui_tmp = malloc(sizeof(char) * 48);
-    char *ai_tmp = malloc(sizeof(char) * 48);
 
-    if (gui_tmp == NULL || ai_tmp == NULL)
+    if (gui_tmp == NULL)
         return perror("incantation_response");
     send_to_all_gui(server, "pic %d %d %d", player->x, player->y,
     player->level + 1);
-    for (int j = 0; ZAPPY->teams_name[j] != NULL; j++)
+    for (int j = 0; ZAPPY->teams_name[j] != NULL; j++) {
         incantation_player_checking(server, i, ZAPPY->teams[j]->players);
+        incantation_player_sending(server, i, ZAPPY->teams[j]->players);
+    }
     send_to_all_gui(server, "\n");
-    send_client(client->fd, "Elevation underway\n");
     elevate_player_on_tile(server, player->x, player->y, player->level);
-    sprintf(ai_tmp, "Current level: %d\n", player->level + 1);
-    client->ai_action_message = ai_tmp;
     sprintf(gui_tmp, "pie %d %d ok\n", player->x, player->y);
     client->gui_action_message = gui_tmp;
-    client->time_to_wait = 300;
 }
 
 /// @brief Check if the incantation is possible or not at the given level
