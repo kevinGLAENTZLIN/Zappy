@@ -132,7 +132,7 @@ void check_command_vector(server_t *server)
         if (client->time_to_wait == 0)
             check_action_message(server, client);
         if (client->time_to_wait == 0 && client->cmds != NULL)
-            return exec_client_command(server, i);
+            exec_client_command(server, i);
         if (client->time_to_wait > 0)
             client->time_to_wait -= 1;
     }

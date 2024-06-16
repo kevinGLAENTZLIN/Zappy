@@ -27,6 +27,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include <time.h>
+#include <pthread.h>
 
 #include "buffer.h"
 
@@ -137,6 +138,15 @@ typedef struct client_s {
     char *ai_action_message;
 } client_t;
 
+typedef struct tick_s {
+    bool is_threading;
+    int nb_ticks;
+    int tick;
+    pthread_t thread;
+    pthread_mutex_t mutex_tick;
+    struct timeval last_time;
+} tick_t;
+
 typedef struct zappy_s {
     int x;
     int y;
@@ -147,7 +157,7 @@ typedef struct zappy_s {
     team_t **teams;
     tile_t ***map;
     egg_t *eggs;
-    int ticks;
+    tick_t *tick;
 } zappy_t;
 
 typedef struct server_s {
@@ -156,7 +166,6 @@ typedef struct server_s {
     zappy_t *zappy;
     struct sockaddr_in ctrl_addr;
     client_t *clients;
-    struct timeval last_tick;
 } server_t;
 
 // * buffer.c library functions :
@@ -167,6 +176,11 @@ char **read_to_buffer(int fd, char delimiter);
 // * main.c functions :
 int is_number(char *str);
 void *my_perror(char *str);
+
+// * tick.c functions :
+tick_t *init_tick(int frequence);
+void free_tick(tick_t *tick);
+void *compute_tick(void *tick);
 
 // * my_server.c functions :
 void config_control(server_t *server, int port);

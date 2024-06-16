@@ -68,9 +68,9 @@ static void check_win(server_t *server, team_t *team)
 /// @param server Structure that contain all server data
 void check_game_condition(server_t *server)
 {
-    if (ZAPPY->ticks % 20 == 0)
+    if (ZAPPY->tick->nb_ticks % 20 == 0)
         set_map_resources(ZAPPY);
-    if (ZAPPY->ticks % 126 == 0)
+    if (ZAPPY->tick->nb_ticks % 126 == 0)
         consume_food(server);
     for (int i = 0; ZAPPY->teams_name[i] != NULL; i++) {
         check_dead(server, TEAM->players);
