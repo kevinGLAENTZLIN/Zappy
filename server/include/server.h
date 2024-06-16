@@ -62,7 +62,7 @@
 #define MAX_NAME_LENGTH 32
 
 #define NB_MAX_LVL      8 - 1
-#define NB_MAX_CLIENT   42
+#define NB_MAX_CLIENT   420
 
 #define RAISE(x)        write(2, x, strlen(x))
 
@@ -181,6 +181,7 @@ void *my_perror(char *str);
 tick_t *init_tick(int frequence);
 void free_tick(tick_t *tick);
 void *compute_tick(void *tick);
+void display_levels(server_t *server, bool kill);
 
 // * my_server.c functions :
 void config_control(server_t *server, int port);

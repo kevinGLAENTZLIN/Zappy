@@ -15,6 +15,7 @@ void teams_sigint(int signum)
     (void) signum;
     ZAPPY->tick->is_threading = false;
     printf("\n\033[1;31m[INFO]\033[0m: Tick %d\n", ZAPPY->tick->nb_ticks);
+    display_levels(server, true);
     free_server(server);
     printf("\033[1;31m[INFO]\033[0m: Shutting down the server\n");
     server = NULL;

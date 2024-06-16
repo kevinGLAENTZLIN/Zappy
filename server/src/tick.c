@@ -40,6 +40,62 @@ void free_tick(tick_t *tick)
     free(tick);
 }
 
+/// @brief Display on a line the food number of each player at given level
+/// @param server Structure that contain all server data
+/// @param level Level of the players to display
+void display_food_level(server_t *server, int level)
+{
+    client_t *client = NULL;
+
+    for (int i = 0; i < server->nb_client; i++) {
+        client = CLIENT;
+        if (client != NULL && client->player != NULL &&
+            client->player->level == level)
+            printf(" %d", client->player->food);
+    }
+}
+
+/// @brief Display the number of Player for each levels
+/// @param server Structure that contain all server data
+/// @param kill If true send dead to all players
+void display_levels(server_t *server, bool kill)
+{
+    client_t *client = NULL;
+    int level[8];
+
+    for (int i = 0; i < 8; i++)
+        level[i] = 0;
+    for (int i = 0; i < server->nb_client; i++) {
+        client = CLIENT;
+        if (client == NULL || client->player == NULL)
+            continue;
+        level[client->player->level] += 1;
+        if (kill)
+            send_client(client->fd, "dead\n");
+    }
+    for (int j = 0; j < 8; j++) {
+        printf("\033[1;31m[INFO]\033[0m: Level %d: %d%s", j + 1, level[j],
+        ((level[j] == 0 || kill) ? "" : " |"));
+        if (!kill)
+            display_food_level(server, j);
+        printf("\n");
+    }
+}
+
+/// @brief Display informations concerning player every 30 seconds
+/// @param server Structure that contain all server data
+static void display_tick_info(server_t *server)
+{
+    int i = 0;
+
+    if (ZAPPY->tick->nb_ticks % (30 * ZAPPY->frequence) == 0) {
+        i = ZAPPY->tick->nb_ticks / (30 * ZAPPY->frequence);
+        printf("\033[1;31m[INFO]\033[0m: %d minutes and %d seconds\n",
+        (i % 2 == 0 ? i / 2 : (i - 1) / 2), (i % 2 == 0 ? 0 : 30));
+        display_levels(server, false);
+    }
+}
+
 /// @brief Check if the ticks have to be updated and call functions
 /// @param server Structure that contain all server data
 /// @param tick Structure that contain all tick data
@@ -63,6 +119,7 @@ static void handle_tick(server_t *server, tick_t *tick,
             return perror("handle tick");
         check_game_condition(server);
         check_command_vector(server);
+        display_tick_info(server);
     }
 }
 

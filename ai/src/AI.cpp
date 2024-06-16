@@ -147,9 +147,9 @@ void Zappy::AI::handleResponse(void)
         command = _commandQueue.front();
         _commandQueue.pop();
     }
-    if (std::rand() % 100 == 0) {
-        sendCommand(_commands[FORK], false);
-    }
+    // if (std::rand() % 100 == 0) {
+    //     sendCommand(_commands[FORK], false);
+    // }
     if (Utils::isInventory(serverResponse) && serverResponse != "ok\n" && serverResponse != "ko\n")
         parseInventory(serverResponse);
     else if (command == "Look\n" && serverResponse != "ko\n" && serverResponse != "ok\n")
@@ -171,12 +171,12 @@ void Zappy::AI::handleResponse(void)
 
 void Zappy::AI::moveToBroadcastPosition(int position, int level)
 {
-    if (_food <= 40) {
+    if (level != _currentLevel)
+        return;
+    if (_food <= 15) {
         _needToBeFat = true;
         return;
     }
-    if (level != _currentLevel)
-        return;
     _moveToBroadcast = true;
     _needToBeFat = false;
     switch(position) {
@@ -429,7 +429,7 @@ void Zappy::AI::takeObject(const std::string &object)
 
 bool Zappy::AI::handleIncantation(int linemate, int deraumere, int sibur, int mendiane, int phiras, int thystame)
 {
-    if (_food <= 50)
+    if (_food <= BROADCAST_FOOD)
         return false;
     if (_currentLevel == 1 && linemate >= 1) {
         sendCommand(_commands[SET_OBJECT], true, "linemate");
@@ -503,7 +503,7 @@ bool Zappy::AI::handleIncantation(int linemate, int deraumere, int sibur, int me
 
 bool Zappy::AI::canIncantation(int linemate, int deraumere, int sibur, int mendiane, int phiras, int thystame)
 {
-    if (_food <= 50)
+    if (_food <= BROADCAST_FOOD)
         return false;
     if (_currentLevel == 1 && linemate >= 1)
         return true;
@@ -554,9 +554,10 @@ void Zappy::AI::parseInventory(const std::string &response)
 
 void Zappy::AI::setPhase(bool canIncantation)
 {
-    if (_moveToBroadcast && _food < 50) {
+    if (_moveToBroadcast && _food < BROADCAST_FOOD) {
         _moveToBroadcast = false;
         _needToBeFat = true;
+        phaseFood();
     }
     if (_moveToBroadcast)
         return;
@@ -567,7 +568,7 @@ void Zappy::AI::setPhase(bool canIncantation)
         _needToBeFat = true;
         phaseFood();
     }
-    if (_moveToBroadcast && _food <= 50) {
+    if (_moveToBroadcast && _food <= BROADCAST_FOOD) {  // ? Utile / Double
         _needToBeFat = true;
         _moveToBroadcast = false;
         phaseFood();

@@ -48,6 +48,8 @@ void add_client_loop(server_t *server, struct timeval *timeout)
     fd_set fd;
     socklen_t addrlen = sizeof((struct sockaddr*)&ADDR_CTRL);
 
+    if (server->nb_client + 1 >= NB_MAX_CLIENT)
+        return;
     FD_ZERO(&fd);
     FD_SET(FD_CTRL, &fd);
     tmp = select(FD_CTRL + 1, &fd, NULL, NULL, timeout);
