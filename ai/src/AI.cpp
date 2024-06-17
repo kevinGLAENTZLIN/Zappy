@@ -121,7 +121,7 @@ bool Zappy::AI::handleUniqueCommand(const std::string &serverResponse, const std
         _needToBeFat = false;
         return true;
     }
-    if (response == "message") {
+    if (response == "message" && _food > 25) {
         handleBroadcast(serverResponse);
         return true;
     }
@@ -171,10 +171,11 @@ void Zappy::AI::handleResponse(void)
 
 void Zappy::AI::moveToBroadcastPosition(int position, int level)
 {
-    if (level != _currentLevel)
-        return;
-    if (_food <= 15) {
+    if (_food < 25) {
         _needToBeFat = true;
+        return;
+    }
+    if (level != _currentLevel) {
         return;
     }
     _moveToBroadcast = true;
@@ -231,14 +232,16 @@ void Zappy::AI::handleBroadcast(const std::string &response)
 {
     std::istringstream stream(response);
     std::string position;
+    std::string level;
     int positionInt = 0;
-    int level = 0;
+    int levelInt = 0;
 
     stream >> position;
     stream >> position;
     stream >> level;
     positionInt = std::stoi(position);
-    moveToBroadcastPosition(positionInt, level);
+    levelInt = std::stoi(level);
+    moveToBroadcastPosition(positionInt, levelInt);
 }
 
 /* Look method ---------------------------------------------------------------------------------------------------------------------------- */
@@ -335,16 +338,16 @@ bool Zappy::AI::shouldTakeObject(const std::string &object)
     if (_food > MIN_FOOD && _currentLevel == 3 && (object == "linemate" || object == "phiras"
     || object == "sibur" || object == "thystame"))
         return true;
-    if (_currentLevel == 4 && (object == "linemate" || object == "deraumere"
+    if (_food > MIN_FOOD && _currentLevel == 4 && (object == "linemate" || object == "deraumere"
     || object == "sibur" || object == "phiras" || object == "thystame"))
         return true;
-    if (_currentLevel == 5 && (object == "linemate" || object == "deraumere"
+    if (_food > MIN_FOOD && _currentLevel == 5 && (object == "linemate" || object == "deraumere"
     || object == "sibur" || object == "mendiane" || object == "thystame"))
         return true;
-    if (_currentLevel == 6 && (object == "linemate" || object == "deraumere"
+    if (_food > MIN_FOOD && _currentLevel == 6 && (object == "linemate" || object == "deraumere"
     || object == "sibur" || object == "phiras" || object == "thystame"))
         return true;
-    if (_currentLevel == 7 && (object == "linemate" || object == "deraumere" || object == "sibur"
+    if (_food > MIN_FOOD && _currentLevel == 7 && (object == "linemate" || object == "deraumere" || object == "sibur"
     || object == "mendiane" || object == "phiras" || object == "thystame"))
         return true;
     return false;
@@ -429,7 +432,7 @@ void Zappy::AI::takeObject(const std::string &object)
 
 bool Zappy::AI::handleIncantation(int linemate, int deraumere, int sibur, int mendiane, int phiras, int thystame)
 {
-    if (_food <= BROADCAST_FOOD)
+    if (_food <= 40)
         return false;
     if (_currentLevel == 1 && linemate >= 1) {
         sendCommand(_commands[SET_OBJECT], true, "linemate");
@@ -503,7 +506,7 @@ bool Zappy::AI::handleIncantation(int linemate, int deraumere, int sibur, int me
 
 bool Zappy::AI::canIncantation(int linemate, int deraumere, int sibur, int mendiane, int phiras, int thystame)
 {
-    if (_food <= BROADCAST_FOOD)
+    if (_food <= 40)
         return false;
     if (_currentLevel == 1 && linemate >= 1)
         return true;
@@ -554,7 +557,7 @@ void Zappy::AI::parseInventory(const std::string &response)
 
 void Zappy::AI::setPhase(bool canIncantation)
 {
-    if (_moveToBroadcast && _food < BROADCAST_FOOD) {
+    if (_moveToBroadcast && _food < 25) {
         _moveToBroadcast = false;
         _needToBeFat = true;
         phaseFood();
@@ -566,11 +569,6 @@ void Zappy::AI::setPhase(bool canIncantation)
         _canBroadcast = false;
         _isBroadcasting = false;
         _needToBeFat = true;
-        phaseFood();
-    }
-    if (_moveToBroadcast && _food <= BROADCAST_FOOD) {  // ? Utile / Double
-        _needToBeFat = true;
-        _moveToBroadcast = false;
         phaseFood();
     }
     if (canIncantation && _food >= INCANTATION_FOOD
