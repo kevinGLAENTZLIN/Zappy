@@ -28,20 +28,23 @@ namespace Zappy {
         std::size_t getLevel() const;
         std::string getTeam() const;
         Vector2 getPosition() const;
+        Vector3 get3DPosition() const;
         std::vector<std::size_t> getInventory() const;
         orientation getOrientation() const;
 
-        void setPosition(std::size_t x, std::size_t y, orientation orientation);
+        void setPosition(std::size_t x, std::size_t y, orientation orientation,
+                         Vector2 mapSize);
         void setInventory(std::vector<std::size_t> inventory);
         void setLevel(std::size_t level);
         void setIncantationStatus(playerStatus status);
 
         void broadcast(const std::string &message);
-        void draw(const Vector2 &mapSize);
-        bool hit(Ray mouseRay, const Vector2 &mapSize);
+        void draw();
+        bool hit(Ray mouseRay);
     private:
         std::size_t _id;
         Vector2 _position;
+        Vector3 _3DPosition;
         orientation _orientation;
         std::size_t _level;
         std::string _team;

@@ -15,6 +15,12 @@
 #include <memory>
 
 namespace Zappy {
+
+    enum color {
+        LIGHT_GREEN = 0,
+        DARK_GREEN = 1,
+    };
+
     class Tiles {
     public:
         Tiles(int x, int y, Vector2 mapSize,
@@ -31,8 +37,10 @@ namespace Zappy {
     private:
         Vector2 _index;
         Vector2 _mapSize;
+        Vector3 _3DPosition;
         BoundingBox _bounds;
         std::vector<std::shared_ptr<Raylib::Model3D>> _models;
         std::vector<std::size_t> _resourcesQuantity;
+        color _color;
     };
 }
