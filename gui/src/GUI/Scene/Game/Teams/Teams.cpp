@@ -65,7 +65,6 @@ void Zappy::Teams::Update()
 
 void Zappy::Teams::Update(std::size_t playerNewLvl)
 {
-    std::cout << "Player new lvl: " << playerNewLvl << std::endl;
     _playersLvlNb[playerNewLvl - 2]--;
     _playersLvlNb[playerNewLvl - 1]++;
     _playersLvlText[playerNewLvl - 2]->setText(TextFormat("Lvl %d: %d", playerNewLvl - 1,
