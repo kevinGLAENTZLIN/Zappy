@@ -58,7 +58,7 @@ namespace Zappy {
     private:
         std::size_t findPlayersFromCoordinates(Vector2 coordinates);
         std::size_t findEggsFromCoordinates(Vector2 coordinates);
-        void userInteractions();
+        void userInteractions(Raylib::Camera &cam);
         void loadModels();
 
         void createMap();

@@ -43,6 +43,11 @@ Vector2 Zappy::Player::getPosition() const
     return _position;
 }
 
+Vector3 Zappy::Player::get3DPosition() const
+{
+    return _3DPosition;
+}
+
 std::vector<std::size_t> Zappy::Player::getInventory() const
 {
     return _inventory;
@@ -53,9 +58,12 @@ Zappy::orientation Zappy::Player::getOrientation() const
     return _orientation;
 }
 
-void Zappy::Player::setPosition(std::size_t x, std::size_t y, orientation orientation)
+void Zappy::Player::setPosition(std::size_t x, std::size_t y, orientation orientation,
+                                Vector2 mapSize)
 {
     _position = {static_cast<float>(x), static_cast<float>(y)};
+    _3DPosition = {static_cast<float>(x - mapSize.x / 2 + 0.5), 0,
+                   static_cast<float>(y - mapSize.y / 2 + 0.5)};
     _orientation = orientation;
 }
 
@@ -79,22 +87,22 @@ void Zappy::Player::broadcast(const std::string &message)
     std::cout << message << std::endl;
 }
 
-void Zappy::Player::draw(const Vector2 &mapSize)
+void Zappy::Player::draw()
 {
-    _model->setPosition(_position.x - mapSize.x / 2 + 0.5, 0,
-                        _position.y - mapSize.y / 2 + 0.5);
+    if (_model == nullptr)
+        return;
+    _model->setPosition(_3DPosition.x, _3DPosition.y, _3DPosition.z);
     _model->setRotation(0, 90 * static_cast<int>(_orientation), 0);
     _model->ModelDraw();
 }
 
-bool Zappy::Player::hit(Ray mouseRay, const Vector2 &mapSize)
+bool Zappy::Player::hit(Ray mouseRay)
 {
     BoundingBox box = _box;
 
-    box.min.x += _position.x - mapSize.x / 2 + 0.5;
-    box.min.z += _position.y - mapSize.y / 2 + 0.5;
-    box.max.x += _position.x - mapSize.x / 2 + 0.5;
-    box.max.z += _position.y - mapSize.y / 2 + 0.5;
-    DrawBoundingBox(box, WHITE);
+    box.min.x += _3DPosition.x;
+    box.min.z += _3DPosition.z;
+    box.max.x += _3DPosition.x;
+    box.max.z += _3DPosition.z;
     return GetRayCollisionBox(mouseRay, box).hit;
 }

@@ -11,12 +11,15 @@
 Zappy::Tiles::Tiles(int x, int y, Vector2 mapSize,
                     std::vector<std::shared_ptr<Raylib::Model3D>> models):
     _index({static_cast<float>(x), static_cast<float>(y)}),
-    _mapSize(mapSize), _models(models)
+    _mapSize(mapSize), _models(models), _color(LIGHT_GREEN)
 {
     _bounds = (BoundingBox){(Vector3){_index.x - _mapSize.x / 2, 0,
                                       _index.y - _mapSize.y / 2},
                             (Vector3){_index.x - _mapSize.x / 2 + 1.f, 0,
                                       _index.y - _mapSize.y / 2 + 1.f}};
+    _3DPosition = {_bounds.min.x + 0.5f, 0, _bounds.min.z + 0.5f};
+    if (static_cast<int>(_index.x + _index.y) % 2 == 0)
+        _color = DARK_GREEN;
 }
 
 Zappy::Tiles::~Tiles()
@@ -46,15 +49,13 @@ bool Zappy::Tiles::Hits(Ray mouseRay)
 
 void Zappy::Tiles::Draw()
 {
-    Vector3 position = {_index.x - _mapSize.x / 2 + 0.5f, 0,
-                        _index.y - _mapSize.y / 2 + 0.5f};
     Color color = {0, 255, 0, 255};
 
-    if (static_cast<int>(_index.x + _index.y) % 2 == 0)
+    if (_color == DARK_GREEN)
         color = {0, 155, 0, 255};
-    DrawPlane(position, {1.0, 1.0}, color);
+    DrawPlane(_3DPosition, {1.0, 1.0}, color);
     for (std::size_t i = 0; i < _resourcesQuantity.size(); i++) {
-        if (_resourcesQuantity[i] != 0 && i < _models.size() && _models[i] != nullptr) {
+        if (_resourcesQuantity[i] != 0 && _models[i] != nullptr) {
             switch(i) {
                 case FOOD:
                     _models[i]->setPosition(_index.x - _mapSize.x / 2 + 0.5, 0,
