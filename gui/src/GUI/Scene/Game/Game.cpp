@@ -31,24 +31,26 @@ void Zappy::Game::computeLogic()
     Raylib::Camera cam = _commonElements->getCamera();
     std::size_t _tickTemp;
 
-    // cam.cameraUpdate(CAMERA_ORBITAL);
-    // _commonElements->setCamera(cam);
     if (_pauseMenu.isVisible() == true)
         return _pauseMenu.computeLogic();
     _network.sendQueueToServer();
     _network.checkServer();
     if (_popUp.getStatus() == true) {
-        if (_selectedObjectType == PLAYERTYPE)
+        if (_selectedObjectType == PLAYERTYPE) {
             _popUp.setInfo(_players[_selectedObject]);
-        if (_selectedObjectType == TILETYPE)
+            cam.setCameraTarget(_players[_selectedObject].get3DPosition());
+        }
+        if (_selectedObjectType == TILETYPE) {
             _popUp.setInfo(_tiles[_selectedObject], findPlayersFromCoordinates(_tiles[_selectedObject].getIndex()),
                            findEggsFromCoordinates(_tiles[_selectedObject].getIndex()));
+        }
     }
+    userInteractions(cam);
+    _commonElements->setCamera(cam);
     if (_tickTime == -1)
         return;
     _timer += GetFrameTime() / _tickTime;
     _tickTemp = static_cast<std::size_t>(_timer);
-    userInteractions();
     if (_timerSizeT == _tickTemp)
         return;
     _timerSizeT = _tickTemp;
@@ -67,7 +69,7 @@ void Zappy::Game::displayElements(void)
             for (auto &tile : _tiles)
                 tile.Draw();
         for (auto &player : _players)
-            player.draw(_mapSize);
+            player.draw();
         for (auto &egg : _eggs)
             egg.Draw(_mapSize);
     _commonElements->getCamera().end3DMode();
@@ -170,7 +172,7 @@ void Zappy::Game::updatePlayerPosition(std::size_t id, std::size_t x, std::size_
     for (auto &player : _players) {
         if (player.getId() == id)
             return player.setPosition(x, y,
-                static_cast<orientation>(playerOrientation));
+                static_cast<orientation>(playerOrientation), _mapSize);
     }
 }
 
@@ -254,21 +256,26 @@ std::size_t Zappy::Game::findEggsFromCoordinates(Vector2 coordinates)
     return eggsOnTile;
 }
 
-void Zappy::Game::userInteractions()
+void Zappy::Game::userInteractions(Raylib::Camera &cam)
 {
     Ray ray;
+    float mouseWheel = GetMouseWheelMove();
+
+    if (mouseWheel != 0)
+        cam.setCameraDistanceToFocus(mouseWheel);
     if (IsKeyPressed(KEY_ESCAPE))
         return _pauseMenu.changeVisibility();
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         if (_popUp.getStatus() == true && _popUp.Hits(GetMousePosition()) == true)
             return;
         if (_popUp.getStatus() == true && _popUp.Hits(GetMousePosition()) == false) {
+            cam.setCameraTarget({0, 0, 0});
             _popUp.setStatus(false);
             return;
         }
         ray = GetMouseRay(GetMousePosition(), _commonElements->getCamera().getCamera());
         for (std::size_t i = 0; i < _players.size(); i++) {
-            if (_players[i].hit(ray, _mapSize) == true) {
+            if (_players[i].hit(ray) == true) {
                 _selectedObject = i;
                 _selectedObjectType = PLAYERTYPE;
                 _popUp.setStatus(true);
@@ -280,6 +287,10 @@ void Zappy::Game::userInteractions()
                 _selectedObject = i;
                 _selectedObjectType = TILETYPE;
                 _popUp.setStatus(true);
+                cam.setCameraTarget({static_cast<float>(_tiles[i].getIndex().x -
+                                    _mapSize.x / 2 + 0.5), 0,
+                                    static_cast<float>(_tiles[i].getIndex().y -
+                                    _mapSize.y / 2 + 0.5)});
                 return;
             }
     }
@@ -307,11 +318,11 @@ void Zappy::Game::loadModels()
     // THYSTAME
     _models.emplace_back(nullptr);
     // PLAYER
-    _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/toothless3D.obj",
-                         "gui/assets/3Delements/food.png", 0, 0, 0, 0, 0, 0, 0.005));
+    _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/toothless.obj",
+                         "gui/assets/3Delements/food.png", 0, 0, 0, 0, 0, 0, 0.01));
     // EGG
     _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/egg.obj",
-                         "gui/assets/3Delements/food.png", 0, 0, 0, 0, 0, 0, 1));
+                         "gui/assets/3Delements/food.png", 0, 0, 0, 0, 0, 0, 0.1));
 }
 
 void Zappy::Game::createMap()
