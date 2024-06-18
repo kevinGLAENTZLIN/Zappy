@@ -45,7 +45,7 @@ extern "C" {
 
     void Raylib::Model3D::ModelDraw() const
     {
-        DrawModel(_model, _position, 1.0f, WHITE);
+        DrawModelEx(_model, _position, _rotation, 0, {1, 1, 1}, WHITE);
     }
 
     void Raylib::Model3D::createModel(const std::string &fileName)
