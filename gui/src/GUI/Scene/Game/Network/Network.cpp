@@ -235,7 +235,12 @@ void Zappy::Network::pie(const std::string &args)
 
 void Zappy::Network::pfk(const std::string &args)
 {
-    std::cout << "pfk " << args << std::endl;
+    std::stringstream ss(args);
+    std::string temp;
+    std::string id;
+
+    ss >> temp >> id;
+    _game.updateStatus(std::stoi(&id[1]), LAYING);
 }
 
 void Zappy::Network::pdr(const std::string &args)
