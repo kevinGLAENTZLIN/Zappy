@@ -77,6 +77,11 @@ zappy_t *check_zappy(zappy_t *zappy)
     error |= (zappy->team_size <= 0);
     error |= (zappy->frequence <= 0 || zappy->frequence > 2000);
     error |= (my_len(NULL, (void **)zappy->teams_name) < 2);
+    error |= (zappy->eggs == NULL);
+    error |= (zappy->map == NULL);
+    error |= (zappy->teams == NULL);
+    error |= (zappy->teams_name == NULL);
+    error |= (zappy->tick == NULL);
     if (error) {
         RAISE("Argument error\n");
         free_zappy(zappy);
@@ -102,7 +107,7 @@ zappy_t *init_zappy(int argc, char **argv)
     zappy->team_size = get_value_by_flag("-c", argc, argv);
     zappy->map = NULL;
     zappy->eggs = NULL;
-    zappy->ticks = 0;
+    zappy->tick = init_tick(zappy->frequence);
     load_names(zappy, argc, argv);
     load_zappy_teams(zappy);
     if (zappy->frequence == -42)
@@ -123,5 +128,6 @@ void free_zappy(zappy_t *zappy)
     free_map(zappy);
     free_eggs(zappy->eggs);
     free_tab(zappy->teams_name);
+    free_tick(zappy->tick);
     free(zappy);
 }

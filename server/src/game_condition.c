@@ -39,6 +39,7 @@ static void check_dead(server_t *server, player_t *player)
             return check_dead(server, next);
         send_to_all_gui(server, "pdi #%d\n", player->id);
         send_client(client->fd, "dead\n");
+        printf("\033[1;31m[INFO]\033[0m: Player %d passed away\n", player->id);
         disconnect_client(server, get_client_by_player(server, player));
     }
     check_dead(server, next);
@@ -59,7 +60,7 @@ static void check_win(server_t *server, team_t *team)
         player = player->next;
     }
     if (count >= 6) {
-        printf("Team %s has won !\n", team->team_name);
+        printf("\033[1;31m[INFO]\033[0m:Team %s has won !\n", team->team_name);
         send_to_all_gui(server, "seg \"%s\"\n", team->team_name);
     }
 }
@@ -68,9 +69,9 @@ static void check_win(server_t *server, team_t *team)
 /// @param server Structure that contain all server data
 void check_game_condition(server_t *server)
 {
-    if (ZAPPY->ticks % 20 == 0)
+    if (ZAPPY->tick->nb_ticks % 20 == 0)
         set_map_resources(ZAPPY);
-    if (ZAPPY->ticks % 126 == 0)
+    if (ZAPPY->tick->nb_ticks % 126 == 0)
         consume_food(server);
     for (int i = 0; ZAPPY->teams_name[i] != NULL; i++) {
         check_dead(server, TEAM->players);

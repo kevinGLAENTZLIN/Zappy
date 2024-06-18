@@ -41,21 +41,20 @@ void free_server(server_t *server)
 /// @brief Server loop that allow new client connection and add it to the
 /// server
 /// @param server Structure that contain all server data
-void add_client_loop(server_t *server)
+void add_client_loop(server_t *server, struct timeval *timeout)
 {
     int tmp = 0;
     int client_fd = 0;
     fd_set fd;
     socklen_t addrlen = sizeof((struct sockaddr*)&ADDR_CTRL);
-    struct timeval time = {0, TIMEOUT};
 
+    if (server->nb_client + 1 >= NB_MAX_CLIENT)
+        return;
     FD_ZERO(&fd);
     FD_SET(FD_CTRL, &fd);
-    tmp = select(FD_CTRL + 1, &fd, NULL, NULL, &time);
-    if (tmp == -1) {
-        perror("add_client_loop");
-        return;
-    }
+    tmp = select(FD_CTRL + 1, &fd, NULL, NULL, timeout);
+    if (tmp == -1)
+        return perror("add_client_loop");
     if (tmp == 1) {
         client_fd = accept(FD_CTRL, (struct sockaddr*)&ADDR_CTRL, &addrlen);
         if (client_fd == -1)
@@ -66,64 +65,37 @@ void add_client_loop(server_t *server)
 
 /// @brief Server loop that read client already connected
 /// @param server Structure that contain all server data
-void read_client_loop(server_t *server)
+static void read_client_loop(server_t *server, struct timeval *timeout, int i)
 {
     int tmp = 0;
     fd_set fd;
-    struct timeval time;
     client_t *client = NULL;
 
-    time.tv_sec = 0;
-    time.tv_usec = TIMEOUT;
-    for (int i = 0; i < server->nb_client; i++) {
-        client = CLIENT;
-        if (client == NULL)
-            continue;
-        FD_ZERO(&fd);
-        FD_SET(client->fd, &fd);
-        tmp = select(client->fd + 1, &fd, NULL, NULL, &time);
-        if (tmp == -1)
-            return perror("read_client_loop");
-        if (tmp == 1)
-            read_client(server, i);
+    client = CLIENT;
+    if (client == NULL)
+        return;
+    FD_ZERO(&fd);
+    FD_SET(client->fd, &fd);
+    tmp = select(client->fd + 1, &fd, NULL, NULL, timeout);
+    if (tmp == -1) {
+        return perror("read_client_loop");
+    } else if (tmp == 1) {
+        read_client(server, i);
     }
 }
 
 /// @brief Call the function to add and read Clients
 /// @param server Structure that contain all server data
-static bool server_loop_call(server_t *server)
+static void server_loop_call(server_t *server, struct timeval *timeout)
 {
-    if (server != NULL)
-        add_client_loop(server);
-    if (server != NULL)
-        read_client_loop(server);
-    else
-        return false;
-    return true;
-}
-
-/// @brief Server loop, handle the tick rate
-/// @param server Structure that contain all server data
-static bool server_loop(server_t *server)
-{
-    struct timeval current_time;
-    struct timeval elapsed_time;
-    int ret = 0;
-
-    ret = gettimeofday(&current_time, NULL);
-    if (ret == -1)
-        perror("server_loop");
-    timersub(&current_time, &server->last_tick, &elapsed_time);
-    if (elapsed_time.tv_sec >= 1 ||
-        (elapsed_time.tv_sec == 0 && elapsed_time.tv_usec >= TICK)) {
-        server->zappy->ticks += 1;
-        ret = gettimeofday(&server->last_tick, NULL);
-        if (ret == -1)
-            perror("server_loop");
-        check_game_condition(server);
-        check_command_vector(server);
+    if (server != NULL) {
+        add_client_loop(server, timeout);
     }
-    return server_loop_call(server);
+    if (server != NULL) {
+        for (int i = 0; i < server->nb_client; i++) {
+            read_client_loop(server, timeout, i);
+        }
+    }
 }
 
 /// @brief Initialize a server with Zappy information and start it
@@ -138,13 +110,10 @@ static int my_server2(server_t *server)
         perror("my_server");
         return 84;
     }
-    tmp = gettimeofday(&server->last_tick, NULL);
-    if (tmp == -1) {
-        perror("my_server");
-        return 84;
-    }
     printf("\033[1;31m[INFO]\033[0m: Server started\n");
-    while (server_loop(server));
+    pthread_create(&ZAPPY->tick->thread, NULL, &compute_tick, server);
+    while (server != NULL)
+        server_loop_call(server, &(struct timeval){0, TIMEOUT});
     return 0;
 }
 

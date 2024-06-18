@@ -32,9 +32,10 @@
 #define TAKE_OBJECT 9
 #define SET_OBJECT 10
 #define LEFT 11
-#define MIN_FOOD 40
-#define INCANTATION_FOOD MIN_FOOD + 30
-#define MAX_FOOD 90
+#define MIN_FOOD            40              // 40 // 30
+#define BROADCAST_FOOD      MIN_FOOD + 20   // 50 // 60
+#define INCANTATION_FOOD    MIN_FOOD + 30   // 70 // 80
+#define MAX_FOOD            MIN_FOOD + 50   // 90 // 90
 
 namespace Zappy {
     class AI {

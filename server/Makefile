@@ -41,6 +41,7 @@ SRC		=	./src/gui_command/mct.c\
 			./src/gui_util.c\
 			./src/main.c\
 			./src/map.c\
+			./src/tick.c\
 			./src/signal.c\
 			./src/zappy.c
 
