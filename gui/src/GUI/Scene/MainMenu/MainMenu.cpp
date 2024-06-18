@@ -43,7 +43,7 @@ void Zappy::MainMenu::computeLogic()
     }
     _quitBtn.Event();
     if (_quitBtn.IsButtonPressed())
-        exit(0);
+        _commonElements->setExit(true);
 }
 
 void Zappy::MainMenu::displayElements(void)

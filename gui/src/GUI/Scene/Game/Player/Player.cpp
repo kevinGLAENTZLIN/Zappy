@@ -15,7 +15,7 @@ Zappy::Player::Player(std::size_t id, std::size_t posX, std::size_t posY,
     _orientation(facingDirection), _level(level), _team(team), _model(models),
     _status(WANDERING)
 {
-    _model->setPosition(0, 0, 0);
+    _3DPosition = {0, 0, 0};
     _box = _model->getModelBoundingBox();
 }
 
@@ -89,7 +89,7 @@ void Zappy::Player::broadcast(const std::string &message)
 
 void Zappy::Player::draw()
 {
-    if (_model == nullptr)
+    if (_model == nullptr || (_3DPosition.x == 0 && _3DPosition.z == 0))
         return;
     _model->setPosition(_3DPosition.x, _3DPosition.y, _3DPosition.z);
     _model->setRotation(0, 90 * static_cast<int>(_orientation), 0);

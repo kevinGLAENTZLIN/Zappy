@@ -314,9 +314,11 @@ void Zappy::Game::loadModels()
     _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/whiteCrystal.obj",
                          "gui/assets/3Delements/whiteCrystal.png", 0, 0, 0, 0, 0, 0, 0.01));
     // PHIRAS
-    _models.emplace_back(nullptr);
+    _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/greenCrystal.obj",
+                         "gui/assets/3Delements/redCrystal.png", 0, 0, 0, 0, 0, 0, 0.05));
     // THYSTAME
-    _models.emplace_back(nullptr);
+    _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/redCrystal.obj",
+                         "gui/assets/3Delements/blueCrystal.png", 0, 0, 0, 0, 0, 0, 0.05));
     // PLAYER
     _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/toothless.obj",
                          "gui/assets/3Delements/food.png", 0, 0, 0, 0, 0, 0, 0.01));

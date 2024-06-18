@@ -7,9 +7,11 @@
 
 #include "CommonElements.hh"
 #include <map>
+#include <unistd.h>
 
 Zappy::CommonElements::CommonElements():
-    _currentScene(0), _oldScene(0), _camera(), _socket(0), _soundVolume(0.5), _music("gui/assets/audio/menu.mp3"), _mute(false), _showFPS(false)
+    _currentScene(0), _oldScene(0), _camera(), _socket(0), _soundVolume(0.5),
+    _music("gui/assets/audio/menu.mp3"), _mute(false), _showFPS(false), _exit(false)
 {
 }
 
@@ -70,6 +72,11 @@ void Zappy::CommonElements::setMute()
 void Zappy::CommonElements::setShowFPS(const bool &value)
 {
     _showFPS = value;
+}
+
+void Zappy::CommonElements::setExit(bool value)
+{
+    _exit = value;
 }
 
 void Zappy::CommonElements::drawFPS()
@@ -136,4 +143,9 @@ bool Zappy::CommonElements::getMute() const
 bool Zappy::CommonElements::getShowFPS() const
 {
     return _showFPS;
+}
+
+bool Zappy::CommonElements::getExit() const
+{
+    return _exit;
 }

@@ -9,6 +9,7 @@
 #include "../ErrorGUI.hh"
 #include "../Utils/Utils.hh"
 #include "../Utils/GuiSocket.hh"
+#include <chrono>
 
 Zappy::GUI::GUI(const std::vector<std::string> &args)
 {
@@ -51,7 +52,7 @@ void Zappy::GUI::runGUI()
     initScenes();
     _commonElements->getMusic().play();
     _commonElements->getMusic().setVolume(0.5);
-    while (_window->myWindowShouldClose() == false) {
+    while (_window->myWindowShouldClose() == false && _commonElements->getExit() == false) {
         _commonElements->getMusic().updateMusic();
         _scenes[_commonElements->getCurrentScene()]->computeLogic();
         _window->myBeginDrawing();
