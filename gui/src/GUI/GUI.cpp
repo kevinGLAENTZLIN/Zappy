@@ -52,12 +52,12 @@ void Zappy::GUI::runGUI()
     _commonElements->getMusic().play();
     _commonElements->getMusic().setVolume(0.5);
     while (_window->myWindowShouldClose() == false) {
-        _commonElements->drawFPS();
         _commonElements->getMusic().updateMusic();
         _scenes[_commonElements->getCurrentScene()]->computeLogic();
         _window->myBeginDrawing();
             _window->myClearBackground();
             _scenes[_commonElements->getCurrentScene()]->displayElements();
+            _commonElements->drawFPS();
         _window->myEndDrawing();
     }
 }
