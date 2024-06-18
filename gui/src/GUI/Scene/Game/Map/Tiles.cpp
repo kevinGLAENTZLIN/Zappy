@@ -77,6 +77,14 @@ void Zappy::Tiles::Draw()
                     _models[i]->setPosition(_index.x - _mapSize.x / 2 + 0.9, 0,
                                             _index.y - _mapSize.y / 2 + 0.9);
                     break;
+                case PHIRAS:
+                    _models[i]->setPosition(_index.x - _mapSize.x / 2 + 0.5, 0,
+                                            _index.y - _mapSize.y / 2 + 0.1);
+                    break;
+                case THYSTAME:
+                    _models[i]->setPosition(_index.x - _mapSize.x / 2 + 0.5, 0,
+                                            _index.y - _mapSize.y / 2 + 0.9);
+                    break;
             }
             _models[i]->ModelDraw();
         }
