@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <raylib.h>
+#include <raymath.h>
 
 Raylib::Camera::Camera()
 {
@@ -21,6 +22,35 @@ Raylib::Camera::~Camera()
 Camera3D Raylib::Camera::getCamera()
 {
     return _camera;
+}
+
+void Raylib::Camera::setCameraTarget(Vector3 focus)
+{
+    _camera.position.x -= _camera.target.x;
+    _camera.position.y -= _camera.target.y;
+    _camera.position.z -= _camera.target.z;
+    _camera.target = focus;
+    _camera.position.x += _camera.target.x;
+    _camera.position.y += _camera.target.y;
+    _camera.position.z += _camera.target.z;
+}
+
+void Raylib::Camera::setCameraDistanceToFocus(float distance)
+{
+    _camera.position.z += distance;
+    _camera.position.y += distance;
+    if (_camera.position.z < 5.0f) {
+        _camera.position.z = 5.0f;
+        _camera.position.y = 5.0f;
+    }
+    if (_camera.position.z > 100.0f) {
+        _camera.position.z = 100.0f;
+        _camera.position.y = 100.0f;
+    }
+}
+
+void Raylib::Camera::setCameraAngle(float x)
+{
 }
 
 extern "C" {
