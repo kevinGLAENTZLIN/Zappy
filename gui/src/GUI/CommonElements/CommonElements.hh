@@ -29,6 +29,8 @@ namespace Zappy {
         void setConnect(const bool &connected);
         void setMute();
         void setShowFPS(const bool &value);
+        void setExit(bool value);
+
         void drawFPS();
 
         std::size_t getCurrentScene() const;
@@ -43,6 +45,7 @@ namespace Zappy {
         bool getMute() const;
         Raylib::MusicEnc getMusic() const;
         bool getShowFPS() const;
+        bool getExit() const;
     private:
         std::size_t _currentScene;
         std::size_t _oldScene;
@@ -55,5 +58,6 @@ namespace Zappy {
         bool _connected;
         bool _mute;
         bool _showFPS;
+        bool _exit;
     };
 }
