@@ -22,7 +22,7 @@ namespace Raylib {
         CENTER,
     };
 
-    enum TextFormat {
+    enum TextPosFormat {
         PIXEL,
         PERCENT,
     };
@@ -32,7 +32,7 @@ namespace Raylib {
         // INFO: the position in the constructor are specified in % of the screen
         Text(const std::string &text, const std::size_t &textSize, const std::string &font,
              const double &posX, const double &posY, const double &spacing,
-             const Color &color, const TextFormat &textFormat, const TextAlignment &textAlign = CENTER);
+             const Color &color, const TextPosFormat &textFormat, const TextAlignment &textAlign = CENTER);
         ~Text();
 
         void setText(const std::string &text);
