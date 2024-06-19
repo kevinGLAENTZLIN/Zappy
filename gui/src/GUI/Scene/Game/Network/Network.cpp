@@ -144,7 +144,7 @@ void Zappy::Network::pnw(const std::string &args)
     ss >> temp >> id >> x >> y >> facingDirection >> level >> team;
     _game.addPlayer(std::stoi(&id[1]), x, y, static_cast<orientation>(facingDirection),
                     level, team);
-    addToQueue("pin " + id + "\n");
+    GuiSocket::sendToServer(_commonElements->getSocket(), "pin " + id + "\n");
 }
 
 void Zappy::Network::ppo(const std::string &args)
@@ -193,7 +193,7 @@ void Zappy::Network::pex(const std::string &args)
     std::string id;
 
     ss >> temp >> id;
-    addToQueue("ppo " + id + "\n");
+    GuiSocket::sendToServer(_commonElements->getSocket(), "ppo " + id + "\n");
 }
 
 void Zappy::Network::pbc(const std::string &args)
@@ -252,9 +252,10 @@ void Zappy::Network::pdr(const std::string &args)
 
     ss >> temp >> id;
     playerPosition = _game.getPlayerPosition(std::stoi(&id[1]));
-    addToQueue("pin " + id + "\n");
-    addToQueue("bct " + std::to_string(static_cast<std::size_t>(playerPosition.x)) + " " +
-               std::to_string(static_cast<std::size_t>(playerPosition.y)) + "\n");
+    GuiSocket::sendToServer(_commonElements->getSocket(), "pin " + id + "\n");
+    GuiSocket::sendToServer(_commonElements->getSocket(), "bct " +
+                std::to_string(static_cast<std::size_t>(playerPosition.x)) + " " +
+                std::to_string(static_cast<std::size_t>(playerPosition.y)) + "\n");
 }
 
 void Zappy::Network::pgt(const std::string &args)
@@ -266,9 +267,10 @@ void Zappy::Network::pgt(const std::string &args)
 
     ss >> temp >> id;
     playerPosition = _game.getPlayerPosition(std::stoi(&id[1]));
-    addToQueue("pin " + id + "\n");
-    addToQueue("bct " + std::to_string(static_cast<std::size_t>(playerPosition.x)) + " " +
-               std::to_string(static_cast<std::size_t>(playerPosition.y)) + "\n");
+    GuiSocket::sendToServer(_commonElements->getSocket(), "pin " + id + "\n");
+    GuiSocket::sendToServer(_commonElements->getSocket(), "bct " +
+                std::to_string(static_cast<std::size_t>(playerPosition.x)) + " " +
+                std::to_string(static_cast<std::size_t>(playerPosition.y)) + "\n");
 }
 
 void Zappy::Network::pdi(const std::string &args)
@@ -349,6 +351,6 @@ void Zappy::Network::smg(const std::string &args)
     ss >> temp >> command;
     if (command == "ppo") {
         ss >> message;
-        addToQueue("ppo " + message + "\n");
+        GuiSocket::sendToServer(_commonElements->getSocket(), "ppo " + message + "\n");
     }
 }
