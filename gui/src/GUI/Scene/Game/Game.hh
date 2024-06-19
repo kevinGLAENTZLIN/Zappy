@@ -21,6 +21,7 @@
 #include "../IScene.hh"
 #include "../../../UI/PopUp.hh"
 #include "./PauseMenu/PauseMenu.hh"
+#include "../../../Raylib/Raylib.hh"
 #include "../../CommonElements/CommonElements.hh"
 #include "../../../Utils/GuiSocket.hh"
 
@@ -79,5 +80,6 @@ namespace Zappy {
         PauseMenu _pauseMenu;
         std::size_t _selectedObject;
         PopUpType _selectedObjectType;
+        Raylib::Skybox _skybox;
     };
 }

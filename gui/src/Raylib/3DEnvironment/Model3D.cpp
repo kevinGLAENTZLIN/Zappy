@@ -37,6 +37,16 @@ void Raylib::Model3D::setRotation(double roll, double pitch, double yaw)
         static_cast<float>(yaw)};
 }
 
+void Raylib::Model3D::setModel(const Model &model)
+{
+    _model = model;
+}
+
+Model Raylib::Model3D::getModel() const
+{
+    return _model;
+}
+
 extern "C" {
     BoundingBox Raylib::Model3D::getModelBoundingBox() const
     {

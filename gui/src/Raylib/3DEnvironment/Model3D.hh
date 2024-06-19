@@ -23,7 +23,9 @@ namespace Raylib {
 
         void setPosition(double x, double y, double z);
         void setRotation(double roll, double pitch, double yaw);
+        void setModel(const Model &model);
 
+        Model getModel() const;
         BoundingBox getModelBoundingBox() const;
 
         void ModelDraw() const;

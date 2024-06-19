@@ -13,7 +13,9 @@
 
 Zappy::Game::Game(std::shared_ptr<CommonElements> commonElements):
     _commonElements(commonElements), _timerSizeT(-1), _timer(0), _mapSizeQuery(false),
-    _tickTime(-1), _network(commonElements, *this), _pauseMenu(_commonElements)
+    _tickTime(-1), _network(commonElements, *this), _pauseMenu(_commonElements),
+    _skybox("gui/assets/Skybox/skybox.png", "gui/assets/Skybox/skybox.vs", "gui/assets/Skybox/skybox.fs",
+        "gui/assets/Skybox/cubemap.vs", "gui/assets/Skybox/cubemap.fs")
 {
     loadModels();
     _mapSize = {0, 0};
@@ -65,6 +67,7 @@ void Zappy::Game::computeLogic()
 void Zappy::Game::displayElements(void)
 {
     _commonElements->getCamera().begin3DMode();
+    _skybox.Draw();
         if (_tiles.size() != 0)
             for (auto &tile : _tiles)
                 tile.Draw();
