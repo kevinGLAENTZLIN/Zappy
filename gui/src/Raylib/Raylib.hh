@@ -19,3 +19,5 @@
 #include "./Texture/AnimatedSpriteSheet.hh"
 #include "./Window/Window.hh"
 #include "./Audio/MusicEnc.hh"
+#include "./RaylibGL/RaylibGL.hh"
+#include "./Skybox/Skybox.hh"

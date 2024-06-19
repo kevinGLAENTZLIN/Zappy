@@ -10,7 +10,7 @@
 
 Raylib::Text::Text(const std::string &text, const std::size_t &textSize,
                    const std::string &font, const double &posX, const double &posY,
-                   const double &spacing, const Color &color, const TextFormat &textFormat,
+                   const double &spacing, const Color &color, const TextPosFormat &textFormat,
                    const TextAlignment &textAlign):
     _text(text), _textSize(textSize), _font(font), _spacing(spacing), _textColor(color)
 {
