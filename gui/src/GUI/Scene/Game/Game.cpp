@@ -10,6 +10,7 @@
 #include "Map/Tiles.hh"
 #include "Player/Player.hh"
 #include <raylib.h>
+#include <thread>
 
 Zappy::Game::Game(std::shared_ptr<CommonElements> commonElements):
     _commonElements(commonElements), _timerSizeT(-1), _timer(0), _mapSizeQuery(false),
@@ -77,8 +78,7 @@ void Zappy::Game::displayElements(void)
         for (auto &egg : _eggs)
             egg.Draw(_mapSize);
     _commonElements->getCamera().end3DMode();
-    for (auto &team : _teams)
-        team.Draw();
+    _gameInfo.display();
     if (_popUp.getStatus() == true && _pauseMenu.isVisible() == false)
         _popUp.Draw();
     if (_pauseMenu.isVisible() == true)
@@ -111,11 +111,8 @@ void Zappy::Game::addPlayer(std::size_t id, std::size_t x, std::size_t y,
 {
     _players.emplace_back(id, x, y, static_cast<orientation>(playerOrientation),
                           level, teamName, _models[PLAYER]);
-    for (auto &team : _teams)
-        if (team.getTeamName() == teamName) {
-            team.Update();
-            return;
-        }
+    _gameInfo.updateTitle(_players.size());
+    _gameInfo.updateValues(findAllLevels());
 }
 
 void Zappy::Game::updateStatus(std::size_t id, playerStatus status)
@@ -131,11 +128,11 @@ void Zappy::Game::updateStatus(std::size_t id, playerStatus status)
 void Zappy::Game::updateStatus(std::size_t x, std::size_t y, playerStatus status)
 {
     for (auto &player : _players) {
-        if (player.getPosition().x == x && player.getPosition().y == y) {
+        GuiSocket::sendToServer(_commonElements->getSocket(), "plv #" +
+        std::to_string(player.getId()) + "\n");
+        if (player.getPosition().x == x && player.getPosition().y == y)
             player.setIncantationStatus(status);
-            GuiSocket::sendToServer(_commonElements->getSocket(), "plv #" +
-                                    std::to_string(player.getId()) + "\n");
-        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 }
 
@@ -194,10 +191,7 @@ void Zappy::Game::updatePlayerLevel(std::size_t id, std::size_t level)
     }
     if (teamName == "")
         return;
-    for (auto &team : _teams) {
-        if (team.getTeamName() == teamName)
-            team.Update(level);
-    }
+    _gameInfo.updateValues(findAllLevels());
 }
 
 void Zappy::Game::updatePlayerInventory(std::size_t id, std::vector<std::size_t> resources)
@@ -217,6 +211,8 @@ void Zappy::Game::playerDeath(std::size_t id)
             if (_selectedObject == i && _selectedObjectType == PLAYERTYPE)
                 _popUp.setStatus(false);
             _players.erase(_players.begin() + i);
+            _gameInfo.updateTitle(_players.size());
+            _gameInfo.updateValues(findAllLevels());
             return;
         }
     }
@@ -230,11 +226,6 @@ void Zappy::Game::playerBroadcast(std::size_t id, const std::string &message)
             return;
         }
     }
-}
-
-void Zappy::Game::addTeam(std::string teamName)
-{
-    _teams.emplace_back(teamName, _teams.size() + 1);
 }
 
 std::size_t Zappy::Game::findPlayersFromCoordinates(Vector2 coordinates)
@@ -299,6 +290,15 @@ void Zappy::Game::userInteractions(Raylib::Camera &cam)
                 return;
             }
     }
+}
+
+std::vector<std::size_t> Zappy::Game::findAllLevels()
+{
+    std::vector<std::size_t> levels(8, 0);
+
+    for (auto &player : _players)
+        levels[player.getLevel() - 1]++;
+    return levels;
 }
 
 void Zappy::Game::loadModels()

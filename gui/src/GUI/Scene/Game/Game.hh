@@ -17,7 +17,7 @@
 #include "Player/Egg.hh"
 #include "Elements.hh"
 #include "Network/Network.hh"
-#include "Teams/Teams.hh"
+#include "GameInfo/GameInfo.hh"
 #include "../IScene.hh"
 #include "../../../UI/PopUp.hh"
 #include "./PauseMenu/PauseMenu.hh"
@@ -59,6 +59,7 @@ namespace Zappy {
     private:
         std::size_t findPlayersFromCoordinates(Vector2 coordinates);
         std::size_t findEggsFromCoordinates(Vector2 coordinates);
+        std::vector<std::size_t> findAllLevels();
         void userInteractions(Raylib::Camera &cam);
         void loadModels();
 
@@ -69,7 +70,6 @@ namespace Zappy {
         std::vector<Tiles> _tiles;
         std::vector<Player> _players;
         std::vector<Egg> _eggs;
-        std::vector<Teams> _teams;
         std::size_t _timerSizeT;
         double _timer;
         Vector2 _mapSize;
@@ -80,6 +80,7 @@ namespace Zappy {
         PauseMenu _pauseMenu;
         std::size_t _selectedObject;
         PopUpType _selectedObjectType;
+        GameInfo _gameInfo;
         Raylib::Skybox _skybox;
     };
 }
