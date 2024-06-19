@@ -39,13 +39,13 @@ void Raylib::Camera::setCameraDistanceToFocus(float distance)
 {
     _camera.position.z += distance;
     _camera.position.y += distance;
-    if (_camera.position.z < 5.0f) {
-        _camera.position.z = 5.0f;
-        _camera.position.y = 5.0f;
+    if (_camera.position.z - _camera.target.z < 5.0f) {
+        _camera.position.z = 5.0f + _camera.target.z;
+        _camera.position.y = 5.0f + _camera.target.y;
     }
-    if (_camera.position.z > 100.0f) {
-        _camera.position.z = 100.0f;
-        _camera.position.y = 100.0f;
+    if (_camera.position.z - _camera.target.z > 100.0f) {
+        _camera.position.z = 100.0f + _camera.target.z;
+        _camera.position.y = 100.0f + _camera.target.y;
     }
 }
 

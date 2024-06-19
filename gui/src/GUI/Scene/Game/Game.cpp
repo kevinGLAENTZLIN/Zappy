@@ -57,10 +57,11 @@ void Zappy::Game::computeLogic()
         return;
     _timerSizeT = _tickTemp;
     if (_timerSizeT % 40 == 0)
-        _network.addToQueue("mct\n");
+        GuiSocket::sendToServer(_commonElements->getSocket(), "mct\n");
     if (_timerSizeT % 126 == 0) {
         for (auto &player : _players)
-            _network.addToQueue("pin #" + std::to_string(player.getId()) + "\n");
+            GuiSocket::sendToServer(_commonElements->getSocket(), "pin #" +
+                                    std::to_string(player.getId()) + "\n");
     }
 }
 
@@ -132,7 +133,8 @@ void Zappy::Game::updateStatus(std::size_t x, std::size_t y, playerStatus status
     for (auto &player : _players) {
         if (player.getPosition().x == x && player.getPosition().y == y) {
             player.setIncantationStatus(status);
-            _network.addToQueue("plv #" + std::to_string(player.getId()) + "\n");
+            GuiSocket::sendToServer(_commonElements->getSocket(), "plv #" +
+                                    std::to_string(player.getId()) + "\n");
         }
     }
 }
