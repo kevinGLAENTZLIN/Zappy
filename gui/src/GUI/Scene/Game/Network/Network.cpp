@@ -127,7 +127,6 @@ void Zappy::Network::tna(const std::string &args)
     std::string teamName;
 
     ss >> temp >> teamName;
-    _game.addTeam(teamName);
 }
 
 void Zappy::Network::pnw(const std::string &args)
@@ -168,7 +167,6 @@ void Zappy::Network::plv(const std::string &args)
     std::string id;
     std::size_t level;
 
-    std::cout << "plv" << std::endl;
     ss >> temp >> id >> level;
     _game.updatePlayerLevel(std::stoi(&id[1]), level);
 }
@@ -211,13 +209,11 @@ void Zappy::Network::pic(const std::string &args)
 {
     std::stringstream ss(args);
     std::string temp;
-    std::string id;
+    std::size_t x;
+    std::size_t y;
 
-    ss >> temp >> temp >> temp >> id;
-    while (id[0] == '#') {
-        _game.updateStatus(std::stoi(&id[1]), INCANTATING);
-        ss >> id;
-    }
+    ss >> temp >> x >> y;
+    _game.updateStatus(x, y, INCANTATING);
 }
 
 void Zappy::Network::pie(const std::string &args)
