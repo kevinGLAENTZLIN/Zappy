@@ -15,14 +15,12 @@ FLAGS       =   -W -Wall -Wextra -g -std=c++20
 
 COMMON_LIBS =   -lraylib -lm -lpthread -ldl
 
-LINUX_LIBS  =   -lGL -lrt -lX11 -lconfig++
+LINUX_LIBS  =   -lGL -lrt -lX11
 
 MACOS_LIBS  =   -framework OpenGL -framework CoreFoundation
 
 MACOS_INCLUDE_PATH = -I/opt/homebrew/opt/raylib/include
-MACOS_INCLUDE_PATH += -I/opt/homebrew/Cellar/libconfig/1.7.3/include
 MACOS_LIB_PATH = -L/opt/homebrew/opt/raylib/lib
-MACOS_LIB_PATH +=  -L/opt/homebrew/Cellar/libconfig/1.7.3/lib -lconfig++
 
 UNAME_S := $(shell uname -s)
 

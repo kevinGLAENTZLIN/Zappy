@@ -122,7 +122,7 @@ static int my_server2(server_t *server)
 /// @return 0 if the server was created with success, else returns 84
 int my_server(zappy_t *zappy)
 {
-    sighandler_t ret;
+    void (*ret)(int);
 
     if (zappy == NULL)
         return 84;

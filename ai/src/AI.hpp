@@ -74,6 +74,7 @@ namespace Zappy {
             bool _isBroadcasting;
             bool _moveToBroadcast;
             bool _needToBeFat;
+            bool _firstRun;
             bool _canBroadcast;
             int _currentLevel;
             int _nbPlayer;

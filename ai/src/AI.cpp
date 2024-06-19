@@ -86,7 +86,6 @@ void Zappy::AI::initConnection(void)
 void Zappy::AI::run(void)
 {
     _lastResponseTime = std::chrono::steady_clock::now();
-    sendCommand(_commands[FORK], false);
     while (_isAlive) {
         if (_clientSocket->selectSocket() == -1)
             handleResponse();
@@ -533,6 +532,10 @@ void Zappy::AI::parseInventory(const std::string &response)
             stream >> _phiras;
         if (stringFind == "thystame")
             stream >> _thystame;
+    }
+    if (_firstRun) {
+        sendCommand(_commands[FORK], false);
+        _firstRun = false;
     }
     _inventoryReceived = true;
     handleIncantation(_linemate, _deraumere, _sibur, _mendiane, _phiras, _thystame);
