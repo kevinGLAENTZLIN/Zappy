@@ -42,18 +42,23 @@ extern "C" {
 	    const std::string &skyboxFsFile, const std::string &cubemapVsFile, const std::string &cubemapFsFile)
 	{
 		Mesh cube = GenMeshCube(1.0f, 1.0f, 1.0f);
-    	_skybox.setModel(LoadModelFromMesh(cube));
+		int materialMapCubemap[] = { MATERIAL_MAP_CUBEMAP };
+		int doGamma[1] = { 1 };
+		int vflipped[1] = { 1 };
+		int environmentMap[1] = { 0 };
 
+    	_skybox.setModel(LoadModelFromMesh(cube));
 		_skybox.getModel().materials[0].shader = LoadShader(TextFormat(skyboxVsFile.c_str(), 330),
                                             TextFormat(skyboxFsFile.c_str(), 330));
 
-		SetShaderValue(_skybox.getModel().materials[0].shader, GetShaderLocation(_skybox.getModel().materials[0].shader, "environmentMap"), (int[1]){ MATERIAL_MAP_CUBEMAP }, SHADER_UNIFORM_INT);
-		SetShaderValue(_skybox.getModel().materials[0].shader, GetShaderLocation(_skybox.getModel().materials[0].shader, "doGamma"), (int[1]) { 1 }, SHADER_UNIFORM_INT);
-		SetShaderValue(_skybox.getModel().materials[0].shader, GetShaderLocation(_skybox.getModel().materials[0].shader, "vflipped"), (int[1]){ 1 }, SHADER_UNIFORM_INT);
+		SetShaderValue(_skybox.getModel().materials[0].shader, GetShaderLocation(_skybox.getModel().materials[0].shader, "environmentMap"), materialMapCubemap, SHADER_UNIFORM_INT);
+		SetShaderValue(_skybox.getModel().materials[0].shader, GetShaderLocation(_skybox.getModel().materials[0].shader, "doGamma"), doGamma, SHADER_UNIFORM_INT);
+		SetShaderValue(_skybox.getModel().materials[0].shader, GetShaderLocation(_skybox.getModel().materials[0].shader, "vflipped"), vflipped, SHADER_UNIFORM_INT);
+
 		_shader = LoadShader(TextFormat(cubemapVsFile.c_str(), 330),
                             TextFormat(cubemapFsFile.c_str(), 330));
 
-    	SetShaderValue(_shader, GetShaderLocation(_shader, "environmentMap"), (int[1]){ 0 }, SHADER_UNIFORM_INT);
+    	SetShaderValue(_shader, GetShaderLocation(_shader, "environmentMap"), environmentMap, SHADER_UNIFORM_INT);
 
 		Texture2D panorama = LoadTexture(texturePath.c_str());
 
