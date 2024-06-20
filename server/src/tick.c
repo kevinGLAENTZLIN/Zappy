@@ -82,12 +82,39 @@ void display_levels(server_t *server, bool kill)
     }
 }
 
+/// @brief Display as the title of the Terminal Window the timer in seconds
+/// @param zappy Structure that contain all game data
+static void display_clock(zappy_t *zappy)
+{
+    int time[4];
+
+    if (zappy == NULL || zappy->tick == NULL ||
+        zappy->tick->nb_ticks <= 0 || zappy->frequence == 0)
+        return;
+    time[0] = zappy->tick->nb_ticks / zappy->frequence;
+    time[1] = time[0] / 60;
+    time[0] %= 60;
+    time[2] = time[1] / 60;
+    time[1] %= 60;
+    time[3] = time[2] / 24;
+    time[2] %= 24;
+    if (time[3] > 0)
+        printf("\e]2;Server time [%02d:%02d:%02d:%02d]\n\007",
+        time[3], time[2], time[1], time[0]);
+    else if (time[2] > 0)
+        printf("\e]2;Server time [%02d:%02d:%02d]\n\007",
+        time[2], time[1], time[0]);
+    else
+        printf("\e]2;Server time [%02d:%02d]\n\007", time[1], time[0]);
+}
+
 /// @brief Display informations concerning player every 30 seconds
 /// @param server Structure that contain all server data
 static void display_tick_info(server_t *server)
 {
     int i = 0;
 
+    display_clock(ZAPPY);
     if (ZAPPY->tick->nb_ticks % (30 * ZAPPY->frequence) == 0) {
         i = ZAPPY->tick->nb_ticks / (30 * ZAPPY->frequence);
         printf("\033[1;31m[INFO]\033[0m: %d minutes and %d seconds\n",
