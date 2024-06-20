@@ -45,16 +45,12 @@ void Zappy::Network::sendQueueToServer()
 {
     std::string command;
 
-    if (_isConnected == false)
+    if (_isConnected == false || _commandsQueue.empty())
         return;
-    while (!_commandsQueue.empty()) {
-        command = _commandsQueue.front();
-        _commandsQueue.pop();
-        GuiSocket::sendToServer(_commonElements->getSocket(), command);
-        command.pop_back();
-        if (!_commandsQueue.empty())
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    }
+    command = _commandsQueue.front();
+    _commandsQueue.pop();
+    GuiSocket::sendToServer(_commonElements->getSocket(), command);
+    command.pop_back();
 }
 
 void Zappy::Network::addToQueue(const std::string &command)
@@ -141,8 +137,7 @@ void Zappy::Network::pnw(const std::string &args)
     std::string team;
 
     ss >> temp >> id >> x >> y >> facingDirection >> level >> team;
-    _game.addPlayer(std::stoi(&id[1]), x, y, static_cast<orientation>(facingDirection),
-                    level, team);
+    _game.addPlayer(std::stoi(&id[1]), x, y, facingDirection, level, team);
     GuiSocket::sendToServer(_commonElements->getSocket(), "pin " + id + "\n");
 }
 
@@ -156,8 +151,7 @@ void Zappy::Network::ppo(const std::string &args)
     std::size_t facingDirection;
 
     ss >> temp >> id >> x >> y >> facingDirection;
-    _game.updatePlayerPosition(std::stoi(&id[1]), x, y,
-        static_cast<orientation>(facingDirection));
+    _game.updatePlayerPosition(std::stoi(&id[1]), x, y, facingDirection);
 }
 
 void Zappy::Network::plv(const std::string &args)
