@@ -22,7 +22,7 @@ void sst(server_t *server, int i, char *input)
     }
     ZAPPY->frequence = atoi(tab[0]);
     ZAPPY->tick->tick = TICK;
-    if (ZAPPY->frequence < 0 || ZAPPY->frequence > 2000)
+    if (ZAPPY->frequence <= 0 || ZAPPY->frequence > 2000)
         ZAPPY->frequence = tmp;
     send_to_all_gui(server, "sst %d\n", ZAPPY->frequence);
     free_tab(tab);

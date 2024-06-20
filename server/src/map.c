@@ -35,7 +35,7 @@ void init_map(zappy_t *zappy)
 {
     tile_t ***map = malloc(sizeof(tile_t **) * (zappy->y * zappy->x));
 
-    if (map == NULL) {
+    if (map == NULL || zappy->x <= 0 || zappy->y <= 0) {
         perror("init_map");
         zappy->map = NULL;
         return;

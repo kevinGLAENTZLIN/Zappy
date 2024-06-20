@@ -60,6 +60,8 @@ static void load_names(zappy_t *zappy, int argc, char **argv)
 /// @param zappy Structure that contains all games information
 static void set_teams_egg(zappy_t *zappy)
 {
+    if (zappy->x <= 0 || zappy->y <= 0)
+        return;
     for (int j = 0; zappy->teams_name[j] != NULL; j++)
         set_n_random_egg(zappy, zappy->teams[j], zappy->team_size);
 }
@@ -103,6 +105,8 @@ zappy_t *init_zappy(int argc, char **argv)
     zappy->x = get_value_by_flag("-x", argc, argv);
     zappy->y = get_value_by_flag("-y", argc, argv);
     zappy->frequence = get_value_by_flag("-f", argc, argv);
+    if (zappy->frequence <= 0)
+        zappy->frequence = 100;
     zappy->port = get_value_by_flag("-p", argc, argv);
     zappy->team_size = get_value_by_flag("-c", argc, argv);
     zappy->map = NULL;
@@ -110,8 +114,6 @@ zappy_t *init_zappy(int argc, char **argv)
     zappy->tick = init_tick(zappy->frequence);
     load_names(zappy, argc, argv);
     load_zappy_teams(zappy);
-    if (zappy->frequence == -42)
-        zappy->frequence = 100;
     init_map(zappy);
     set_map_resources(zappy);
     set_teams_egg(zappy);
