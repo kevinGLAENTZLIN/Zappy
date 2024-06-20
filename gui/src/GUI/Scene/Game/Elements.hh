@@ -8,6 +8,11 @@
 
 #pragma once
 
+#define UP_ORIENTATION 0
+#define RIGHT_ORIENTATION 1
+#define DOWN_ORIENTATION 2
+#define LEFT_ORIENTATION 3
+
 namespace Zappy {
     enum modelNames {
         FOOD,
@@ -19,13 +24,6 @@ namespace Zappy {
         THYSTAME,
         PLAYER,
         EGG
-    };
-
-    enum orientation {
-        NORTH = 1,
-        EAST = 2,
-        SOUTH = 3,
-        WEST = 4
     };
 
     enum playerStatus {

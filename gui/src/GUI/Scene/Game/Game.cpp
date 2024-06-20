@@ -109,8 +109,8 @@ void Zappy::Game::addPlayer(std::size_t id, std::size_t x, std::size_t y,
                            std::size_t playerOrientation, std::size_t level,
                            std::string teamName)
 {
-    _players.emplace_back(id, x, y, static_cast<orientation>(playerOrientation),
-                          level, teamName, _models[PLAYER]);
+    _players.emplace_back(id, x, y, playerOrientation, level, teamName,
+                          _models[PLAYER]);
     _gameInfo.updateTitle(_players.size());
     _gameInfo.updateValues(findAllLevels());
 }
@@ -119,7 +119,7 @@ void Zappy::Game::updateStatus(std::size_t id, playerStatus status)
 {
     for (auto &player : _players) {
         if (player.getId() == id) {
-            player.setIncantationStatus(status);
+            player.setStatus(status);
             return;
         }
     }
@@ -128,11 +128,9 @@ void Zappy::Game::updateStatus(std::size_t id, playerStatus status)
 void Zappy::Game::updateStatus(std::size_t x, std::size_t y, playerStatus status)
 {
     for (auto &player : _players) {
-        GuiSocket::sendToServer(_commonElements->getSocket(), "plv #" +
-        std::to_string(player.getId()) + "\n");
+        _network.addToQueue("plv #" + std::to_string(player.getId()) + "\n");
         if (player.getPosition().x == x && player.getPosition().y == y)
-            player.setIncantationStatus(status);
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            player.setStatus(status);
     }
 }
 
@@ -174,7 +172,7 @@ void Zappy::Game::updatePlayerPosition(std::size_t id, std::size_t x, std::size_
     for (auto &player : _players) {
         if (player.getId() == id)
             return player.setPosition(x, y,
-                static_cast<orientation>(playerOrientation), _mapSize);
+                playerOrientation, _mapSize);
     }
 }
 
@@ -305,31 +303,32 @@ void Zappy::Game::loadModels()
 {
     // FOOD
     _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/food.obj",
-                         "gui/assets/3Delements/food.png", 0, 0, 0, 0, 0, 0, 0.75));
+                         "gui/assets/3Delements/food.png", 0, 0, 0, 0, 0.75));
     // LINEMATE
     _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/redCrystal.obj",
-                         "gui/assets/3Delements/redCrystal.png", 0, 0, 0, 0, 0, 0, 0.05));
+                         "gui/assets/3Delements/redCrystal.png", 0, 0, 0, 0, 0.05));
     // DERAUMERE
     _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/blueCrystal.obj",
-                         "gui/assets/3Delements/blueCrystal.png", 0, 0, 0, 0, 0, 0, 0.05));
+                         "gui/assets/3Delements/blueCrystal.png", 0, 0, 0, 0, 0.05));
     // SIBUR
     _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/greenCrystal.obj",
-                         "gui/assets/3Delements/greenCrystal.png", 0, 0, 0, 0, 0, 0, 0.05));
+                         "gui/assets/3Delements/greenCrystal.png", 0, 0, 0, 0, 0.05));
     // MENDIANE
     _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/whiteCrystal.obj",
-                         "gui/assets/3Delements/whiteCrystal.png", 0, 0, 0, 0, 0, 0, 0.01));
+                         "gui/assets/3Delements/whiteCrystal.png", 0, 0, 0, 0, 0.01));
     // PHIRAS
     _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/greenCrystal.obj",
-                         "gui/assets/3Delements/redCrystal.png", 0, 0, 0, 0, 0, 0, 0.05));
+                         "gui/assets/3Delements/redCrystal.png", 0, 0, 0, 0, 0.05));
     // THYSTAME
     _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/redCrystal.obj",
-                         "gui/assets/3Delements/blueCrystal.png", 0, 0, 0, 0, 0, 0, 0.05));
+                         "gui/assets/3Delements/blueCrystal.png", 0, 0, 0, 0, 0.05));
     // PLAYER
     _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/toothless.obj",
-                         "gui/assets/3Delements/food.png", 0, 0, 0, 0, 0, 0, 0.01));
+                         "gui/assets/3Delements/food.png", 0, 0, 0, 0, 0.01));
     // EGG
     _models.emplace_back(std::make_shared<Raylib::Model3D>("gui/assets/3Delements/egg.obj",
-                         "gui/assets/3Delements/food.png", 0, 0, 0, 0, 0, 0, 0.1));
+                         "gui/assets/3Delements/food.png", 0, 0, 0, 0, 0.1));
+    _models[FOOD]->setRotation(90);
 }
 
 void Zappy::Game::createMap()
