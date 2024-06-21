@@ -74,7 +74,7 @@ void display_levels(server_t *server, bool kill)
             send_client(client->fd, "dead\n");
     }
     for (int j = 0; j < 8; j++) {
-        printf("\033[1;31m[INFO]\033[0m: Level %d: %d%s", j + 1, level[j],
+        printf("%s: Level %d: %d%s", INFO, j + 1, level[j],
         ((level[j] == 0 || kill) ? "" : " |"));
         if (!kill)
             display_food_level(server, j);
@@ -108,6 +108,32 @@ static void display_clock(zappy_t *zappy)
         printf("\e]2;Server time [%02d:%02d]\n\007", time[1], time[0]);
 }
 
+/// @brief Display timer in the terminal
+/// @param zappy Structure that contain all game data
+static void display_clock_terminal(zappy_t *zappy)
+{
+    int time[4];
+
+    if (zappy == NULL || zappy->tick == NULL ||
+        zappy->tick->nb_ticks <= 0 || zappy->frequence == 0)
+        return;
+    time[0] = zappy->tick->nb_ticks / zappy->frequence;
+    time[1] = time[0] / 60;
+    time[0] %= 60;
+    time[2] = time[1] / 60;
+    time[1] %= 60;
+    time[3] = time[2] / 24;
+    time[2] %= 24;
+    if (time[3] > 0)
+        printf("%s: Server time [%02d:%02d:%02d:%02d]\n", INFO,
+        time[3], time[2], time[1], time[0]);
+    else if (time[2] > 0)
+        printf("%s: Server time [%02d:%02d:%02d]\n", INFO,
+        time[2], time[1], time[0]);
+    else
+        printf("%s: Server time [%02d:%02d]\n", INFO, time[1], time[0]);
+}
+
 /// @brief Display informations concerning player every 30 seconds
 /// @param server Structure that contain all server data
 static void display_tick_info(server_t *server)
@@ -115,12 +141,14 @@ static void display_tick_info(server_t *server)
     int i = 0;
 
     display_clock(ZAPPY);
+    printf("\033[A\r");
     if (ZAPPY->tick->nb_ticks % (30 * ZAPPY->frequence) == 0) {
         i = ZAPPY->tick->nb_ticks / (30 * ZAPPY->frequence);
-        printf("\033[1;31m[INFO]\033[0m: %d minutes and %d seconds\n",
+        printf("%s: %d minutes and %d seconds\n", INFO,
         (i % 2 == 0 ? i / 2 : (i - 1) / 2), (i % 2 == 0 ? 0 : 30));
         display_levels(server, false);
     }
+    display_clock_terminal(ZAPPY);
 }
 
 /// @brief Check if the ticks have to be updated and call functions

@@ -66,6 +66,8 @@
 
 #define RAISE(x)        write(2, x, strlen(x))
 
+#define INFO            "\033[1;31m[INFO]\033[0m"
+
 #define SO_REUSEPORT    15
 
 typedef enum direction_e {
