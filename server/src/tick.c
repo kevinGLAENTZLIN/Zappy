@@ -138,12 +138,15 @@ static void display_clock_terminal(zappy_t *zappy)
 /// @param n Number of line to remove
 void erase_n_previous_line(int n)
 {
+    struct winsize w;
+
+    ioctl(0, TIOCGWINSZ, &w);
     if (n < 0)
         return;
     for (int i = 0; i < n; i++)
         printf("\033[A\r");
     for (int i = 0; i < n; i++) {
-        for (int j = 0; j < 100; j++)
+        for (int j = 0; j < w.ws_col; j++)
             printf(" ");
         printf("\n");
     }
@@ -155,8 +158,6 @@ void erase_n_previous_line(int n)
 /// @param server Structure that contain all server data
 static void display_tick_info(server_t *server)
 {
-    int i = 0;
-
     if (ZAPPY->clear_line)
         erase_n_previous_line(9);
     ZAPPY->clear_line = true;

@@ -28,6 +28,7 @@
 #include <math.h>
 #include <time.h>
 #include <pthread.h>
+#include <sys/ioctl.h>
 
 #include "buffer.h"
 
