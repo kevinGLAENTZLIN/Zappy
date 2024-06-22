@@ -89,7 +89,7 @@ zappy_t *check_zappy(zappy_t *zappy)
         free_zappy(zappy);
         return NULL;
     }
-    zappy->clear_line = true;
+    zappy->clear_line = false;
     return zappy;
 }
 

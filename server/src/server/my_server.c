@@ -112,7 +112,7 @@ static int my_server2(server_t *server)
         perror("my_server");
         return 84;
     }
-    printf("%s: Server started\n\n", INFO);
+    printf("%s: Server started\n", INFO);
     pthread_create(&ZAPPY->tick->thread, NULL, &compute_tick, server);
     while (server != NULL)
         server_loop_call(server, &(struct timeval){0, TIMEOUT});

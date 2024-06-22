@@ -43,7 +43,7 @@ void free_tick(tick_t *tick)
 /// @brief Display on a line the food number of each player at given level
 /// @param server Structure that contain all server data
 /// @param level Level of the players to display
-void display_food_level(server_t *server, int level)
+static void display_food_level(server_t *server, int level)
 {
     client_t *client = NULL;
 
@@ -134,22 +134,34 @@ static void display_clock_terminal(zappy_t *zappy)
         printf("%s: Server time [%02d:%02d]\n", INFO, time[1], time[0]);
 }
 
-/// @brief Display informations concerning player every 30 seconds
+/// @brief Remove the Nth last line in the terminal
+/// @param n Number of line to remove
+void erase_n_previous_line(int n)
+{
+    if (n < 0)
+        return;
+    for (int i = 0; i < n; i++)
+        printf("\033[A\r");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < 100; j++)
+            printf(" ");
+        printf("\n");
+    }
+    for (int i = 0; i < n; i++)
+        printf("\033[A\r");
+}
+
+/// @brief Display informations concerning player every seconds
 /// @param server Structure that contain all server data
 static void display_tick_info(server_t *server)
 {
     int i = 0;
 
-    display_clock(ZAPPY);
     if (ZAPPY->clear_line)
-        printf("\033[A\r");
+        erase_n_previous_line(9);
     ZAPPY->clear_line = true;
-    if (ZAPPY->tick->nb_ticks % (30 * ZAPPY->frequence) == 0) {
-        i = ZAPPY->tick->nb_ticks / (30 * ZAPPY->frequence);
-        printf("%s: %d minutes and %d seconds\n", INFO,
-        (i % 2 == 0 ? i / 2 : (i - 1) / 2), (i % 2 == 0 ? 0 : 30));
-        display_levels(server, false);
-    }
+    display_clock(ZAPPY);
+    display_levels(server, false);
     display_clock_terminal(ZAPPY);
 }
 

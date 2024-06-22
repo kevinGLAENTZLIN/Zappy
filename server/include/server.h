@@ -185,6 +185,7 @@ tick_t *init_tick(int frequence);
 void free_tick(tick_t *tick);
 void *compute_tick(void *tick);
 void display_levels(server_t *server, bool kill);
+void erase_n_previous_line(int n);
 
 // * my_server.c functions :
 void config_control(server_t *server, int port);
