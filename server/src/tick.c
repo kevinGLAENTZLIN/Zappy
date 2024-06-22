@@ -141,7 +141,9 @@ static void display_tick_info(server_t *server)
     int i = 0;
 
     display_clock(ZAPPY);
-    printf("\033[A\r");
+    if (ZAPPY->clear_line)
+        printf("\033[A\r");
+    ZAPPY->clear_line = true;
     if (ZAPPY->tick->nb_ticks % (30 * ZAPPY->frequence) == 0) {
         i = ZAPPY->tick->nb_ticks / (30 * ZAPPY->frequence);
         printf("%s: %d minutes and %d seconds\n", INFO,

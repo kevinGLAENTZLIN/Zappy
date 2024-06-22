@@ -61,7 +61,9 @@ void push_back_command(server_t *server, int i, char *line)
             count += 1;
         }
         if (count >= 10) {
+            printf("\033[A\r");
             printf("%s: Command %s not added to client %d\n", INFO,  line, i);
+            ZAPPY->clear_line = false;
             return;
         }
         cmd->next = init_command(line);

@@ -150,6 +150,7 @@ typedef struct tick_s {
 } tick_t;
 
 typedef struct zappy_s {
+    bool clear_line;
     int x;
     int y;
     int frequence;

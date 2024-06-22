@@ -39,7 +39,9 @@ static void check_dead(server_t *server, player_t *player)
             return check_dead(server, next);
         send_to_all_gui(server, "pdi #%d\n", player->id);
         send_client(client->fd, "dead\n");
+        printf("\033[A\r");
         printf("%s: Player %d passed away\n", INFO, player->id);
+        ZAPPY->clear_line = false;
         disconnect_client(server, get_client_by_player(server, player));
     }
     check_dead(server, next);
@@ -60,7 +62,9 @@ static void check_win(server_t *server, team_t *team)
         player = player->next;
     }
     if (count >= 6) {
+        printf("\033[A\r");
         printf("%s:Team %s has won !\n", INFO, team->team_name);
+        ZAPPY->clear_line = false;
         send_to_all_gui(server, "seg \"%s\"\n", team->team_name);
     }
 }

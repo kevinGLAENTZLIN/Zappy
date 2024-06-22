@@ -45,6 +45,7 @@ void Zappy::AI::initAI(const std::string port, const std::string teamName, const
     _clientSocket = std::make_unique<Zappy::Socket>();
     _currentLevel = 1;
     _isAlive = true;
+    _firstRun = true;
     _isBroadcasting = false;
     _moveToBroadcast = false;
     _needToBeFat = false;
