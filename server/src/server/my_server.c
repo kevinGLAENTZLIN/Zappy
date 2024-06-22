@@ -88,6 +88,8 @@ static void read_client_loop(server_t *server, struct timeval *timeout, int i)
 /// @param server Structure that contain all server data
 static void server_loop_call(server_t *server, struct timeval *timeout)
 {
+    if (server != NULL && server->nb_client == 0)
+        return add_client_loop(server, NULL);
     if (server != NULL) {
         add_client_loop(server, timeout);
     }
