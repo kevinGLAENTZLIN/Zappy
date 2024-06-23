@@ -6,6 +6,7 @@
 */
 
 #include "MainMenu.hh"
+#include <raylib.h>
 
 Zappy::MainMenu::MainMenu(std::shared_ptr<CommonElements> commonElements):
     _commonElements(commonElements), _playBtn(50, 60, "gui/assets/Button.png", "PLAY", "gui/assets/Futura Condensed Medium.ttf"),

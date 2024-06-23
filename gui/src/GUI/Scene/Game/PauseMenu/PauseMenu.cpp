@@ -32,18 +32,25 @@ void Zappy::PauseMenu::changeVisibility()
     _visible = !_visible;
 }
 
-void Zappy::PauseMenu::computeLogic()
+void Zappy::PauseMenu::computeLogic(Vector2 mapSize)
 {
+    Raylib::Camera camera = _commonElements->getCamera();
+    std::size_t distance = mapSize.x > mapSize.y ? mapSize.x : mapSize.y;
     _resumeBtn.Event();
     _optionsBtn.Event();
     _quitBtn.Event();
     if (_resumeBtn.IsButtonPressed())
         _visible = false;
     if (_optionsBtn.IsButtonPressed()) {
+        camera.setCameraTarget({0, 0, 0});
+        camera.setCameraDistanceToFocusHard(distance);
+        _commonElements->setCamera(camera);
         _commonElements->setCurrentScene(1);
         _commonElements->setOldScene(2);
     }
     if (_quitBtn.IsButtonPressed()) {
+        camera.setCameraTarget({0, 0, 0});
+        _commonElements->setCamera(camera);
         _commonElements->setCurrentScene(0);
         _visible = false;
     }

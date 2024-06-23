@@ -8,7 +8,9 @@
 #include "CommonElements.hh"
 #include <map>
 #include <memory>
+#include <raylib.h>
 #include <unistd.h>
+#include <rlgl.h>
 
 Zappy::CommonElements::CommonElements():
     _currentScene(0), _oldScene(0), _camera(), _socket(0), _soundVolume(0.5),
@@ -16,6 +18,9 @@ Zappy::CommonElements::CommonElements():
 {
     _map = std::make_shared<Raylib::Model3D>("gui/assets/3Delements/GameBoard.obj",
     "gui/assets/3Delements/hexagons_medieval.png", 0, 0, 0, 0, SCALE_42);
+    _shader = LoadShader(nullptr, "gui/assets/shaders/shader.fs");
+    _target = LoadRenderTexture(Raylib::Screen::myGetScreenWidth(),
+                                Raylib::Screen::myGetScreenHeight());
 }
 
 Zappy::CommonElements::~CommonElements()
@@ -141,6 +146,16 @@ Raylib::MusicEnc Zappy::CommonElements::getMusic() const
 std::shared_ptr<Raylib::Model3D> Zappy::CommonElements::getMap() const
 {
     return _map;
+}
+
+Shader Zappy::CommonElements::getShader() const
+{
+    return _shader;
+}
+
+RenderTexture2D Zappy::CommonElements::getTarget() const
+{
+    return _target;
 }
 
 bool Zappy::CommonElements::getMute() const

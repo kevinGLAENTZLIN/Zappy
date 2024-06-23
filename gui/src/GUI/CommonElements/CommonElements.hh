@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <memory>
+#include <raylib.h>
 
 #include "../../Raylib/Raylib.hh"
 
@@ -43,6 +44,8 @@ namespace Zappy {
         double getMusicVolume() const;
         double getSoundVolume() const;
         std::shared_ptr<Raylib::Model3D> getMap() const;
+        Shader getShader() const;
+        RenderTexture2D getTarget() const;
         std::size_t getPort() const;
         std::string getIp() const;
         bool getConnect() const;
@@ -58,6 +61,8 @@ namespace Zappy {
         double _soundVolume;
         Raylib::MusicEnc _music;
         std::shared_ptr<Raylib::Model3D> _map;
+        Shader _shader;
+        RenderTexture2D _target;
         std::size_t _port;
         std::string _ip;
         bool _connected;

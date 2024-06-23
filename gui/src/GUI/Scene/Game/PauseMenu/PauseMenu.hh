@@ -17,7 +17,7 @@ namespace Zappy {
             ~PauseMenu();
             bool isVisible() const;
             void changeVisibility();
-            void computeLogic();
+            void computeLogic(Vector2 mapSize);
             void Draw();
 
         protected:

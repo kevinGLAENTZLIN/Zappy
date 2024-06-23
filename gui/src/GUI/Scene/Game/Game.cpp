@@ -35,7 +35,7 @@ void Zappy::Game::computeLogic()
     std::size_t _tickTemp;
 
     if (_pauseMenu.isVisible() == true)
-        return _pauseMenu.computeLogic();
+        return _pauseMenu.computeLogic(_mapSize);
     _network.sendQueueToServer();
     _network.checkServer();
     if (_popUp.getStatus() == true) {
@@ -47,6 +47,8 @@ void Zappy::Game::computeLogic()
             _popUp.setInfo(_tiles[_selectedObject], findPlayersFromCoordinates(_tiles[_selectedObject].getIndex()),
                            findEggsFromCoordinates(_tiles[_selectedObject].getIndex()));
         }
+    } else {
+        cam.cameraUpdate(CAMERA_FREE);
     }
     userInteractions(cam);
     _commonElements->setCamera(cam);
@@ -263,7 +265,7 @@ void Zappy::Game::userInteractions(Raylib::Camera &cam)
     Ray ray;
     float mouseWheel = GetMouseWheelMove();
 
-    if (mouseWheel != 0)
+    if (mouseWheel != 0 && _popUp.getStatus() == true)
         cam.setCameraDistanceToFocus(mouseWheel);
     if (IsKeyPressed(KEY_ESCAPE))
         return _pauseMenu.changeVisibility();
@@ -271,7 +273,6 @@ void Zappy::Game::userInteractions(Raylib::Camera &cam)
         if (_popUp.getStatus() == true && _popUp.Hits(GetMousePosition()) == true)
             return;
         if (_popUp.getStatus() == true && _popUp.Hits(GetMousePosition()) == false) {
-            cam.setCameraTarget({0, 0, 0});
             _popUp.setStatus(false);
             return;
         }
