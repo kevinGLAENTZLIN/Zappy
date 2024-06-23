@@ -62,8 +62,7 @@ static void check_win(server_t *server, team_t *team)
         player = player->next;
     }
     if (count >= 6) {
-        erase_n_previous_line(1);
-        // printf("\033[A\r");
+        erase_n_previous_line(9);
         printf("%s:Team %s has won !\n", INFO, team->team_name);
         ZAPPY->clear_line = false;
         send_to_all_gui(server, "seg \"%s\"\n", team->team_name);
