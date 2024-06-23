@@ -69,7 +69,8 @@ void Zappy::Game::computeLogic()
 void Zappy::Game::displayElements(void)
 {
     _commonElements->getCamera().begin3DMode();
-    _skybox.Draw();
+        _skybox.Draw();
+        _commonElements->getMap()->ModelDraw();
         if (_tiles.size() != 0)
             for (auto &tile : _tiles)
                 tile.Draw();
@@ -88,6 +89,13 @@ void Zappy::Game::displayElements(void)
 void Zappy::Game::setMapSize(std::size_t x, std::size_t y)
 {
     _mapSize = {static_cast<float>(x), static_cast<float>(y)};
+    if (y > x) {
+        _commonElements->getCamera().setCameraDistanceToFocusHard(y);
+        _commonElements->getMap()->setScale((y * SCALE_42) / 42.0f);
+    } else {
+        _commonElements->getCamera().setCameraDistanceToFocusHard(x);
+        _commonElements->getMap()->setScale((x * SCALE_42) / 42.0f);
+    }
     createMap();
 }
 

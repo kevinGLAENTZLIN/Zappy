@@ -7,12 +7,15 @@
 
 #include "CommonElements.hh"
 #include <map>
+#include <memory>
 #include <unistd.h>
 
 Zappy::CommonElements::CommonElements():
     _currentScene(0), _oldScene(0), _camera(), _socket(0), _soundVolume(0.5),
     _music("gui/assets/audio/menu.mp3"), _mute(false), _showFPS(false), _exit(false)
 {
+    _map = std::make_shared<Raylib::Model3D>("gui/assets/3Delements/GameBoard.obj",
+    "gui/assets/3Delements/hexagons_medieval.png", 0, 0, 0, 0, SCALE_42);
 }
 
 Zappy::CommonElements::~CommonElements()
@@ -133,6 +136,11 @@ bool Zappy::CommonElements::getConnect() const
 Raylib::MusicEnc Zappy::CommonElements::getMusic() const
 {
     return _music;
+}
+
+std::shared_ptr<Raylib::Model3D> Zappy::CommonElements::getMap() const
+{
+    return _map;
 }
 
 bool Zappy::CommonElements::getMute() const

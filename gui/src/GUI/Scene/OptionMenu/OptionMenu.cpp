@@ -19,9 +19,12 @@ Zappy::OptionMenu::~OptionMenu()
 
 void Zappy::OptionMenu::computeLogic()
 {
+    _commonElements->getMap()->setRotation(_commonElements->getMap()->getRotation() + 0.5);
     _backBtn.Event();
-    if (_backBtn.IsButtonPressed())
+    if (_backBtn.IsButtonPressed()) {
+        _commonElements->getMap()->setRotation(0);
         _commonElements->setCurrentScene(_commonElements->getOldScene());
+    }
     _slider.computeLogic();
     if (_slider.isCursorPressed() && _commonElements->getMute() == false)
         _commonElements->getMusic().setVolume(_slider.getValue());
@@ -46,6 +49,9 @@ void Zappy::OptionMenu::computeLogic()
 
 void Zappy::OptionMenu::displayElements(void)
 {
+    _commonElements->getCamera().begin3DMode();
+        _commonElements->getMap()->ModelDraw();
+    _commonElements->getCamera().end3DMode();
     _backBtn.Draw();
     _backBox.DrawTexture();
     _slider.displayElements();

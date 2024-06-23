@@ -30,7 +30,7 @@ namespace Zappy {
         Button _optionBtn;
         Button _quitBtn;
         GuiSocket _guiSock;
-        Raylib::Texture _logo;
+        Raylib::AnimatedSpriteSheet _logo;
         bool _popUp;
         Raylib::Texture _popUpBack;
         Raylib::Text _popUpText;

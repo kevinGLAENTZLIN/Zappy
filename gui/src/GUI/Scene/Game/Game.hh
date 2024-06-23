@@ -61,6 +61,7 @@ namespace Zappy {
         std::size_t findEggsFromCoordinates(Vector2 coordinates);
         std::vector<std::size_t> findAllLevels();
         void userInteractions(Raylib::Camera &cam);
+        void findMapModelSize();
         void loadModels();
 
         void createMap();

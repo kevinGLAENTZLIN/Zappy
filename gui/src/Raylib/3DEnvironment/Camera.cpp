@@ -49,6 +49,12 @@ void Raylib::Camera::setCameraDistanceToFocus(float distance)
     }
 }
 
+void Raylib::Camera::setCameraDistanceToFocusHard(float distance)
+{
+    _camera.position.z = distance;
+    _camera.position.y = distance;
+}
+
 extern "C" {
     void Raylib::Camera::cameraUpdate(std::size_t flags)
     {
