@@ -42,6 +42,12 @@ void Raylib::Model3D::setModel(const Model &model)
     _model = model;
 }
 
+void Raylib::Model3D::setScale(double scale)
+{
+    resetScale();
+    scaleModel(scale);
+}
+
 double Raylib::Model3D::getRotation() const
 {
     return _rotation;
@@ -78,5 +84,10 @@ extern "C" {
     {
         Matrix scaleMatrix = MatrixScale(scale, scale, scale);
         _model.transform = MatrixMultiply(_model.transform, scaleMatrix);
+    }
+
+    void Raylib::Model3D::resetScale()
+    {
+        _model.transform = MatrixIdentity();
     }
 }

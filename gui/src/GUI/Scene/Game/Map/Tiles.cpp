@@ -17,7 +17,7 @@ Zappy::Tiles::Tiles(int x, int y, Vector2 mapSize,
                                       _index.y - _mapSize.y / 2},
                             (Vector3){_index.x - _mapSize.x / 2 + 1.f, 0,
                                       _index.y - _mapSize.y / 2 + 1.f}};
-    _3DPosition = {_bounds.min.x + 0.5f, 0, _bounds.min.z + 0.5f};
+    _3DPosition = {_bounds.min.x + 0.5f, 0.05, _bounds.min.z + 0.5f};
     if (static_cast<int>(_index.x + _index.y) % 2 == 0)
         _color = DARK_GREEN;
 }

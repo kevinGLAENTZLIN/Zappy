@@ -24,6 +24,7 @@ namespace Raylib {
         void setPosition(double x, double y, double z);
         void setRotation(double rotation);
         void setModel(const Model &model);
+        void setScale(double scale);
 
         double getRotation() const;
         Model getModel() const;
@@ -34,6 +35,7 @@ namespace Raylib {
         void createModel(const std::string &fileName);
         void destroyModel();
         void scaleModel(double scale);
+        void resetScale();
         Model _model;
         Texture _texture;
         double _rotation;

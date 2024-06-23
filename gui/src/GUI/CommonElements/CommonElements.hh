@@ -9,8 +9,11 @@
 #pragma once
 
 #include <iostream>
+#include <memory>
 
 #include "../../Raylib/Raylib.hh"
+
+#define SCALE_42 6.2f
 
 namespace Zappy {
     class CommonElements {
@@ -39,6 +42,7 @@ namespace Zappy {
         std::size_t getSocket() const;
         double getMusicVolume() const;
         double getSoundVolume() const;
+        std::shared_ptr<Raylib::Model3D> getMap() const;
         std::size_t getPort() const;
         std::string getIp() const;
         bool getConnect() const;
@@ -53,6 +57,7 @@ namespace Zappy {
         std::size_t _socket;
         double _soundVolume;
         Raylib::MusicEnc _music;
+        std::shared_ptr<Raylib::Model3D> _map;
         std::size_t _port;
         std::string _ip;
         bool _connected;

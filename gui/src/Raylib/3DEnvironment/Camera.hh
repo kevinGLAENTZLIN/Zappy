@@ -22,6 +22,7 @@ namespace Raylib {
         void setCameraTarget(Vector3 focus);
         // INFO: this method adds / remove to the existing distance
         void setCameraDistanceToFocus(float distance);
+        void setCameraDistanceToFocusHard(float distance);
 
         void begin3DMode();
         void end3DMode();
